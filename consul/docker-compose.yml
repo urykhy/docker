@@ -1,0 +1,23 @@
+version: '2'
+services:
+  consul:
+    image: consul
+    hostname: consul
+    container_name: consul
+    network_mode: "bridge"
+    volumes:
+    - consul:/consul/data
+  registrator:
+    image: gliderlabs/registrator
+    hostname: registrator
+    container_name: registrator
+    network_mode: "bridge"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    command: -internal consul://consul.consul.docker:8500
+    depends_on:
+      - consul
+volumes:
+  consul:
+    external: true
+

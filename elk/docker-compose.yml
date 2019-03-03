@@ -1,0 +1,82 @@
+version: '2'
+
+services:
+  elasticsearch:
+    hostname: elasticsearch
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
+    environment:
+      ES_JAVA_OPTS: "-Xms2g -Xmx2g"
+      indices.memory.index_buffer_size: "60%"
+      http.cors.allow-origin: "\"*\""
+      http.cors.enabled: "true"
+      xpack.security.enabled: "false"
+      xpack.monitoring.enabled: "false"
+      xpack.ml.enabled: "false"
+      xpack.graph.enabled: "false"
+      xpack.watcher.enabled: "false"
+    networks:
+      - elk
+    volumes:
+     - elasticsearch:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+
+  logstash:
+    hostname: logstash
+    container_name: logstash
+    image: docker.elastic.co/logstash/logstash:6.4.0
+    command: -f /etc/logstash/conf.d/
+    volumes:
+      - ./logstash:/etc/logstash/conf.d
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+    environment:
+      xpack.monitoring.enabled: "false"
+
+  kibana:
+    hostname: kibana
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:6.4.0
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+    environment:
+      SERVER_NAME: "kibana"
+      SERVER_HOST: "0.0.0.0"
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+      LOGGING_QUIET: "true"
+
+  filebeat:
+    user: root
+    hostname: filebeat
+    container_name: filebeat
+    image: docker.elastic.co/beats/filebeat:6.4.0
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - /var/log:/var/log:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - filebeat:/usr/share/filebeat/data/
+    command: "filebeat -e -strict.perms=false"
+
+networks:
+  elk:
+    external: true
+volumes:
+  elasticsearch:
+    external: true
+  filebeat:
+    external: true

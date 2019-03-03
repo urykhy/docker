@@ -1,0 +1,12 @@
+version: '2'
+services:
+  nextcloud:
+    image: nextcloud
+    hostname: nextcloud
+    network_mode: "bridge"
+    volumes:
+      - "nextcloud:/var/www/html"
+
+volumes:
+  nextcloud:
+    external: true

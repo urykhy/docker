@@ -1,0 +1,22 @@
+version: '2'
+services:
+  allure:
+    image: urykhy/allure
+    hostname: cli
+    container_name: allure-cli
+    network_mode: "bridge"
+    volumes:
+      - "allure:/data"
+  web:
+    image: urykhy/nginx-allure-fe
+    hostname: web
+    container_name: allure-web
+    network_mode: "bridge"
+    volumes:
+      - "allure:/data"
+    depends_on:
+      - allure
+
+volumes:
+  allure:
+    external: true

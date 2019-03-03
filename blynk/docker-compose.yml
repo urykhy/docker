@@ -1,0 +1,15 @@
+version: '2'
+services:
+  blynk:
+    image: mpherg/blynk-server:latest
+    hostname: blynk
+    container_name: blynk
+    network_mode: "bridge"
+    volumes:
+      - "blynk:/data"
+      - "blynk_config:/config"
+volumes:
+  blynk:
+    external: true
+  blynk_config:
+    external: true

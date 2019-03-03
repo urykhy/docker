@@ -1,0 +1,48 @@
+version: '2'
+services:
+  gs1:
+    image: urykhy/gluster
+    privileged: true
+    container_name: gluster1
+    hostname: gs1
+    environment:
+      - GLUSTER_OTHER=gluster2 gluster3
+      - GLUSTER_INIT=1
+    networks:
+      gluster:
+    volumes:
+      - gluster1:/var/lib/glusterd
+  gs2:
+    image: urykhy/gluster
+    privileged: true
+    container_name: gluster2
+    hostname: gs2
+    environment:
+      - GLUSTER_OTHER=gluster1
+    networks:
+      gluster:
+    volumes:
+      - gluster2:/var/lib/glusterd
+  gs3:
+    image: urykhy/gluster
+    privileged: true
+    container_name: gluster3
+    hostname: gs3
+    environment:
+      - GLUSTER_OTHER=gluster1
+    networks:
+      gluster:
+    volumes:
+      - gluster3:/var/lib/glusterd
+
+networks:
+  gluster:
+    external: true
+
+volumes:
+  gluster1:
+    external: true
+  gluster2:
+    external: true
+  gluster3:
+    external: true

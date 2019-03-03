@@ -1,0 +1,144 @@
+version: '2'
+
+services:
+  namenode:
+    image: urykhy/hadoop-namenode
+    container_name: namenode
+    hostname: namenode
+    networks:
+      - hadoop
+    volumes:
+      - hadoop_namenode:/hadoop/dfs/name
+    environment:
+      CLUSTER_NAME: uh-cluster
+    env_file:
+      - ./hadoop.env
+
+  resourcemanager:
+    image: urykhy/hadoop-resourcemanager
+    container_name: resourcemanager
+    hostname: resourcemanager
+    depends_on:
+      - namenode
+    networks:
+      - hadoop
+    env_file:
+      - ./hadoop.env
+
+  historyserver:
+    image: urykhy/hadoop-historyserver
+    container_name: historyserver
+    hostname: historyserver
+    depends_on:
+      - namenode
+    networks:
+      - hadoop
+    volumes:
+      - hadoop_historyserver:/hadoop/yarn/timeline
+    env_file:
+      - ./hadoop.env
+
+  spark:
+    image: urykhy/hadoop-spark
+    container_name: spark
+    hostname: spark
+    networks:
+      - hadoop
+    environment:
+      - SPARK_CONF_spark_eventLog_enabled=true
+      - SPARK_CONF_spark_eventLog_dir=hdfs://namenode.hadoop:8020/spark-logs
+      - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode.hadoop:8020/spark-logs
+    env_file:
+      - ./hadoop.env
+    command: historyserver
+    depends_on:
+      - namenode
+
+  notebook:
+    image: urykhy/hadoop-spark-notebook
+    container_name: notebook
+    hostname: notebook
+    networks:
+      - hadoop
+    env_file:
+      - ./hadoop.env
+    depends_on:
+      - spark
+
+  nodemanager1:
+    image: urykhy/hadoop-nodemanager
+    container_name: nodemanager1
+    hostname: nodemanager1
+    depends_on:
+      - namenode
+      - resourcemanager
+    networks:
+      - hadoop
+    env_file:
+      - ./hadoop.env
+
+  nodemanager2:
+    image: urykhy/hadoop-nodemanager
+    container_name: nodemanager2
+    hostname: nodemanager2
+    depends_on:
+      - namenode
+      - resourcemanager
+    networks:
+      - hadoop
+    env_file:
+      - ./hadoop.env
+
+  datanode1:
+    image: urykhy/hadoop-datanode
+    container_name: datanode1
+    hostname: datanode1
+    depends_on:
+      - namenode
+    networks:
+      - hadoop
+    volumes:
+      - hadoop_datanode1:/hadoop/dfs/data
+    env_file:
+      - ./hadoop.env
+
+  datanode2:
+    image: urykhy/hadoop-datanode
+    container_name: datanode2
+    hostname: datanode2
+    depends_on:
+      - namenode
+    networks:
+      - hadoop
+    volumes:
+      - hadoop_datanode2:/hadoop/dfs/data
+    env_file:
+      - ./hadoop.env
+
+  nfs:
+    image: urykhy/hadoop-nfs
+    container_name: nfs
+    hostname: nfs
+    depends_on:
+    - namenode
+    networks:
+    - hadoop
+    env_file:
+    - ./hadoop.env
+
+networks:
+  hadoop:
+    external: true
+
+volumes:
+  hadoop_namenode:
+    external: true
+
+  hadoop_datanode1:
+    external: true
+
+  hadoop_datanode2:
+    external: true
+
+  hadoop_historyserver:
+    external: true

@@ -1,0 +1,39 @@
+version: '2'
+services:
+  zookeeper:
+    image: zookeeper
+    container_name: helix-zk
+    hostname: zk
+    network_mode: "bridge"
+    volumes:
+      - helix_zk1:/data
+      - helix_zk2:/datalog
+
+  core:
+    build: ./core
+    image: urykhy/helix-core
+    hostname: core
+    container_name: helix-core
+    network_mode: "bridge"
+    depends_on:
+      - zookeeper
+    environment:
+      CLUSTER: MYCLUSTER
+      ZOOKEEPER: zookeeper.helix
+
+  web:
+    build: ./web
+    image: urykhy/helix-web
+    hostname: web
+    container_name: helix-web
+    network_mode: "bridge"
+    depends_on:
+      - core
+    environment:
+      ZOOKEEPER: zookeeper.helix
+
+volumes:
+  helix_zk1:
+    external: true
+  helix_zk2:
+    external: true

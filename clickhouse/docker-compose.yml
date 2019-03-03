@@ -1,0 +1,73 @@
+version: '2'
+
+services:
+  zookeeper:
+    image: zookeeper
+    container_name: clickhouse-zk
+    hostname: zookeeper
+    networks:
+      clickhouse:
+        aliases:
+          - zk
+    volumes:
+      - clickhouse_zk1:/data
+      - clickhouse_zk2:/datalog
+
+  master:
+    image: urykhy/clickhouse
+    container_name: clickhouse-master
+    hostname: master
+    networks:
+      clickhouse:
+        aliases:
+          - master
+    volumes:
+      - clickhouse_master:/var/lib/clickhouse
+    depends_on:
+      - zookeeper
+
+  node1:
+    image: urykhy/clickhouse
+    container_name: clickhouse-node1
+    hostname: node1
+    networks:
+      clickhouse:
+        aliases:
+          - node1
+    volumes:
+      - clickhouse1:/var/lib/clickhouse
+    depends_on:
+      - zookeeper
+    environment:
+      SHARD: 1
+
+  node2:
+    image: urykhy/clickhouse
+    container_name: clickhouse-node2
+    hostname: node2
+    networks:
+      clickhouse:
+        aliases:
+        - node2
+    volumes:
+      - clickhouse2:/var/lib/clickhouse
+    depends_on:
+      - zookeeper
+    environment:
+      SHARD: 2
+
+networks:
+  clickhouse:
+    external: true
+
+volumes:
+  clickhouse_master:
+    external: true
+  clickhouse1:
+    external: true
+  clickhouse2:
+    external: true
+  clickhouse_zk1:
+    external: true
+  clickhouse_zk2:
+    external: true

@@ -1,0 +1,19 @@
+
+kubectl create ns kubeless
+cat kubeless-non-rbac-v1.0.2.yaml | kubectl apply -f -
+kubectl get pods -n kubeless
+kubectl get deployment -n kubeless
+kubectl get customresourcedefinition
+
+kubeless function deploy hello --runtime python2.7 --from-file test.py --handler test.hello
+kubeless function ls hello
+kubeless function call hello --data 'Hello world!'
+
+kubectl get svc # hello is here, but as cluster ip
+kubeless trigger http create hello --function-name hello --hostname function.com
+kubectl get ing
+curl -L --data '{"Hello": "World"}' --header "Content-Type:application/json" -H "Host: function.com" node1.kubernets.docker:30080
+
+kubectl get pods
+kubectl describe pods hello-7ff986546d-sbmrk
+kubectl logs hello-7ff986546d-sbmrk

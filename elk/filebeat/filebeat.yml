@@ -1,0 +1,14 @@
+filebeat.registry_file: /usr/share/filebeat/data/registry
+filebeat.inputs:
+- type: docker
+  containers.ids: '*'
+  processors:
+  - add_docker_metadata: ~
+- type: log
+  paths:
+  - /var/log/syslog
+  - /var/log/apache2/virtual/*.log
+  - /var/log/apache2/*.log
+output.logstash:
+  hosts: ["logstash:5044"]
+logging.metrics.enabled: false

@@ -1,0 +1,24 @@
+PREPARE
+=======
+
+* download rpms
+* make em available via FTP and edit Dockerfile to download files from correct location
+* ./build.sh
+# docker-compose create
+
+RUNNING
+=======
+
+docker-compose start
+
+ACCESS
+======
+
+docker-compose exec oracle /bin/bash
+$ export PATH=$PATH:/opt/oracle/product/18c/dbhomeXE/bin/
+$ sqlplus / as sysdba
+
+PROBLEMS
+========
+no volume
+no em express

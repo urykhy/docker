@@ -1,0 +1,10 @@
+docker volume create blynk
+docker volume create blynk_config
+
+ports used:
+8080
+9443
+
+default ui: https://<ip>:9443/admin
+login email is admin@blynk.cc
+password is admin

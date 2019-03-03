@@ -1,0 +1,6 @@
+
+docker network create elk --subnet 172.16.7.0/24
+docker volume create --name=elasticsearch
+docker volume create --name=filebeat
+
+open http://kibana.elk:5601

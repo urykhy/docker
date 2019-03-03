@@ -1,0 +1,62 @@
+version: '2'
+services:
+  influxdb:
+    image: influxdb
+    hostname: influxdb
+    container_name: influxdb
+    networks:
+      - grafana
+    volumes:
+      - "influxdb:/var/lib/influxdb"
+      - "./influxdb.conf:/etc/influxdb/influxdb.conf"
+
+  graphite:
+    image: nickstenning/graphite
+    hostname: graphite
+    container_name: graphite
+    networks:
+      - grafana
+    volumes:
+      - "graphite:/var/lib/graphite/storage/whisper/"
+
+  telegraf:
+    image: telegraf
+    hostname: telegraf
+    container_name: telegraf
+    networks:
+      - grafana
+    volumes:
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - influxdb
+      - graphite
+
+  grafana:
+    image: grafana/grafana
+    hostname: grafana
+    container_name: grafana
+    networks:
+      - grafana
+    depends_on:
+      - influxdb
+      - graphite
+    volumes:
+      - "grafana:/var/lib/grafana"
+      - "grafana_log:/var/log/grafana"
+      - "grafana_etc:/etc/grafana"
+
+networks:
+  grafana:
+    external: true
+volumes:
+  influxdb:
+    external: true
+  graphite:
+    external: true
+  grafana:
+    external: true
+  grafana_log:
+    external: true
+  grafana_etc:
+    external: true

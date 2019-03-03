@@ -1,0 +1,20 @@
+
+gitea + MySQL
+
+prepare:
+docker volume create gitea_db
+docker volume create gitea_server
+docker volume create gitea_drone
+
+docker-compose create --force-recreate
+docker-compose start
+
+# Drone does not create your database automatically.
+echo "create database drone" | mysql -hdb.gitea -uroot -pgitea
+echo "create user 'drone'@'%' IDENTIFIED BY 'drone'"  | mysql -hdb.gitea -uroot -pgitea
+echo "grant all privileges on drone.* TO 'drone'@'%'" | mysql -hdb.gitea -uroot -pgitea
+
+access:
+http://server.gitea:3000
+http://drone.gitea:8000
+

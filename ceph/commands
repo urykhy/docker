@@ -1,0 +1,31 @@
+
+# explore
+docker run -it --rm debian:jessie-backports /bin/bash
+docker run -it --rm urykhy/ceph /bin/bash
+
+# prepare and start
+docker-compose rm;
+docker network create ceph
+docker volume rm ceph_mon; docker volume create --name=ceph_mon;
+docker volume rm ceph_osd0; docker volume create --name=ceph_osd0;
+docker volume rm ceph_osd1; docker volume create --name=ceph_osd1;
+docker-compose create; docker-compose up
+
+# status
+docker-compose exec mon ceph -s
+                        ceph osd tree
+
+# create pool and fs
+ceph osd pool create pdata 16
+ceph osd pool create pmeta 16
+ceph fs new base pmeta pdata
+
+# mount and use
+docker run -it --rm --cap-add SYS_ADMIN --device /dev/fuse --net ceph --env-file=ceph.env urykhy/ceph /bin/bash
+mkdir /data
+ceph-fuse -m mon:6789 /data
+
+#rgw
+from rgw host: radosgw-admin user create --uid="test" --display-name="Test User"
+from localhost: aptitude install python-boto; ./s3test.py
+

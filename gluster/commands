@@ -1,0 +1,27 @@
+
+docker-compose exec gs1 /bin/bash
+mount -t glusterfs gs1:/gv0 /mnt
+gluster volume status gv0
+
+addd nfs:
+    on gs1:
+    /etc/init.d/rpcbind start
+    /etc/init.d/nfs-common start
+    gluster volume set gv0 nfs.disable off
+    gluster volume set gv0 nfs.export-volumes on
+    gluster volume stop gv0
+    gluster volume start gv0
+
+    on user:
+    rpcinfo -p gs1.gluster
+    showmount -e gs1.gluster
+    mount -t nfs -o nolock gs1.gluster:/gv0 /mnt/m1
+
+new volume with nfs:
+    gluster volume create gvtest replica 3 gs1:/var/lib/glusterd/brick2 gs2:/var/lib/glusterd/brick2 gs3:/var/lib/glusterd/brick3 force
+    gluster volume set gvtest nfs.disable off
+    gluster volume set gvtest nfs.export-volumes on
+    gluster volume start gvtest
+
+
+

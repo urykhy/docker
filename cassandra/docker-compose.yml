@@ -1,0 +1,33 @@
+version: '2'
+services:
+  node1:
+    image: urykhy/cassandra
+    hostname: node1
+    container_name: cassandra1
+    environment:
+      CASSANDRA_SEED: "cassandra2"
+    networks:
+      - cassandra
+    volumes:
+      - "cassandra1:/var/lib/cassandra"
+  node2:
+    image: urykhy/cassandra
+    hostname: node2
+    container_name: cassandra2
+    environment:
+      CASSANDRA_SEED: "cassandra1"
+    depends_on:
+      - node1
+    networks:
+      - cassandra
+    volumes:
+      - "cassandra2:/var/lib/cassandra"
+
+volumes:
+  cassandra1:
+    external: true
+  cassandra2:
+    external: true
+networks:
+  cassandra:
+    external: true

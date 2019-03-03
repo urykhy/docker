@@ -1,0 +1,11 @@
+.:53 {
+	errors
+	log
+	health
+	kubernetes 172.16.9.0/24 k8s {
+	  endpoint http://master.kubernets.docker:8080/
+	  transfer to *
+	}
+	proxy . 10.103.10.3:53
+	cache 30
+}

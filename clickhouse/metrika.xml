@@ -1,0 +1,31 @@
+<yandex>
+    <clickhouse_remote_servers>       <!-- name of substitution-->
+        <replicated>                  <!-- name of cluster (arbitary) to be specified in parameter of Distributed table -->
+            <shard>
+                <internal_replication>true</internal_replication>
+                <replica><host>node1</host><port>9000</port></replica>
+                <replica><host>node2</host><port>9000</port></replica>
+            </shard>
+        </replicated>
+        <sharded>                     <!-- name of cluster (arbitary) to be specified in parameter of Distributed table -->
+            <shard>
+                <internal_replication>true</internal_replication>
+                <replica><host>node1</host><port>9000</port></replica>
+            </shard>
+            <shard>
+                <internal_replication>true</internal_replication>
+                <replica><host>node2</host><port>9000</port></replica>
+            </shard>
+        </sharded>
+    </clickhouse_remote_servers>
+    <zookeeper-servers>
+        <node index="1">
+            <host>zk</host>
+            <port>2181</port>
+        </node>
+    </zookeeper-servers>
+    <macros>
+        <host>%HOST%</host>
+        <shard>%SHARD%</shard>
+    </macros>
+</yandex>

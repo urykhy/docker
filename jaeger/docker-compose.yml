@@ -1,0 +1,68 @@
+version: '2'
+
+services:
+    jaeger-collector:
+      container_name: jaeger-collector
+      image: jaegertracing/jaeger-collector
+      command: ["--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=cassandra.jaeger", "--collector.zipkin.http-port=9411"]
+      ports:
+        - "14269"
+        - "14268"
+        - "14267"
+        - "9411"
+      restart: on-failure
+      depends_on:
+        - cassandra-schema
+      network_mode: "bridge"
+
+    jaeger-query:
+      container_name: jaeger-query
+      image: jaegertracing/jaeger-query
+      command: ["--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=cassandra.jaeger"]
+      ports:
+        - "16686"
+        - "16687"
+      restart: on-failure
+      depends_on:
+        - cassandra-schema
+      network_mode: "bridge"
+
+    jaeger-agent:
+      container_name: jaeger-agent
+      image: jaegertracing/jaeger-agent
+      command: ["--collector.host-port=jaeger-collector.jaeger:14267"]
+      ports:
+        - "5775"
+        - "6831"
+        - "6832"
+        - "5778"
+      restart: on-failure
+      depends_on:
+        - jaeger-collector
+      network_mode: "bridge"
+
+    cassandra:
+      container_name: jaeger-cassandra
+      image: cassandra:3.9
+      network_mode: "bridge"
+      volumes:
+        - "jaeger-cassandra:/var/lib/cassandra"
+      environment:
+        JVM_OPTS: "-Xms1024M -Xmx2048M"
+
+    cassandra-schema:
+      container_name: jaeger-schema
+      image: jaegertracing/jaeger-cassandra-schema
+      depends_on:
+        - cassandra
+      environment:
+        CQLSH_HOST: "cassandra.jaeger"
+      volumes:
+        - "jaeger-schema:/var/lib/cassandra"
+      network_mode: "bridge"
+
+volumes:
+  jaeger-cassandra:
+    external: true
+  jaeger-schema:
+    external: true

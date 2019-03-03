@@ -1,0 +1,97 @@
+version: '2'
+
+services:
+  mon:
+    image: urykhy/ceph
+    container_name: ceph-mon
+    hostname: mon
+    networks:
+      ceph:
+        aliases:
+          - mon
+    volumes:
+      - ceph_mon:/var/lib/ceph/mon
+    environment:
+      - MON=a
+    env_file:
+      - ./ceph.env
+
+  osd0:
+    image: urykhy/ceph
+    container_name: ceph-osd0
+    hostname: osd0
+    networks:
+      ceph:
+        aliases:
+          - osd0
+    volumes:
+      - ceph_osd0:/var/lib/ceph/osd
+    environment:
+      - OSD=0
+    depends_on:
+      - mon
+    env_file:
+      - ./ceph.env
+
+  osd1:
+    image: urykhy/ceph
+    container_name: ceph-osd1
+    hostname: osd1
+    networks:
+      ceph:
+        aliases:
+          - osd1
+    volumes:
+      - ceph_osd1:/var/lib/ceph/osd
+    environment:
+      - OSD=1
+    depends_on:
+      - mon
+    env_file:
+      - ./ceph.env
+
+  mds:
+    image: urykhy/ceph
+    container_name: ceph-mds
+    hostname: mds
+    networks:
+      ceph:
+        aliases:
+          - mds
+    environment:
+      - MDS=a
+    depends_on:
+      - mon
+      - osd0
+      - osd1
+    env_file:
+      - ./ceph.env
+
+  rgw:
+    image: urykhy/ceph
+    container_name: ceph-rgw
+    hostname: rgw
+    networks:
+      ceph:
+        aliases:
+          - rgw
+    environment:
+      - RGW=radosgw.a
+    depends_on:
+      - mon
+      - osd0
+      - osd1
+    env_file:
+      - ./ceph.env
+
+networks:
+  ceph:
+    external: true
+
+volumes:
+  ceph_osd0:
+    external: true
+  ceph_osd1:
+    external: true
+  ceph_mon:
+    external: true

@@ -1,0 +1,79 @@
+version: '2'
+services:
+  mgt:
+    image: urykhy/mysql-mgt
+    hostname: mgt
+    container_name: mysql-mgt
+    networks:
+      mysql:
+        ipv4_address: 172.24.1.1
+    volumes:
+      - "mysql:/data"
+    command: /opt/mysql/server-5.7/bin/ndb_mgmd --nodaemon -f /etc/config.ini --ndb-nodeid=1
+
+  data1:
+    image: urykhy/mysql-data
+    hostname: data1
+    container_name: mysql-data1
+    networks:
+      mysql:
+        ipv4_address: 172.24.2.1
+    volumes:
+      - "mysql:/data"
+    command: opt/mysql/server-5.7/bin/ndbd --nodaemon --connect-retries=2 --connect-delay=2
+    depends_on:
+      - mgt
+
+  data2:
+    image: urykhy/mysql-data
+    hostname: data2
+    container_name: mysql-data2
+    networks:
+      mysql:
+        ipv4_address: 172.24.2.2
+    volumes:
+      - "mysql:/data"
+    command: opt/mysql/server-5.7/bin/ndbd --nodaemon --connect-retries=2 --connect-delay=2
+    depends_on:
+      - mgt
+
+  sql1:
+    image: urykhy/mysql-sql
+    hostname: sql1
+    container_name: mysql-sql1
+    networks:
+      mysql:
+        ipv4_address: 172.24.3.1
+    depends_on:
+      - data1
+      - data2
+    volumes:
+      - "mysql1:/data"
+
+  sql2:
+    image: urykhy/mysql-sql
+    hostname: sql2
+    container_name: mysql-sql2
+    networks:
+      mysql:
+        ipv4_address: 172.24.3.2
+    depends_on:
+      - data1
+      - data2
+    volumes:
+      - "mysql2:/data"
+
+volumes:
+  mysql:
+    external: true
+  mysql1:
+    external: true
+  mysql2:
+    external: true
+networks:
+  mysql:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.24.0.0/16
+        gateway: 172.24.0.1

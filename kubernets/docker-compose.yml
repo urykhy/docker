@@ -1,0 +1,75 @@
+version: '2'
+services:
+  etcd:
+    image: quay.io/coreos/etcd
+    container_name: etcd
+    networks:
+      kube:
+    command: etcd -name etcd0 -initial-cluster-token etcd-cluster-1 --listen-client-urls 'http://0.0.0.0:2379' --advertise-client-urls 'http://0.0.0.0:2379' --data-dir /var/lib/etcd
+    volumes:
+      - kube-etcd:/var/lib/etcd
+
+  master:
+    image: urykhy/kube-master
+    build: ./master
+    container_name: kube-master
+    privileged: true
+    networks:
+      kube:
+    depends_on:
+      - etcd
+
+  dns:
+    image: coredns/coredns:latest
+    container_name: kube-dns
+    networks:
+      kube:
+    depends_on:
+      - master
+    command: -conf /etc/coredns/Corefile
+    volumes:
+      - ./Corefile:/etc/coredns/Corefile
+
+  node1:
+    image: urykhy/kube-node
+    build: ./node
+    container_name: kube-node1
+    networks:
+      kube:
+    privileged: true
+    depends_on:
+      - master
+    volumes:
+      - kube-node1:/var/lib/docker
+    environment:
+      NODE_NAME: kube-node1
+      NODE_DNS: 103.103.10.3
+      NETWORK: 172.17.0.1/24
+
+  node2:
+    image: urykhy/kube-node
+    build: ./node
+    container_name: kube-node2
+    networks:
+      kube:
+    privileged: true
+    depends_on:
+      - node1
+    volumes:
+      - kube-node2:/var/lib/docker
+    environment:
+      NODE_NAME: kube-node2
+      NODE_DNS: 103.103.10.3
+      NETWORK: 172.17.1.1/24
+
+
+networks:
+  kube:
+    external: true
+volumes:
+  kube-node1:
+    external: true
+  kube-node2:
+    external: true
+  kube-etcd:
+    external: true

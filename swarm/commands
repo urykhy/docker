@@ -1,0 +1,34 @@
+
+docker network create swarm
+docker volume create --name=swarm1
+docker volume create --name=swarm2
+docker volume create --name=registry
+
+-- after start
+docker-compose exec swarm1 /bin/sh
+. docker swarm init
+
+docker-compose exec swarm2 /bin/sh
+. docker swarm join --token SWMTKN-1-0rer0tan04a0cx3xzmcze3qisg3slm8s0yyt9n4fbsj21voiui-182nbobbm4d1si2cg7a5kwfrg 172.16.6.2:2377
+
+-- on swarm1:
+docker node ls
+
+-- example with service
+docker network create -d overlay mynetwork
+docker service create --name web --network mynetwork --replicas 2 -p 5001:80 francois/apache-hostname
+docker service ls
+
+-- access
+-- from swarm2
+curl 127.0.0.1:5001
+
+-- from host
+curl swarm1.swarm:5001
+
+registry:
+  docker pull francois/apache-hostname
+  docker images | grep apache | grep '<none>' | awk '{print $3}'
+  docker tag <ID> registry:5000/apache-hostname
+  docker push registry:5000/apache-hostname
+

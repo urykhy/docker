@@ -1,0 +1,10 @@
+
+docker volume create redash_pg
+docker volume create redash_redis
+
+docker-compose create --force-recreate
+docker-compose run --rm server create_db
+docker-compose start
+
+access:
+http://server.redash:5000

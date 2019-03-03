@@ -1,0 +1,16 @@
+
+simple way to run allure reports:
+upload XML to web server and it will be automagically converted to report.
+
+* prepare cluster
+docker volume create --name=allure
+
+* start
+docker-compose create
+docker-compose start
+
+* usage
+$curl -T ctest-Main-testsuite.xml http://web.allure/upload/ctest-Main-testsuite.xml
+open `http://web.allure` in browser
+
+* tested with https://github.com/urykhy/stuff/blob/master/scripts/docker-ddns.py to update dns

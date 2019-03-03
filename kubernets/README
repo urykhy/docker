@@ -1,0 +1,40 @@
+
+PREPARE
+    modules must be available xt_REDIRECT and xt_comment
+
+CREATE
+    docker volume create --name=kube-node1
+    docker volume create --name=kube-node2
+    docker volume create --name=kube-etcd
+    docker network create kube --subnet 172.16.9.0/24
+    docker-compose create --build
+    docker-compose start
+
+MANAGEMENT
+    docker-compose exec master /bin/bash
+    kubectl get componentstatuses
+    kubectl get nodes
+
+    kubectl get pods,svc,deployments --all-namespaces
+    kubectl describe pods
+
+    kubectl delete svc hostnames
+    kubectl delete svc default-http-backend -n kube-system
+
+USAGE
+    docker cp nginx.yml kube-master:/
+    docker cp ingress.yml kube-master:/
+    > kubectl run hostnames --image=francois/apache-hostname --labels=app=hostnames --port=80 --replicas=3
+    > cat /nginx.yml | kubectl apply -f -
+    > cat /ingress.yml | kubectl apply -f -
+    > kubectl get pod -n kube-system
+    > kubectl describe pod -n kube-system
+    > kubectl get svc --all-namespaces
+    curl -H "Host: web.com" -v node1.kubernets.docker:30080
+    curl -H "Host: web.com" -v node2.kubernets.docker:30080
+
+DNS
+    host nginx-ingress-controller.kube-system.svc.k8s. dns.kubernets.docker
+
+PROBLEMS
+    dns not start correctly, it must be started `docker-compose start dns` again

@@ -1,0 +1,28 @@
+
+## Clickhouse Cluster
+very simple and basic cluster via docker-compose
+for demonstration and tests
+
+### prepare
+docker network create clickhouse
+docker volume create --name=clickhouse1
+docker volume create --name=clickhouse2
+docker volume create --name=clickhouse_master
+docker volume create --name=clickhouse_zk1
+docker volume create --name=clickhouse_zk2
+
+### schema
+migrate-clickhouse -database clickhouse://master.clickhouse.docker:9000 -path migrations -verbose up
+(used tool from https://github.com/mattes/migrate/tree/master/cli)
+
+### fill data
+cd scripts
+./prepare-data.sh
+cat DATA | POST 'http://node1.clickhouse:8123/?query=INSERT INTO hits_1 VALUES'
+cat DATA | POST 'http://master.clickhouse:8123/?query=INSERT INTO hits_2 VALUES'
+
+# check it
+docker run -it --rm --net clickhouse yandex/clickhouse-client --host master
+> SELECT * from system.clusters
+> select CounterID,count() as c from hits_1 group by CounterID order by c desc limit 10
+> select CounterID,count() as c from hits_2 group by CounterID order by c desc limit 10

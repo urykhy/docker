@@ -1,0 +1,5 @@
+docker volume create jaeger-cassandra
+docker-compose create
+docker-compose start
+
+open in browser: http://jaeger-query.jaeger:16686/search

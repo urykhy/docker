@@ -1,0 +1,35 @@
+mysql NDB cluster
+
+* prepare
+docker volume create --name=mysql
+docker volume create --name=mysql1
+docker volume create --name=mysql2
+
+* start
+docker-compose create
+docker-compose up
+
+* use
+IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mysql-sql1)
+mysql -h $IP
+> show status where Variable_name like 'ndb%' and value > 0;
+
+USE test;
+DROP TABLE IF EXISTS `City`;
+CREATE TABLE `City` (
+  `ID` int(11) NOT NULL auto_increment,
+  `Name` char(35) NOT NULL default '',
+  `CountryCode` char(3) NOT NULL default '',
+  `District` char(20) NOT NULL default '',
+  `Population` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`ID`)
+) ENGINE=NDBCLUSTER DEFAULT CHARSET=utf8;
+
+INSERT INTO `City` VALUES (1,'Kabul','AFG','Kabol',1780000);
+INSERT INTO `City` VALUES (2,'Qandahar','AFG','Qandahar',237500);
+INSERT INTO `City` VALUES (3,'Herat','AFG','Herat',186800);
+
+* check memory usage:
+$ docker-compose exec mgt /bin/bash
+# /opt/mysql/server-5.7/bin/ndb_mgm
+> all report memory

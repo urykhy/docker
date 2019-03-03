@@ -1,0 +1,26 @@
+games with docker and service discovery
+
+# start stuff
+docker volume create --name=consul
+docker-compose up
+
+# check services
+http consul.consul.docker:8500/v1/catalog/services
+
+# ask via dns
+dig @consul.consul.docker -p 8600 consul.service.consul
+
+# run test redis
+docker run -d -P --name=redis redis
+
+# check service
+http consul.consul.docker:8500/v1/catalog/service/redis
+dig @consul.consul.docker -p 8600 redis.service.dc1.consul.
+dig @consul.consul.docker -p 8600 redis.service.consul.
+dig @consul.consul.docker -p 8600 redis.service.consul. SRV
+
+# access one
+echo INFO | nc -w1 127.0.0.1 40002
+
+# browser ui
+http://consul.consul.docker:8500/

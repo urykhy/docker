@@ -1,0 +1,13 @@
+
+apache helix in docker
+
+prepare:
+    docker volume create --name=helix_zk1;
+    docker volume create --name=helix_zk2;
+
+create
+    docker-compose create --force-recreate --build
+    docker-compose start
+
+    on start - cluster MYCLUSTER will be created
+

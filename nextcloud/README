@@ -1,0 +1,4 @@
+
+docker pull nextcloud
+docker volume create nextcloud
+

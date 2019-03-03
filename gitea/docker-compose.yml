@@ -1,0 +1,72 @@
+version: "2"
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: gitea_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=gitea
+      - MYSQL_USER=gitea
+      - MYSQL_PASSWORD=gitea
+      - MYSQL_DATABASE=gitea
+    network_mode: "bridge"
+    volumes:
+      - gitea_db:/var/lib/mysql
+
+  server:
+    image: gitea/gitea:latest
+    container_name: gitea_server
+    environment:
+      - USER_UID=1000
+      - USER_GID=100
+      - DB_TYPE=mysql
+      - DB_HOST=db.gitea:3306
+      - DB_USER=gitea
+      - DB_PASSWD=gitea
+      - SSH_DOMAIN=server.gitea.docker
+      - RUN_MODE=prod
+      - ROOT_URL="http://server.gitea.docker:3000/"
+    network_mode: "bridge"
+    volumes:
+      - gitea_server:/data
+    depends_on:
+      - db
+
+  drone:
+    image: drone/drone:latest
+    container_name: gitea_drone
+    network_mode: "bridge"
+    volumes:
+      - gitea_drone:/var/lib/drone/
+    environment:
+      - DRONE_OPEN=true
+      - DRONE_HOST=http://drone.gitea.docker:8000
+      - DRONE_GITEA=true
+      - DRONE_GITEA_URL=http://server.gitea.docker:3000/
+      - DRONE_SECRET=123
+      - DRONE_DATABASE_DRIVER=mysql
+      - DRONE_DATABASE_DATASOURCE=drone:drone@tcp(db.gitea:3306)/drone?parseTime=true
+    depends_on:
+      - db
+
+  agent:
+    image: drone/agent:latest
+    container_name: gitea_agent
+    command: agent
+    network_mode: "bridge"
+    depends_on:
+      - drone
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DRONE_SERVER=drone.gitea.docker:9000
+      - DRONE_SECRET=123
+
+volumes:
+  gitea_db:
+    external: true
+  gitea_server:
+    external: true
+  gitea_drone:
+    external: true
+
