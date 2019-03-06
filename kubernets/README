@@ -38,3 +38,8 @@ DNS
 
 PROBLEMS
     dns not start correctly, it must be started `docker-compose start dns` again
+
+HELM
+    helm init
+    kubectl get pods --namespace kube-system
+    helm version
