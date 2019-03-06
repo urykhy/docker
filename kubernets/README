@@ -8,9 +8,6 @@ CREATE
     docker volume create --name=kube-etcd
     docker network create kube --subnet 172.16.9.0/24
     docker-compose create --build
-    docker-compose start etcd master
-    docker-compose start dns
-    docker-compose start node1 node2
 
 MANAGEMENT
     docker-compose exec master /bin/bash
