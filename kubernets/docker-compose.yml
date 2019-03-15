@@ -38,7 +38,7 @@ services:
       kube:
     privileged: true
     depends_on:
-      - master
+      - dns
     volumes:
       - kube-node1:/var/lib/docker
     environment:

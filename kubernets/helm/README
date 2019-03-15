@@ -9,11 +9,6 @@ HELM
     helm repo update
 
 PROMETHEUS
-    helm install stable/prometheus --namespace prometheus --set alertmanager.persistentVolume.enabled=false,server.persistentVolume.enabled=false
-    PODNAME=$(kubectl get pods --namespace prometheus -l "app=prometheus,component=server" -o jsonpath="{.items[0].metadata.name}")
-    kubectl --namespace prometheus port-forward $PODNAME 9090
-    > open http://127.0.0.1:9090 in browser
-
     helm install stable/prometheus-operator --namespace prometheus
     PODNAME=$(kubectl get pods --namespace prometheus -l "app=grafana" -o jsonpath="{.items[0].metadata.name}")
     kubectl port-forward -n prometheus $PODNAME 3000
@@ -22,12 +17,12 @@ PROMETHEUS
     # get login and password
     kubectl get secret --namespace prometheus washed-marmot-grafana -o jsonpath="{.data.admin-user}" | base64 -d
     kubectl get secret --namespace prometheus washed-marmot-grafana -o jsonpath="{.data.admin-password}" | base64 -d
-
-    # default source is http://washed-marmot-prometheus-o-prometheus:9090/
-    host washed-marmot-prometheus-o-prometheus.prometheus.svc.k8s. dns.kubernets.docker
-    - resolved
-    - but domain probably not configured in docker
-    --dns-search=prometheus.svc.k8s. default.svc.k8s. svc.k8s. k8s.
+    admin:prom-operator
 
     cleanup:
     helm delete hasty-cow
+    kubectl get customresourcedefinition
+    kubectl delete customresourcedefinition XXX -- if required
+
+    my setup:
+    no metrics for etcd, coredns. other seems to work.
