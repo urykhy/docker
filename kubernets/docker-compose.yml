@@ -34,6 +34,7 @@ services:
     image: urykhy/kube-node
     build: ./node
     container_name: kube-node1
+    hostname: kube-node1
     networks:
       kube:
     privileged: true
@@ -42,14 +43,13 @@ services:
     volumes:
       - kube-node1:/var/lib/docker
     environment:
-      NODE_NAME: kube-node1
       NODE_DNS: 103.103.10.3
-      NETWORK: 172.17.0.1/24
 
   node2:
     image: urykhy/kube-node
     build: ./node
     container_name: kube-node2
+    hostname: kube-node2
     networks:
       kube:
     privileged: true
@@ -58,10 +58,7 @@ services:
     volumes:
       - kube-node2:/var/lib/docker
     environment:
-      NODE_NAME: kube-node2
       NODE_DNS: 103.103.10.3
-      NETWORK: 172.17.1.1/24
-
 
 networks:
   kube:

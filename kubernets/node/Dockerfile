@@ -16,4 +16,5 @@ ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ENV USER=root
 ADD net-conf.json /etc/kube-flannel/net-conf.json
 ADD 10-flannel.conf /etc/cni/net.d/
-CMD ["/usr/bin/supervisord"]
+ADD entrypoint.sh /entrypoint.sh
+CMD ["/entrypoint.sh"]
