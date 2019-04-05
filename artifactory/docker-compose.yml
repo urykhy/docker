@@ -1,0 +1,16 @@
+version: '3'
+services:
+  artifactory:
+    image: docker.bintray.io/jfrog/artifactory-cpp-ce
+    container_name: artifactory
+    volumes:
+     - artifactory:/var/opt/jfrog/artifactory
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 32000
+        hard: 40000
+    network_mode: "bridge"
+volumes:
+  artifactory:
+    external: true
