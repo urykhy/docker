@@ -1,0 +1,6 @@
+
+docker volume create jenkins
+open http://jenkins.jenkins:8080
+admin password in /var/jenkins_home/secrets/initialAdminPassword
+
+blue: http://jenkins.jenkins:8080/blue

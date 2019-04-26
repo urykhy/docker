@@ -1,0 +1,12 @@
+version: '2'
+services:
+  jenkins:
+    image: jenkinsci/blueocean
+    hostname: jenkins
+    network_mode: "bridge"
+    volumes:
+      - "jenkins:/var/jenkins_home"
+
+volumes:
+  jenkins:
+    external: true
