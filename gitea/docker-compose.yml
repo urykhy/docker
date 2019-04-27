@@ -2,6 +2,7 @@ version: "2"
 
 services:
   db:
+    cgroup_parent: gitea
     image: mysql:5.7
     container_name: gitea_db
     environment:
@@ -14,6 +15,7 @@ services:
       - gitea_db:/var/lib/mysql
 
   server:
+    cgroup_parent: gitea
     image: gitea/gitea:latest
     container_name: gitea_server
     environment:
@@ -33,6 +35,7 @@ services:
       - db
 
   drone:
+    cgroup_parent: gitea
     image: drone/drone:latest
     container_name: gitea_drone
     network_mode: "bridge"
@@ -50,6 +53,7 @@ services:
       - db
 
   agent:
+    cgroup_parent: gitea
     image: drone/agent:latest
     container_name: gitea_agent
     command: agent
