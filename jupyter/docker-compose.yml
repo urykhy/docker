@@ -3,12 +3,14 @@ services:
   jupyter:
     build: .
     image: urykhy/jupyter
-    #runtime: nvidia
     hostname: jupyter
     network_mode: "bridge"
     command: jupyter notebook --port=8888 --ip=0.0.0.0 --allow-root --no-browser .
     volumes:
       - "jupyter:/work"
+    devices:
+      - "/dev/nvidia0:/dev/nvidia0"
+    privileged: true
 
 volumes:
   jupyter:
