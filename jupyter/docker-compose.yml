@@ -1,0 +1,16 @@
+version: '2.3'
+services:
+  jupyter:
+    build: .
+    image: urykhy/jupyter
+    #image: tensorflow/tensorflow:latest-gpu-jupyter
+    #runtime: nvidia
+    hostname: jupyter
+    network_mode: "bridge"
+    command: jupyter notebook --port=8888 --ip=0.0.0.0 --allow-root --no-browser .
+    volumes:
+      - "jupyter:/work"
+
+volumes:
+  jupyter:
+    external: true
