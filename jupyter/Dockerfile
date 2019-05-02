@@ -1,4 +1,5 @@
 FROM tensorflow/tensorflow:latest-jupyter
+# tensorflow/tensorflow:latest-gpu-jupyter
 
 RUN mkdir /work
 WORKDIR /work
