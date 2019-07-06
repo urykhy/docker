@@ -31,3 +31,37 @@ spec:
           serviceName: hostnames
           servicePort: 8082
 ---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: prometheus
+  name: grafana
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: grafana.k8s
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: kind-clownfish-grafana
+          servicePort: 3000
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: prometheus
+  name: prometheus
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: prometheus.k8s
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: kind-clownfish-prometheus-prometheus
+          servicePort: 9090
+---
