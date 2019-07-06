@@ -14,6 +14,8 @@ app:
 kubeless:
 	kubectl create ns kubeless
 	kubectl apply -f kubeless/kubeless-non-rbac-v1.0.2.yaml
+	kubeless function deploy hello --runtime python2.7 --from-file kubeless/test.py --handler test.hello
+	kubeless trigger http create hello --function-name hello --hostname function.com
 
 .PHONY: helm
 helm:

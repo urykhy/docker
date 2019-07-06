@@ -38,3 +38,6 @@ DNS
 PROBLEMS
     dns not start correctly, it must be started `docker-compose start dns` again
     flannel settings should be used from /var/run/flannel/subnet.env
+
+DOCKER
+    modern docker version fail to work with: Error response from daemon: cgroups: cgroup deleted: unknown

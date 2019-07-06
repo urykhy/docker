@@ -1,4 +1,4 @@
-FROM gcr.io/google_containers/hyperkube-amd64:v1.11.0
+FROM gcr.io/google_containers/hyperkube-amd64:v1.15.0
 
 RUN    sed -ie 's|deb.debian.org|mirror.yandex.ru|' /etc/apt/sources.list \
     && apt-get update                \
