@@ -1,4 +1,6 @@
 DOCKER_HOME = "/u01/docker"
+export ETCDCTL_API=2
+export ETCDCTL_ENDPOINT=http://172.16.9.2:2379
 
 all:
 	@echo use specific target
@@ -46,9 +48,13 @@ create:
 start:
 	docker-compose start etcd
 	sleep 1
-	ETCDCTL_API=2 etcdctl --endpoint=http://172.16.9.2:2379 set /coreos.com/network/config '{ "Network": "172.17.0.0/16", "Backend": {"Type": "vxlan"}}'
+	etcdctl set /coreos.com/network/config '{ "Network": "172.17.0.0/16", "Backend": {"Type": "vxlan"}}'
 	docker-compose start master
 	sleep 10
 	docker-compose start dns
 	sleep 3
 	docker-compose up node1 node2
+define subnet_script =
+	for x in `etcdctl ls /coreos.com/network/subnets/`; do n=`basename $x`; echo -n "$n\t"; etcdctl get $x; done
+endef
+subnet: ; @$(value subnet_script)
