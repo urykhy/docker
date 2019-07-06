@@ -19,6 +19,10 @@ PROMETHEUS
     kubectl get secret --namespace prometheus washed-marmot-grafana -o jsonpath="{.data.admin-password}" | base64 -d
     admin:prom-operator
 
+    # prometheus
+    PODNAME=$(kubectl get pods --namespace prometheus -l "app=prometheus" -o jsonpath="{.items[0].metadata.name}")
+    kubectl port-forward -n prometheus $PODNAME 9090
+
     cleanup:
     helm delete hasty-cow
     kubectl get customresourcedefinition
