@@ -97,7 +97,7 @@ spec:
     spec:
       terminationGracePeriodSeconds: 60
       containers:
-      - image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.22.0
+      - image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.24.1
         name: nginx-ingress-controller
         readinessProbe:
           httpGet:
@@ -123,8 +123,6 @@ spec:
         ports:
         - containerPort: 80
         - containerPort: 443
-        # (Optional) we expose 18080 to access nginx stats in url /nginx-status
-        - containerPort: 18080
         args:
         - /nginx-ingress-controller
         - --default-backend-service=$(POD_NAMESPACE)/default-http-backend
