@@ -23,12 +23,21 @@ helm:
 	helm init --service-account helm
 
 prometheus:
-	helm install stable/prometheus-operator --namespace prometheus
+	# kubectl delete crd prometheuses.monitoring.coreos.com prometheusrules.monitoring.coreos.com servicemonitors.monitoring.coreos.com alertmanagers.monitoring.coreos.com
+	helm install stable/prometheus-operator --namespace prometheus \
+		--set prometheus.prometheusSpec.ruleSelector=null \
+		--set prometheus.prometheusSpec.serviceMonitorSelector=null \
+		--set prometheus.prometheusSpec.ruleSelectorNilUsesHelmValues=false \
+		--set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
+
 
 nginx:
 	helm install stable/nginx-ingress --namespace kube-system \
-		--set controller.metrics.serviceMonitor.enabled=true \
-		--set controller.service.type=NodePort 			\
+		--set controller.stats.enabled=true                   \
+		--set controller.metrics.serviceMonitor.enabled=true  \
+		--set controller.metrics.serviceMonitor.namespace=prometheus \
+		--set controller.metrics.enabled=true           	  \
+		--set controller.service.type=NodePort 				  \
 		--set controller.service.nodePorts.http=30080
 	kubectl apply -f ingress.yml
 

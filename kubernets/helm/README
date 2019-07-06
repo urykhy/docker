@@ -30,3 +30,6 @@ PROMETHEUS
 
     my setup:
     no metrics for etcd, coredns. other seems to work.
+
+    # to check what is created
+    helm get luminous-dog

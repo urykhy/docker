@@ -7,7 +7,6 @@ kubectl get customresourcedefinition
 
 kubeless function deploy hello --runtime python2.7 --from-file test.py --handler test.hello
 kubeless function ls hello
-# need flannel on master to use function call
 kubeless function call hello --data 'Hello world!'
 
 kubectl get svc # hello is here, but as cluster ip
