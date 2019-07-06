@@ -33,6 +33,8 @@ svc:
 	kubectl get svc --all-namespaces
 ing:
 	kubectl get ing --all-namespaces
+end:
+	kubectl get endpoints --all-namespaces
 
 create:
 	docker-compose stop
