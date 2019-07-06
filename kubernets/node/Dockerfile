@@ -11,14 +11,13 @@ RUN    sed -ie 's|deb.debian.org|mirror.yandex.ru|' /etc/apt/sources.list \
     && chmod +x /usr/bin/flanneld \
     && rm -rf /var/lib/apt/lists/*
 
-ENV USER=root
-
-ADD kubeconfig       /kubeconfig
-ADD net-conf.json    /etc/kube-flannel/net-conf.json
 ADD 10-flannel.conf  /etc/cni/net.d/
-ADD entrypoint.sh    /entrypoint.sh
 ADD ca.crt           /kube.ca
 ADD client-kube.crt  /client.crt
 ADD client-kube.key  /client.key
+ADD kubeconfig       /kubeconfig
+ADD net-conf.json    /etc/kube-flannel/net-conf.json
+ADD entrypoint.sh    /entrypoint.sh
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ENV USER=root
 CMD ["/entrypoint.sh"]
