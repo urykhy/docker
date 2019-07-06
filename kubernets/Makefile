@@ -7,8 +7,7 @@ all:
 
 app:
 	kubectl run hostnames --image=francois/apache-hostname --labels=app=hostnames --port=80 --replicas=3
-	kubectl apply -f nginx.yml
-	kubectl apply -f ingress.yml
+	#kubectl apply -f nginx.yml
 
 .PHONY: kubeless
 kubeless:
@@ -25,6 +24,13 @@ helm:
 
 prometheus:
 	helm install stable/prometheus-operator --namespace prometheus
+
+nginx:
+	helm install stable/nginx-ingress --namespace kube-system \
+		--set controller.metrics.serviceMonitor.enabled=true \
+		--set controller.service.type=NodePort 			\
+		--set controller.service.nodePorts.http=30080
+	kubectl apply -f ingress.yml
 
 nodes:
 	kubectl get componentstatuses
