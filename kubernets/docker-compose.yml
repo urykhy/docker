@@ -5,7 +5,7 @@ services:
     container_name: etcd
     networks:
       kube:
-    command: etcd -name etcd0 -initial-cluster-token etcd-cluster-1 --listen-client-urls 'http://0.0.0.0:2379' --advertise-client-urls 'http://0.0.0.0:2379' --data-dir /var/lib/etcd
+    command: etcd -name etcd0 -initial-cluster-token etcd-cluster-1 --listen-client-urls 'http://0.0.0.0:2379' --advertise-client-urls 'http://172.16.9.2:2379' --data-dir /var/lib/etcd
     volumes:
       - kube-etcd:/var/lib/etcd
 

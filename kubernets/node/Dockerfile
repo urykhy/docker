@@ -17,4 +17,7 @@ ENV USER=root
 ADD net-conf.json /etc/kube-flannel/net-conf.json
 ADD 10-flannel.conf /etc/cni/net.d/
 ADD entrypoint.sh /entrypoint.sh
+ADD ca.crt /kube.ca
+ADD client-kube.crt /client.crt
+ADD client-kube.key /client.key
 CMD ["/entrypoint.sh"]

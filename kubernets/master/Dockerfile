@@ -7,6 +7,7 @@ RUN    sed -ie 's|deb.debian.org|mirror.yandex.ru|' /etc/apt/sources.list \
     && rm -rf /var/lib/apt/lists/*
 
 ADD ca.crt          /kube.ca
+ADD client-kube.crt /client.crt
 ADD client-kube.key /client.key
 ADD client-kube.pub /client.pub
 ADD server-kube.crt /server.crt

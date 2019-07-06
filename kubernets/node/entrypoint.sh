@@ -2,7 +2,9 @@
 set -e
 
 export NODE_NAME=`hostname`
-flanneld -kube-api-url=http://master:8080 --kube-subnet-mgr &
+
+flanneld --etcd-endpoints=http://172.16.9.2:2379 &
+#flanneld -kube-api-url=http://172.16.9.3:8080 --kube-subnet-mgr &
 
 for i in `seq 1 10`; do
     if [ -f /var/run/flannel/subnet.env ]; then
