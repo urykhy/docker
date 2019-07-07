@@ -14,6 +14,7 @@ services:
      - /var/mail:/var/mail
      - /var/spool/mail:/var/spool/mail
      - /var/spool/exim4:/var/spool/exim4
+     - /var/log/exim4:/var/log/exim4
      - /etc/ssl:/etc/ssl
     network_mode: "host"
 
@@ -45,4 +46,5 @@ services:
      - /home/ury/.local/lib/:/home/ury/.local/lib/
      - /home/ury/code/stuff/:/home/ury/code/stuff/
      - /var/www:/var/www
+     - /var/log/apache2/:/var/log/apache2/
     network_mode: "host"
