@@ -1,7 +1,6 @@
-
 offload some services to docker with host network
 * exim4 + dovecot
 * samba + ftpd + syncthing
+* apache + php7.3
 
-
-
+config still live on host system

@@ -6,10 +6,10 @@ services:
     container_name: email
     hostname: elf.dark
     volumes:
-     - /etc/exim4:/etc/exim4
-     - /etc/dovecot:/etc/dovecot
      - /etc/passwd:/etc/passwd
      - /etc/shadow:/etc/shadow
+     - /etc/exim4:/etc/exim4
+     - /etc/dovecot:/etc/dovecot
      - /etc/aliases:/etc/aliases
      - /var/mail:/var/mail
      - /var/spool/mail:/var/spool/mail
@@ -33,3 +33,16 @@ services:
      - /var/lib/samba:/var/lib/samba
     network_mode: "host"
     privileged: true
+
+  apache:
+    image: urykhy/apache
+    build: apache
+    container_name: apache
+    volumes:
+     - /etc/apache2:/etc/apache2
+     - /etc/ssl:/etc/ssl
+     - /home/ury/www:/home/ury/www
+     - /home/ury/.local/lib/:/home/ury/.local/lib/
+     - /home/ury/code/stuff/:/home/ury/code/stuff/
+     - /var/www:/var/www
+    network_mode: "host"
