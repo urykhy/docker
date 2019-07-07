@@ -10,5 +10,5 @@ filebeat.inputs:
   - /var/log/apache2/virtual/*.log
   - /var/log/apache2/*.log
 output.logstash:
-  hosts: ["logstash:5044"]
+  hosts: ["logstash.elk.docker:5044"]
 logging.metrics.enabled: false
