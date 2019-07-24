@@ -12,7 +12,7 @@ trap 'DONE=1; ' SIGTERM
 
 while [ "$DONE" -eq "0" ]
 do
-    ls -la $DATA/upload/*.xml > /tmp/.current 2> /dev/null
+    ls -la $DATA/upload/* > /tmp/.current 2> /dev/null
 
     if ! [ -s /tmp/.current ]; then
         sleep 1
@@ -28,6 +28,6 @@ do
         fi
     fi
 
-    allure generate -o $DATA/report $DATA/upload
+    allure generate --clean -o $DATA/report $DATA/upload
     mv /tmp/.current /tmp/.old
 done

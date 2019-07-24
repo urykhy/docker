@@ -2,6 +2,7 @@ version: '2'
 services:
   allure:
     image: urykhy/allure
+    build: allure
     hostname: cli
     container_name: allure-cli
     network_mode: "bridge"
@@ -9,6 +10,7 @@ services:
       - "allure:/data"
   web:
     image: urykhy/nginx-allure-fe
+    build: nginx
     hostname: web
     container_name: allure-web
     network_mode: "bridge"
