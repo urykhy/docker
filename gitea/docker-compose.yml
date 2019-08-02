@@ -40,12 +40,17 @@ services:
       - gitea_drone:/var/lib/drone/
     environment:
       - DRONE_OPEN=true
-      - DRONE_HOST=http://drone.gitea.docker:8000
-      - DRONE_GITEA=true
-      - DRONE_GITEA_URL=http://server.gitea.docker:3000/
-      - DRONE_SECRET=123
+      - DRONE_GIT_ALWAYS_AUTH=false
+      - DRONE_GITEA_SERVER=http://server.gitea.docker:3000/
+      - DRONE_GITEA_CLIENT_ID=c7a66454-7333-4226-b95d-408fdfb1ed72
+      - DRONE_GITEA_CLIENT_SECRET=I8S2sUa0zYP_kdZLmRCZMG2ZtlZeMaeOI2YH01kU1C4=
+      - DRONE_SERVER_HOST=drone.gitea.docker:80
+      - DRONE_SERVER_PROTO=http
+      - DRONE_RPC_SECRET=123
       - DRONE_DATABASE_DRIVER=mysql
       - DRONE_DATABASE_DATASOURCE=drone:drone@tcp(db.gitea:3306)/drone?parseTime=true
+      - DRONE_LOGS_DEBUG=true
+      - DRONE_AGENTS_ENABLED=true
     depends_on:
       - db
 
@@ -59,8 +64,10 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - DRONE_SERVER=drone.gitea.docker:9000
-      - DRONE_SECRET=123
+      - DRONE_RPC_HOST=drone.gitea.docker
+      - DRONE_RPC_PROTO=http
+      - DRONE_RPC_SECRET=123
+      - DRONE_LOGS_DEBUG=true
 
 volumes:
   gitea_db:

@@ -16,5 +16,12 @@ echo "grant all privileges on drone.* TO 'drone'@'%'" | mysql -hdb.gitea -uroot 
 
 access:
 http://server.gitea:3000
-http://drone.gitea:8000
+http://drone.gitea.docker
 
+register drone application in gitea. settings -> applications -> Manage OAuth2 applications
+    name: drone
+    url:  http://drone.gitea.docker:80/login
+    -> client id: c7a66454-7333-4226-b95d-408fdfb1ed72
+    -> secret:    I8S2sUa0zYP_kdZLmRCZMG2ZtlZeMaeOI2YH01kU1C4=
+    set client ids in compose file
+    works from FF, not chrome
