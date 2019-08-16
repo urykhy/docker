@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
   zookeeper:
@@ -14,6 +14,7 @@ services:
       - clickhouse_zk2:/datalog
 
   master:
+    build: .
     image: urykhy/clickhouse
     container_name: clickhouse-master
     hostname: master
@@ -27,6 +28,7 @@ services:
       - zookeeper
 
   node1:
+    build: .
     image: urykhy/clickhouse
     container_name: clickhouse-node1
     hostname: node1
@@ -42,6 +44,7 @@ services:
       SHARD: 1
 
   node2:
+    build: .
     image: urykhy/clickhouse
     container_name: clickhouse-node2
     hostname: node2
