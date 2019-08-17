@@ -16,7 +16,6 @@ ADD ca.crt           /kube.ca
 ADD client-kube.crt  /client.crt
 ADD client-kube.key  /client.key
 ADD kubeconfig       /kubeconfig
-ADD net-conf.json    /etc/kube-flannel/net-conf.json
 ADD entrypoint.sh    /entrypoint.sh
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ENV USER=root
