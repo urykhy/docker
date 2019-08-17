@@ -13,7 +13,6 @@ ENV USER=root
 RUN mkdir        /etc/fpm/
 ADD php-fpm.conf /etc/fpm/
 ADD pool.conf    /etc/fpm/
-RUN mkdir /var/log/apache2/virtual/ && chown www-data: /var/log/apache2/virtual/
 RUN mkdir /run/php/ && chown www-data: /run/php/
 ENV APACHE_LOCK_DIR=/var/lock/apache2
 ENV APACHE_PID_FILE=/var/run/apache2/apache2.pid
