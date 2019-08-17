@@ -3,6 +3,7 @@ set -e
 
 export NODE_NAME=`hostname`
 
+rpcbind
 flanneld --etcd-endpoints=http://172.16.9.2:2379 &
 #flanneld -kube-api-url=http://172.16.9.3:8080 --kube-subnet-mgr &
 

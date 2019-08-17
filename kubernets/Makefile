@@ -30,7 +30,6 @@ prometheus:
 		--set prometheus.prometheusSpec.ruleSelectorNilUsesHelmValues=false \
 		--set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
 
-
 nginx:
 	helm install stable/nginx-ingress --namespace kube-system \
 		--set controller.stats.enabled=true                   \
@@ -40,6 +39,14 @@ nginx:
 		--set controller.service.type=NodePort 				  \
 		--set controller.service.nodePorts.http=30080
 	kubectl apply -f ingress.yml
+
+.PHONY: nfs
+nfs:
+	helm install stable/nfs-client-provisioner --namespace kube-system \
+		--set nfs.server=10.103.10.3 \
+		--set nfs.path=/u01/common \
+		--set nfs.mountOptions="{nolock}"
+	kubectl create -f nfs/deployment.yml
 
 nodes:
 	kubectl get componentstatuses

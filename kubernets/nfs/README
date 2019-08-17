@@ -1,0 +1,10 @@
+kubectl get sc
+kubectl get pvc
+kubectl get pv
+kubectl get pods -n kube-system | grep nfs
+kubectl logs -n kube-system calling-tarsier-nfs-client-provisioner-9c49bbbfb-t4wf5
+
+kubectl get pods | grep nfs
+kubectl exec -it nfs-user -- /bin/sh
+    touch /mnt/from-kuber
+kubectl delete -f nfs/deployment.yml

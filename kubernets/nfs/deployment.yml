@@ -1,0 +1,34 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: my-nfs-claim
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "nfs-client"
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Mi
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: nfs-user
+spec:
+  containers:
+  - name: nfs-user
+    image: alpine
+    command:
+      - "/bin/sh"
+    args:
+      - "-c"
+      - "tail -f /dev/null"
+    volumeMounts:
+      - name: my-nfs-volume
+        mountPath: "/mnt"
+  restartPolicy: "Never"
+  volumes:
+    - name: my-nfs-volume
+      persistentVolumeClaim:
+        claimName: my-nfs-claim
