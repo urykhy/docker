@@ -15,6 +15,8 @@ for i in `seq 1 10`; do
     fi
 done
 
+rm /var/run/docker.pid || true
+
 . /var/run/flannel/subnet.env
 export FLANNEL_SUBNET
 export FLANNEL_MTU
