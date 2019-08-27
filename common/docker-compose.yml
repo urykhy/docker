@@ -7,6 +7,7 @@ services:
     hostname: elf.dark
     volumes:
      - /etc/passwd:/etc/passwd
+     - /etc/group:/etc/group
      - /etc/shadow:/etc/shadow
      - /etc/exim4:/etc/exim4
      - /etc/dovecot:/etc/dovecot
