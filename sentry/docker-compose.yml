@@ -1,0 +1,67 @@
+version: '2'
+
+volumes:
+  sentry-db:
+    external: true
+  sentry-files:
+    external: true
+  sentry-redis:
+    external: true
+
+networks:
+  sentry:
+    external: true
+
+services:
+  redis:
+    image: redis
+    volumes:
+    - sentry-redis:/data
+    networks:
+    - sentry
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: sentry
+      POSTGRES_PASSWORD: sentry
+      POSTGRES_DB: sentry
+    volumes:
+    - sentry-db:/var/lib/postgresql/data
+    networks:
+    - sentry
+
+  web:
+    depends_on:
+    - redis
+    - postgres
+    image: sentry
+    networks:
+    - sentry
+    volumes:
+    - sentry-files:/var/lib/sentry/files
+    env_file: .env
+
+  cron:
+    depends_on:
+    - redis
+    - postgres
+    image: sentry
+    command: "sentry run cron"
+    networks:
+    - sentry
+    volumes:
+    - sentry-files:/var/lib/sentry/files
+    env_file: .env
+
+  worker:
+    depends_on:
+    - redis
+    - postgres
+    image: sentry
+    command: "sentry run worker"
+    networks:
+    - sentry
+    volumes:
+    - sentry-files:/var/lib/sentry/files
+    env_file: .env

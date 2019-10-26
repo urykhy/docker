@@ -1,0 +1,14 @@
+docker network create sentry     --subnet 172.16.10.0/24
+docker volume create sentry-files
+docker volume create sentry-db
+docker volume create sentry-redis
+
+docker-compose up
+docker-compose run web upgrade
+docker-compose exec web sentry createuser --email urykhy@gmail.com --password 123 --superuser --no-input
+
+get cli:
+https://github.com/getsentry/sentry-cli/releases/
+
+export SENTRY_DSN=http://626d891753d6489ba426baa41d7c79fc:350776c0cfba4013a93275e9de63ba5d@web.sentry.docker:9000/2
+sentry-cli send-event -m "My Message"
