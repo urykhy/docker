@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 
 services:
     jaeger-collector:
@@ -11,7 +11,10 @@ services:
         - "14267"
         - "9411"
       depends_on:
-        - cassandra-schema
+        cassandra-schema:
+          condition: service_started
+        cassandra:
+          condition: service_healthy
       network_mode: "bridge"
 
     jaeger-query:
@@ -22,7 +25,10 @@ services:
         - "16686"
         - "16687"
       depends_on:
-        - cassandra-schema
+        cassandra-schema:
+          condition: service_started
+        cassandra:
+          condition: service_healthy
       network_mode: "bridge"
 
     jaeger-agent:
@@ -46,6 +52,11 @@ services:
         - "jaeger-cassandra:/var/lib/cassandra"
       environment:
         JVM_OPTS: "-Xms1024M -Xmx2048M"
+      healthcheck:
+        test: /usr/bin/cqlsh -k jaeger_v1_dc1 -e "DESCRIBE tables"
+        interval: 5s
+        timeout: 5s
+        retries: 10
 
     cassandra-schema:
       container_name: jaeger-schema
