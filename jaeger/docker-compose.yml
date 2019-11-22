@@ -10,7 +10,6 @@ services:
         - "14268"
         - "14267"
         - "9411"
-      restart: on-failure
       depends_on:
         - cassandra-schema
       network_mode: "bridge"
@@ -22,7 +21,6 @@ services:
       ports:
         - "16686"
         - "16687"
-      restart: on-failure
       depends_on:
         - cassandra-schema
       network_mode: "bridge"
@@ -36,7 +34,6 @@ services:
         - "6831"
         - "6832"
         - "5778"
-      restart: on-failure
       depends_on:
         - jaeger-collector
       network_mode: "bridge"
