@@ -38,6 +38,7 @@ services:
     network_mode: "bridge"
     volumes:
       - gitea_drone:/var/lib/drone/
+      - gitea_drone2:/data
     environment:
       - DRONE_OPEN=true
       - DRONE_GIT_ALWAYS_AUTH=false
@@ -75,5 +76,7 @@ volumes:
   gitea_server:
     external: true
   gitea_drone:
+    external: true
+  gitea_drone2:
     external: true
 

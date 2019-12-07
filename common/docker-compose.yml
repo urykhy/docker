@@ -46,9 +46,7 @@ services:
     volumes:
      - /etc/apache2:/etc/apache2
      - /etc/ssl:/etc/ssl
-     - /home/ury/www:/home/ury/www
-     - /home/ury/.local/lib/:/home/ury/.local/lib/
-     - /home/ury/code/stuff/:/home/ury/code/stuff/
+     - /home/ury:/home/ury
      - /var/www:/var/www
     network_mode: "host"
     environment:
