@@ -76,3 +76,10 @@ resource "null_resource" "start_slave" {
         command = "mysql -proot -h \"${docker_container.mysql-slave.ip_address}\" -e \"CHANGE MASTER TO MASTER_HOST='${docker_container.mysql-master.ip_address}', MASTER_PORT=3306, MASTER_USER='${mysql_user.slave.user}', MASTER_PASSWORD='slave', MASTER_AUTO_POSITION=1; START SLAVE USER='${mysql_user.slave.user}' PASSWORD='slave'\""
     }
 }
+
+output "master" {
+  value = docker_container.mysql-master.network_data
+}
+output "slave" {
+  value = docker_container.mysql-slave.network_data
+}
