@@ -7,7 +7,6 @@ all:
 
 app:
 	kubectl run hostnames --image=francois/apache-hostname --labels=app=hostnames --port=80 --replicas=3
-	#kubectl apply -f nginx.yml
 
 .PHONY: kubeless
 kubeless:
