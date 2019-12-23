@@ -48,6 +48,12 @@ nfs:
 		--set nfs.mountOptions="{nolock}"
 	kubectl create -f nfs/deployment.yml
 
+.PHONY: web-view
+web-view:
+	kubectl apply -f web-view/deployment.yaml
+	kubectl apply -f web-view/rbac.yaml
+	kubectl apply -f web-view/service.yaml
+
 nodes:
 	kubectl get componentstatuses
 	kubectl get nodes

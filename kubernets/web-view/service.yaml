@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    application: kube-web-view
+  name: kube-web-view
+  namespace: kube-system
+spec:
+  selector:
+    application: kube-web-view
+  type: ClusterIP
+  ports:
+  - port: 8083
+    protocol: TCP
+    targetPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kube-web-view
+  namespace: kube-system
+spec:
+  rules:
+  - host: web-view.k8s
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: kube-web-view
+          servicePort: 8083
