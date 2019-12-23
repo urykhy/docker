@@ -45,7 +45,7 @@ nfs:
 		--set nfs.server=10.103.10.3 \
 		--set nfs.path=/u01/common \
 		--set nfs.mountOptions="{nolock}"
-	kubectl create -f nfs/deployment.yml
+	kubectl apply -f nfs/deployment.yml
 
 .PHONY: web-view
 web-view:

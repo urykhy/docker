@@ -15,6 +15,8 @@ kind: Pod
 apiVersion: v1
 metadata:
   name: nfs-user
+  labels:
+    application: nfs-user
 spec:
   containers:
   - name: nfs-user
@@ -27,8 +29,51 @@ spec:
     volumeMounts:
       - name: my-nfs-volume
         mountPath: "/mnt"
+  - name: nfs-metrics
+    image: quay.io/prometheus/node-exporter
+    args:
+      - "--collector.mountstats"
+    ports:
+      - containerPort: 9100
+        protocol: TCP
+    volumeMounts:
+      - name: my-nfs-volume
+        mountPath: "/mnt"
   restartPolicy: "Never"
   volumes:
     - name: my-nfs-volume
       persistentVolumeClaim:
         claimName: my-nfs-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nfs-user-metrics
+  labels:
+    application: nfs-user
+spec:
+  selector:
+    application: nfs-user
+  ports:
+  - name: metrics
+    port: 9100
+    protocol: TCP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  namespace: prometheus
+  name: nfs-user-monitor
+  labels:
+    application: nfs-user
+spec:
+  jobLabel: nfs-user
+  selector:
+    matchLabels:
+      application: nfs-user
+  namespaceSelector:
+    matchNames:
+    - default
+  endpoints:
+  - port: metrics
+    interval: 30s
