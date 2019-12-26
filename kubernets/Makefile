@@ -53,6 +53,10 @@ web-view:
 	kubectl apply -f web-view/rbac.yaml
 	kubectl apply -f web-view/service.yaml
 
+.PHONY: filebeat
+filebeat:
+	kubectl apply -f filebeat/deployment.yaml
+
 nodes:
 	kubectl get componentstatuses
 	kubectl get nodes
@@ -66,6 +70,8 @@ ing:
 	kubectl get ing --all-namespaces
 end:
 	kubectl get endpoints --all-namespaces
+axfr:
+	dig axfr k8s @dns.kubernets.docker
 
 create:
 	docker-compose stop

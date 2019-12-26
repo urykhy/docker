@@ -6,6 +6,6 @@
 	  endpoint http://master.kubernets.docker:8080/
 	  transfer to *
 	}
-	proxy . 10.103.10.3:53
+    forward . /etc/resolv.conf
 	cache 30
 }
