@@ -1,10 +1,11 @@
-version: '2'
+version: '2.2'
 
 services:
   elasticsearch:
     hostname: elasticsearch
     container_name: elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
+    cpus: 2
     environment:
       ES_JAVA_OPTS: "-Xms2g -Xmx2g"
       indices.memory.index_buffer_size: "60%"
@@ -31,6 +32,7 @@ services:
     hostname: logstash
     container_name: logstash
     image: docker.elastic.co/logstash/logstash:6.4.0
+    cpus: 1
     command: -f /etc/logstash/conf.d/
     volumes:
       - ./logstash:/etc/logstash/conf.d
@@ -39,6 +41,7 @@ services:
     depends_on:
       - elasticsearch
     environment:
+      LS_JAVA_OPTS: "-Xms2g -Xmx2g"
       xpack.monitoring.enabled: "false"
 
   kibana:
