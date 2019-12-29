@@ -39,7 +39,7 @@ spec:
     volumeMounts:
       - name: my-nfs-volume
         mountPath: "/mnt"
-  restartPolicy: "Never"
+  restartPolicy: "OnFailure"
   volumes:
     - name: my-nfs-volume
       persistentVolumeClaim:
