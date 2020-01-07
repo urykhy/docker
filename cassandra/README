@@ -1,0 +1,8 @@
+docker-compose exec node2 bash
+$ nodetool status
+$ getent ahosts cassandra1 cassandra2
+
+docker-compose exec node2 cqlsh
+$ describe tables;
+$ SELECT * from system.local;
+$ SELECT * from system.peers;

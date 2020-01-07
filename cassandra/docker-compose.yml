@@ -1,21 +1,21 @@
 version: '2'
 services:
   node1:
-    image: urykhy/cassandra
-    hostname: node1
+    image: cassandra:3.11
     container_name: cassandra1
     environment:
-      CASSANDRA_SEED: "cassandra2"
+      CASSANDRA_SEED: "cassandra1"
+      JVM_OPTS: "-Xms128m -Xmx1g"
     networks:
       - cassandra
     volumes:
       - "cassandra1:/var/lib/cassandra"
   node2:
-    image: urykhy/cassandra
-    hostname: node2
+    image: cassandra:3.11
     container_name: cassandra2
     environment:
-      CASSANDRA_SEED: "cassandra1"
+      CASSANDRA_SEEDS: "cassandra1"
+      JVM_OPTS: "-Xms128m -Xmx1g"
     depends_on:
       - node1
     networks:
