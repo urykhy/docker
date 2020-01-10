@@ -15,6 +15,7 @@ ADD client-kube.key  /client.key
 ADD client-kube.pub  /client.pub
 ADD server-kube.crt  /server.crt
 ADD server-kube.key  /server.key
+ADD kubeconfig       /kubeconfig
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ENV USER=root
 CMD ["/usr/bin/supervisord"]

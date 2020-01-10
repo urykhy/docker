@@ -57,6 +57,12 @@ web-view:
 filebeat:
 	kubectl apply -f filebeat/deployment.yaml
 
+.PHONY: metrics-server
+metrics-server:
+	helm install stable/metrics-server \
+		--namespace kube-system \
+		--set args="{--v=4,--kubelet-insecure-tls,--kubelet-preferred-address-types=InternalIP\,Hostname\,InternalDNS\,ExternalDNS\,ExternalIP}"
+
 nodes:
 	kubectl get componentstatuses
 	kubectl get nodes
@@ -72,6 +78,9 @@ end:
 	kubectl get endpoints --all-namespaces
 axfr:
 	dig axfr k8s @dns.kubernets.docker
+top:
+	kubectl top pod --all-namespaces=true
+
 
 create:
 	docker-compose stop
