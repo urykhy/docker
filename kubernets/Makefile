@@ -57,11 +57,14 @@ web-view:
 filebeat:
 	kubectl apply -f filebeat/deployment.yaml
 
-.PHONY: metrics-server
-metrics-server:
+.PHONY: metrics
+metrics:
 	helm install stable/metrics-server \
 		--namespace kube-system \
 		--set args="{--v=4,--kubelet-insecure-tls,--kubelet-preferred-address-types=InternalIP\,Hostname\,InternalDNS\,ExternalDNS\,ExternalIP}"
+	helm install stable/prometheus-adapter \
+		--namespace kube-system \
+		--set prometheus.url="http://esteemed-panda-prometheus-prometheus.prometheus.svc.k8s."
 
 nodes:
 	kubectl get componentstatuses
