@@ -64,7 +64,8 @@ metrics:
 		--set args="{--v=4,--kubelet-insecure-tls,--kubelet-preferred-address-types=InternalIP\,Hostname\,InternalDNS\,ExternalDNS\,ExternalIP}"
 	helm install stable/prometheus-adapter \
 		--namespace kube-system \
-		--set prometheus.url="http://esteemed-panda-prometheus-prometheus.prometheus.svc.k8s."
+		--set prometheus.url="http://esteemed-panda-prometheus-prometheus.prometheus.svc.k8s." \
+		--set resources.limits.cpu=100m
 
 nodes:
 	kubectl get componentstatuses
