@@ -15,22 +15,21 @@ kubeless:
 	kubeless function deploy hello --runtime python2.7 --from-file kubeless/test.py --handler test.hello
 	kubeless trigger http create hello --function-name hello --hostname function.com
 
-.PHONY: helm
-helm:
-	kubectl apply -f helm/helm.yaml
-	kubectl apply -f helm/admin.yaml
-	helm init --service-account helm
-
 prometheus:
 	# kubectl delete crd prometheuses.monitoring.coreos.com prometheusrules.monitoring.coreos.com servicemonitors.monitoring.coreos.com alertmanagers.monitoring.coreos.com
-	helm install stable/prometheus-operator --namespace prometheus \
-		--set prometheus.prometheusSpec.ruleSelector=null \
-		--set prometheus.prometheusSpec.serviceMonitorSelector=null \
-		--set prometheus.prometheusSpec.ruleSelectorNilUsesHelmValues=false \
-		--set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
+	helm install sweet-bumblebee stable/prometheus-operator --namespace prometheus \
+		--set kubeDns.enabled=false \
+		--set coreDns.enabled=false \
+		--set kubeControllerManager.enabled=false \
+		--set kubeEtcd.enabled=false \
+		--set kubeProxy.enabled=false \
+		--set kubeScheduler.enabled=false \
+		--set alertmanager.enabled=false \
+		--set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
+		--set prometheus.prometheusSpec.ruleSelectorNilUsesHelmValues=false
 
 nginx:
-	helm install stable/nginx-ingress --namespace kube-system \
+	helm install loitering-dragon stable/nginx-ingress --namespace kube-system \
 		--set controller.stats.enabled=true                   \
 		--set controller.metrics.serviceMonitor.enabled=true  \
 		--set controller.metrics.serviceMonitor.namespace=prometheus \
@@ -41,7 +40,7 @@ nginx:
 
 .PHONY: nfs
 nfs:
-	helm install stable/nfs-client-provisioner --namespace kube-system \
+	helm install calling-tarsier stable/nfs-client-provisioner --namespace kube-system \
 		--set nfs.server=10.103.10.3 \
 		--set nfs.path=/u01/common \
 		--set nfs.mountOptions="{nolock}"
@@ -59,12 +58,12 @@ filebeat:
 
 .PHONY: metrics
 metrics:
-	helm install stable/metrics-server \
+	helm install rude-chipmunk stable/metrics-server \
 		--namespace kube-system \
 		--set args="{--v=4,--kubelet-insecure-tls,--kubelet-preferred-address-types=InternalIP\,Hostname\,InternalDNS\,ExternalDNS\,ExternalIP}"
-	helm install stable/prometheus-adapter \
+	helm install fair-ladybird stable/prometheus-adapter \
 		--namespace kube-system \
-		--set prometheus.url="http://esteemed-panda-prometheus-prometheus.prometheus.svc.k8s." \
+		--set prometheus.url="http://sweet-bumblebee-prometheus-prometheus.prometheus.svc.k8s." \
 		--set resources.limits.cpu=200m \
 		-f metrics/custom
 	kubectl apply -f metrics/hpa
@@ -88,6 +87,9 @@ top:
 	kubectl top pod --all-namespaces=true
 hpa:
 	kubectl describe hpa hostnames
+sm:
+	kubectl get servicemonitor --all-namespaces=true
+
 
 create:
 	docker-compose stop

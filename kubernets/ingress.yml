@@ -41,7 +41,7 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: esteemed-panda-grafana
+          serviceName: sweet-bumblebee-grafana
           servicePort: 3000
 ---
 apiVersion: extensions/v1beta1
@@ -56,6 +56,6 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: esteemed-panda-prometheus-prometheus
+          serviceName: sweet-bumblebee-prometheus-prometheus
           servicePort: 9090
 ---
