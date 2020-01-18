@@ -13,3 +13,10 @@ DNS
 
 PROBLEMS
     flannel settings should be used from /var/run/flannel/subnet.env
+
+METRICS upgrade
+    helm upgrade fair-ladybird stable/prometheus-adapter \
+        --namespace kube-system \
+        --set prometheus.url="http://esteemed-panda-prometheus-prometheus.prometheus.svc.k8s." \
+        --set resources.limits.cpu=200m \
+        -f metrics/custom --dry-run --debug

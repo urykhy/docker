@@ -1,0 +1,12 @@
+rules:
+  custom:
+  - seriesQuery: nginx_ingress_controller_requests
+    resources:
+      overrides:
+        exported_namespace:
+          resource: "namespace"
+        ingress:
+          resource: "service"
+    name:
+      as: "ingress_requests_per_second"
+    metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>}[1m])) by (<<.GroupBy>>)

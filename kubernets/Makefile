@@ -65,7 +65,9 @@ metrics:
 	helm install stable/prometheus-adapter \
 		--namespace kube-system \
 		--set prometheus.url="http://esteemed-panda-prometheus-prometheus.prometheus.svc.k8s." \
-		--set resources.limits.cpu=100m
+		--set resources.limits.cpu=200m \
+		-f metrics/custom
+	kubectl apply -f metrics/hpa
 
 nodes:
 	kubectl get componentstatuses
@@ -84,7 +86,8 @@ axfr:
 	dig axfr k8s @dns.kubernets.docker
 top:
 	kubectl top pod --all-namespaces=true
-
+hpa:
+	kubectl describe hpa hostnames
 
 create:
 	docker-compose stop
