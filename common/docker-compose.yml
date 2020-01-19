@@ -12,6 +12,8 @@ services:
      - /etc/exim4:/etc/exim4
      - /etc/dovecot:/etc/dovecot
      - /etc/aliases:/etc/aliases
+     - /etc/email-addresses:/etc/email-addresses
+     - /home/config/exim4/passwd.client:/etc/exim4/passwd.client
      - /var/mail:/var/mail
      - /var/spool/mail:/var/spool/mail
      - /var/spool/exim4:/var/spool/exim4
