@@ -39,15 +39,25 @@ services:
     environment:
       PYTHONUNBUFFERED: 1
 
-  apache:
-    image: urykhy/apache
-    build: apache
-    container_name: apache
+  # apache:
+  #   image: urykhy/apache
+  #   build: apache
+  #   container_name: apache
+  #   volumes:
+  #    - /etc/apache2:/etc/apache2
+  #    - /etc/ssl:/etc/ssl
+  #    - /home/ury:/home/ury
+  #    - /var/www:/var/www
+  #   network_mode: "host"
+  #   environment:
+  #     PYTHONUNBUFFERED: 1
+
+  uwsgi:
+    image: urykhy/uwsgi
+    build: uwsgi
+    container_name: uwsgi
     volumes:
-     - /etc/apache2:/etc/apache2
-     - /etc/ssl:/etc/ssl
-     - /home/ury:/home/ury
-     - /var/www:/var/www
+    - /home/ury:/home/ury
     network_mode: "host"
     environment:
       PYTHONUNBUFFERED: 1
