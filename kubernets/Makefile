@@ -72,6 +72,7 @@ nodes:
 	kubectl get componentstatuses
 	kubectl get nodes
 dep:
+	helm list --all --all-namespaces
 	kubectl get deployments --all-namespaces
 pods:
 	kubectl get pod --all-namespaces
