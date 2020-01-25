@@ -2,7 +2,7 @@
 FROM debian:buster
 
 RUN    apt-get update              \
-    && apt-get install -y  --no-install-recommends quagga-ospfd supervisor python-pip python-setuptools python-wheel \
+    && apt-get install -y  --no-install-recommends quagga-ospfd supervisor \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir /run/quagga           \
     && chown quagga: /run/quagga

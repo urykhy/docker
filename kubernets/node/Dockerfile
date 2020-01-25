@@ -1,9 +1,8 @@
-FROM gcr.io/google_containers/hyperkube-amd64:v1.15.0
+FROM gcr.io/google_containers/hyperkube-amd64:v1.17.0
 
 RUN    sed -ie 's|deb.debian.org|mirror.yandex.ru|' /etc/apt/sources.list \
     && apt-get update                   \
-    && apt-get install -y --no-install-recommends supervisor python-pip python-setuptools python-wheel apt-transport-https curl dnsutils dkms- \
-    && pip install supervisor-stdout    \
+    && apt-get install -y --no-install-recommends supervisor apt-transport-https curl dnsutils dkms- \
     && echo "deb [trusted=yes] https://download.docker.com/linux/debian stretch stable" > /etc/apt/sources.list.d/docker.list \
     && apt-get update                   \
     && apt-get install -y --no-install-recommends docker-ce=18.06.3~ce~3-0~debian  \
@@ -19,4 +18,4 @@ ADD kubeconfig       /kubeconfig
 ADD entrypoint.sh    /entrypoint.sh
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ENV USER=root
-CMD ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

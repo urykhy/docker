@@ -20,3 +20,7 @@ METRICS upgrade
         --set prometheus.url="http://sweet-bumblebee-prometheus-prometheus.prometheus.svc.k8s." \
         --set resources.limits.cpu=200m \
         -f metrics/custom --dry-run --debug
+
+START
+    run cluster                   # make start
+    make hpa happy(create metric) # curl -H "Host: web.com" node1.kubernets.docker:30080

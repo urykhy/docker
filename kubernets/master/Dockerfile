@@ -1,9 +1,8 @@
-FROM gcr.io/google_containers/hyperkube-amd64:v1.15.0
+FROM gcr.io/google_containers/hyperkube-amd64:v1.17.0
 
 RUN    sed -ie 's|deb.debian.org|mirror.yandex.ru|' /etc/apt/sources.list \
     && apt-get update                \
-    && apt-get install -y  --no-install-recommends supervisor python-pip python-setuptools python-wheel curl dnsutils dkms- \
-    && pip install supervisor-stdout \
+    && apt-get install -y  --no-install-recommends supervisor curl dnsutils dkms- \
     && curl -L https://github.com/coreos/flannel/releases/download/v0.11.0/flanneld-amd64 > /usr/bin/flanneld \
     && chmod +x /usr/bin/flanneld \
     && rm -rf /var/lib/apt/lists/*
@@ -18,4 +17,4 @@ ADD server-kube.key  /server.key
 ADD kubeconfig       /kubeconfig
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ENV USER=root
-CMD ["/usr/bin/supervisord"]
+ENTRYPOINT ["/usr/bin/supervisord"]
