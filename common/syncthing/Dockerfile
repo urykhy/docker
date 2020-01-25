@@ -3,9 +3,9 @@ FROM debian:buster
 RUN    sed -ie 's|deb.debian.org|mirror.yandex.ru|' /etc/apt/sources.list \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-       samba procps less \
+       syncthing \
     && rm -rf /var/lib/apt/lists/*
 
-ENV USER=root
-ADD entrypoint.sh /
-CMD ["/entrypoint.sh"]
+ENV USER=ury
+ENV HOME=/home/ury
+CMD ["/usr/bin/syncthing"]
