@@ -1,12 +1,11 @@
 # vim:set ft=dockerfile:
-FROM debian:stretch
+FROM debian:buster
 
 RUN    apt-get update              \
     && apt-get install -y  --no-install-recommends quagga-ospfd supervisor python-pip python-setuptools python-wheel \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir /run/quagga           \
-    && chown quagga: /run/quagga   \
-    && pip install supervisor-stdout
+    && chown quagga: /run/quagga
 
 ADD ./ospfd.conf /etc/quagga/ospfd.conf
 ADD ./zebra.conf /etc/quagga/zebra.conf
