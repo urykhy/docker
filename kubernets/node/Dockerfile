@@ -18,4 +18,5 @@ ADD kubeconfig       /kubeconfig
 ADD entrypoint.sh    /entrypoint.sh
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ENV USER=root
-ENTRYPOINT ["/entrypoint.sh"]
+#ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT unshare -C /entrypoint.sh

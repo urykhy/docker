@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+mkdir -p /mnt/m1 || true
+mount none -t cgroup /mnt/m1
+mount --make-private /sys/fs/cgroup/cgroup
+mount --bind /mnt/m1 /sys/fs/cgroup/cgroup
+umount /mnt/m1
+
 export NODE_NAME=`hostname`
 
 rpcbind
