@@ -38,8 +38,6 @@ services:
     build: samba
     container_name: samba
     volumes:
-     - /etc/passwd:/etc/passwd
-     - /etc/shadow:/etc/shadow
      - /etc/samba:/etc/samba
      - /home:/home
      - /u01:/u01
