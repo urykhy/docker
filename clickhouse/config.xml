@@ -25,6 +25,8 @@
     <path>/var/lib/clickhouse/</path>
     <tmp_path>/var/lib/clickhouse/tmp/</tmp_path>
     <user_files_path>/var/lib/clickhouse/user_files/</user_files_path>
+    <format_schema_path>/var/lib/clickhouse/format_schemas/</format_schema_path>
+
     <users_config>users.xml</users_config>
     <default_profile>default</default_profile>
     <default_database>default</default_database>
@@ -54,12 +56,6 @@
         <flush_interval_milliseconds>7500</flush_interval_milliseconds>
     </part_log>
 
-    <text_log>
-        <database>system</database>
-        <table>text_log</table>
-        <flush_interval_milliseconds>7500</flush_interval_milliseconds>
-    </text_log>
-
     <!-- <path_to_regions_hierarchy_file>/opt/geo/regions_hierarchy.txt</path_to_regions_hierarchy_file> -->
     <!-- <path_to_regions_names_files>/opt/geo/</path_to_regions_names_files> -->
     <!-- <dictionaries_config>*_dictionary.xml</dictionaries_config> -->
@@ -74,6 +70,4 @@
 
     <!-- <max_table_size_to_drop>0</max_table_size_to_drop> -->
     <!-- <max_partition_size_to_drop>0</max_partition_size_to_drop> -->
-
-    <format_schema_path>/var/lib/clickhouse/format_schemas/</format_schema_path>
 </yandex>

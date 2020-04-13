@@ -10,8 +10,8 @@ services:
         aliases:
           - zk
     volumes:
-      - clickhouse_zk1:/data
-      - clickhouse_zk2:/datalog
+      - clickhouse-zk1:/data
+      - clickhouse-zk2:/datalog
 
   master:
     build: .
@@ -23,39 +23,71 @@ services:
         aliases:
           - master
     volumes:
-      - clickhouse_master:/var/lib/clickhouse
+      - clickhouse-master:/var/lib/clickhouse
     depends_on:
       - zookeeper
 
-  node1:
+  shard1-a:
     build: .
     image: urykhy/clickhouse
-    container_name: clickhouse-node1
-    hostname: node1
+    container_name: clickhouse-shard1-a
+    hostname: shard1-a
     networks:
       clickhouse:
         aliases:
-          - node1
+          - shard1-a
     volumes:
-      - clickhouse1:/var/lib/clickhouse
+      - clickhouse-1a:/var/lib/clickhouse
     depends_on:
-      - zookeeper
+      - master
     environment:
       SHARD: 1
 
-  node2:
+  shard1-b:
     build: .
     image: urykhy/clickhouse
-    container_name: clickhouse-node2
-    hostname: node2
+    container_name: clickhouse-shard1-b
+    hostname: shard1-b
     networks:
       clickhouse:
         aliases:
-        - node2
+          - shard1-b
     volumes:
-      - clickhouse2:/var/lib/clickhouse
+      - clickhouse-1b:/var/lib/clickhouse
     depends_on:
-      - zookeeper
+      - shard1-a
+    environment:
+      SHARD: 1
+
+  shard2-a:
+    build: .
+    image: urykhy/clickhouse
+    container_name: clickhouse-shard2-a
+    hostname: shard2-a
+    networks:
+      clickhouse:
+        aliases:
+        - shard2-a
+    volumes:
+      - clickhouse-2a:/var/lib/clickhouse
+    depends_on:
+      - shard1-b
+    environment:
+      SHARD: 2
+
+  shard2-b:
+    build: .
+    image: urykhy/clickhouse
+    container_name: clickhouse-shard2-b
+    hostname: shard2-b
+    networks:
+      clickhouse:
+        aliases:
+        - shard2-b
+    volumes:
+      - clickhouse-2b:/var/lib/clickhouse
+    depends_on:
+      - shard2-a
     environment:
       SHARD: 2
 
@@ -64,13 +96,17 @@ networks:
     external: true
 
 volumes:
-  clickhouse_master:
+  clickhouse-master:
     external: true
-  clickhouse1:
+  clickhouse-1a:
     external: true
-  clickhouse2:
+  clickhouse-1b:
     external: true
-  clickhouse_zk1:
+  clickhouse-2a:
     external: true
-  clickhouse_zk2:
+  clickhouse-2b:
+    external: true
+  clickhouse-zk1:
+    external: true
+  clickhouse-zk2:
     external: true

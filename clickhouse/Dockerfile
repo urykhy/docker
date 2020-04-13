@@ -1,4 +1,4 @@
-FROM yandex/clickhouse-server
+FROM yandex/clickhouse-server:19.17.9.6
 
 ADD metrika.xml   /etc/metrika.xml
 ADD config.xml    /etc/clickhouse-server/config.xml
