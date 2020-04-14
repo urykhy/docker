@@ -2,10 +2,11 @@
 <yandex>
     <profiles>
         <default>
-            <max_memory_usage>10000000000</max_memory_usage>
+            <max_memory_usage>1000000000</max_memory_usage>
             <use_uncompressed_cache>0</use_uncompressed_cache>
             <load_balancing>random</load_balancing>
             <log_queries>1</log_queries>
+            <allow_experimental_data_skipping_indices>1</allow_experimental_data_skipping_indices>
         </default>
 
         <readonly>
