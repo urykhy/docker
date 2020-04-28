@@ -46,13 +46,14 @@
     <query_log>
         <database>system</database>
         <table>query_log</table>
-        <partition_by>toYYYYMM(event_date)</partition_by>
+        <partition_by>toYYYYMMDD(event_date)</partition_by>
         <flush_interval_milliseconds>7500</flush_interval_milliseconds>
     </query_log>
 
     <part_log>
         <database>system</database>
         <table>part_log</table>
+        <partition_by>toYYYYMMDD(event_date)</partition_by>
         <flush_interval_milliseconds>7500</flush_interval_milliseconds>
     </part_log>
 
