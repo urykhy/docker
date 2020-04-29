@@ -9,7 +9,7 @@ services:
         ipv4_address: 172.24.1.1
     volumes:
       - "mysql:/data"
-    command: /opt/mysql/server-5.7/bin/ndb_mgmd --nodaemon -f /etc/config.ini --ndb-nodeid=1
+    command: /usr/sbin/ndb_mgmd --reload --nodaemon -f /etc/config.ini --ndb-nodeid=1
 
   data1:
     image: urykhy/mysql-data
@@ -20,7 +20,7 @@ services:
         ipv4_address: 172.24.2.1
     volumes:
       - "mysql:/data"
-    command: opt/mysql/server-5.7/bin/ndbd --nodaemon --connect-retries=2 --connect-delay=2
+    command: /usr/sbin/ndbd --nodaemon --connect-retries=2 --connect-delay=2
     depends_on:
       - mgt
 
@@ -33,9 +33,9 @@ services:
         ipv4_address: 172.24.2.2
     volumes:
       - "mysql:/data"
-    command: opt/mysql/server-5.7/bin/ndbd --nodaemon --connect-retries=2 --connect-delay=2
+    command: /usr/sbin/ndbd --nodaemon --connect-retries=2 --connect-delay=2
     depends_on:
-      - mgt
+      - data1
 
   sql1:
     image: urykhy/mysql-sql
@@ -45,10 +45,10 @@ services:
       mysql:
         ipv4_address: 172.24.3.1
     depends_on:
-      - data1
       - data2
     volumes:
       - "mysql1:/data"
+    privileged: true
 
   sql2:
     image: urykhy/mysql-sql
@@ -58,10 +58,10 @@ services:
       mysql:
         ipv4_address: 172.24.3.2
     depends_on:
-      - data1
-      - data2
+      - sql1
     volumes:
       - "mysql2:/data"
+    privileged: true
 
 volumes:
   mysql:
