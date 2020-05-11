@@ -15,7 +15,7 @@ echo "create user 'drone'@'%' IDENTIFIED BY 'drone'"  | mysql -hdb.gitea -uroot 
 echo "grant all privileges on drone.* TO 'drone'@'%'" | mysql -hdb.gitea -uroot -pgitea
 
 access:
-http://server.gitea:3000
+http://server.gitea.docker:3000
 http://drone.gitea.docker
 
 register drone application in gitea. settings -> applications -> Manage OAuth2 applications
