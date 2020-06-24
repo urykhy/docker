@@ -1,51 +1,51 @@
 version: '3'
 services:
-  email:
-    image: urykhy/email
-    build: email
-    container_name: email
-    hostname: elf.dark
-    volumes:
-     - /etc/passwd:/etc/passwd
-     - /etc/group:/etc/group
-     - /etc/shadow:/etc/shadow
-     - /etc/exim4:/etc/exim4
-     - /etc/dovecot:/etc/dovecot
-     - /etc/aliases:/etc/aliases
-     - /etc/email-addresses:/etc/email-addresses
-     - /home/config/exim4/passwd.client:/etc/exim4/passwd.client
-     - /var/mail:/var/mail
-     - /var/spool/mail:/var/spool/mail
-     - /var/spool/exim4:/var/spool/exim4
-     - /etc/ssl:/etc/ssl
-    network_mode: "host"
-    environment:
-      PYTHONUNBUFFERED: 1
+  #email:
+  #  image: urykhy/email
+  #  build: email
+  #  container_name: email
+  #  hostname: elf.dark
+  #  volumes:
+  #   - /etc/passwd:/etc/passwd
+  #   - /etc/group:/etc/group
+  #   - /etc/shadow:/etc/shadow
+  #   - /etc/exim4:/etc/exim4
+  #   - /etc/dovecot:/etc/dovecot
+  #   - /etc/aliases:/etc/aliases
+  #   - /etc/email-addresses:/etc/email-addresses
+  #   - /home/config/exim4/passwd.client:/etc/exim4/passwd.client
+  #   - /var/mail:/var/mail
+  #   - /var/spool/mail:/var/spool/mail
+  #   - /var/spool/exim4:/var/spool/exim4
+  #   - /etc/ssl:/etc/ssl
+  #  network_mode: "host"
+  #  environment:
+  #    PYTHONUNBUFFERED: 1
 
-  syncthing:
-    image: urykhy/syncthing
-    build: syncthing
-    container_name: syncthing
-    volumes:
-     - /home:/home
-     - /u01:/u01
-     - /u02:/u02
-    network_mode: "host"
-    user: "1000:100"
+  #syncthing:
+  #  image: urykhy/syncthing
+  #  build: syncthing
+  #  container_name: syncthing
+  #  volumes:
+  #   - /home:/home
+  #   - /u01:/u01
+  #   - /u02:/u02
+  #  network_mode: "host"
+  #  user: "1000:100"
 
-  samba:
-    image: urykhy/samba
-    build: samba
-    container_name: samba
-    volumes:
-     - /etc/samba:/etc/samba
-     - /home:/home
-     - /u01:/u01
-     - /u02:/u02
-     - /u03:/u03
-     - /var/lib/samba:/var/lib/samba
-    network_mode: "host"
-    privileged: true
+  #samba:
+  #  image: urykhy/samba
+  #  build: samba
+  #  container_name: samba
+  #  volumes:
+  #   - /etc/samba:/etc/samba
+  #   - /home:/home
+  #   - /u01:/u01
+  #   - /u02:/u02
+  #   - /u03:/u03
+  #   - /var/lib/samba:/var/lib/samba
+  #  network_mode: "host"
+  #  privileged: true
 
   # apache:
   #   image: urykhy/apache
