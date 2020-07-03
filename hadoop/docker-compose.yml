@@ -126,6 +126,19 @@ services:
     env_file:
     - ./hadoop.env
 
+  minio:
+    image: minio/minio
+    container_name: minio_hdfs
+    hostname: minio
+    depends_on:
+    - namenode
+    networks:
+    - hadoop
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    command: gateway hdfs hdfs://namenode:8020
+
 networks:
   hadoop:
     external: true
