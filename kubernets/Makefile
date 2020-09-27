@@ -74,6 +74,10 @@ sentry:
 		--namespace kube-system \
 		--set sentry.dsn=http://7267c0b2b79f4fd7b819cb8e7bcfc063:d99d52b6b6a54f5fb80e0e8cf73d6860@web.sentry.docker:9000/3
 
+.PHONY: rclone
+rclone:
+	kubectl apply -f rclone/deployment.yml
+
 nodes:
 	kubectl get componentstatuses
 	kubectl get nodes

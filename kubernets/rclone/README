@@ -1,0 +1,13 @@
+make rclone
+make pods
+kubectl logs mount-with-rclone rclone
+
+# check mount
+kubectl exec -it mount-with-rclone -c rclone -- /bin/sh
+kubectl exec -it mount-with-rclone  -- /bin/sh
+ls /data
+
+# get metrics
+kubectl exec -it mount-with-rclone -c rclone -- rclone rc core/stats
+
+kubectl delete pod mount-with-rclone
