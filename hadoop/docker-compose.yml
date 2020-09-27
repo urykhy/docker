@@ -92,7 +92,7 @@ services:
   datanode1:
     image: urykhy/hadoop-datanode
     container_name: datanode1
-    hostname: datanode1
+    hostname: datanode1.hadoop
     depends_on:
       - namenode
     networks:
@@ -105,7 +105,7 @@ services:
   datanode2:
     image: urykhy/hadoop-datanode
     container_name: datanode2
-    hostname: datanode2
+    hostname: datanode2.hadoop
     depends_on:
       - namenode
     networks:
