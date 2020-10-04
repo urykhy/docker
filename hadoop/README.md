@@ -7,9 +7,9 @@ The available components are:
 
    * *namenode*
    * *dtanode*
-   
+
 1. *YARN*:
-   
+
    * *resourcemanager*
    * *nodemanager*
 
@@ -17,7 +17,7 @@ The available components are:
 
 All images inherit from a base *hadoop* image which provides an hadoop
 installation in `/opt/` and provides a way to configure *hadoop* via
-environment variables. 
+environment variables.
 
 ## Hadoop configuration
 
@@ -28,7 +28,7 @@ variable groups:
 1. `HDFS_CONF`: affects `/etc/hadoop/hdfs-site.xml`
 1. `YARN_CONF`: affects `/etc/hadoop/yarn-site.xml`
 1. `HTTPFS_CONF`: affects `/etc/hadoop/httpfs-site.xml`
-1. `KMS_CONF`: affects `/etc/hadoop/KMS-site.xml` 
+1. `KMS_CONF`: affects `/etc/hadoop/KMS-site.xml`
 
 *Hadoop* properties by setting an environment variable with the
 appropriated prefix in the form `<PREFIX>_<PROPERTY>`.
@@ -79,7 +79,7 @@ configurations presets:
     * yarn.nodemanager.bind-host = 0.0.0.0
 
 * `GANGLIA_HOST`: instruct *hadoop* to send metrics to the specified
-  *ganglia gmond* daemon (requires a unicast ganglia configuration) 
+  *ganglia gmond* daemon (requires a unicast ganglia configuration)
 
 ## Networking
 
@@ -190,7 +190,7 @@ the webui.
 ### nodemanager
 
 The *hadoop-nodemanager* image starts an Hadoop NodeManager. (multiple
-instances) 
+instances)
 
 Mandatory configuration:
 

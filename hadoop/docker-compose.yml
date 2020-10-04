@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 
 services:
   namenode:
@@ -13,13 +13,19 @@ services:
       CLUSTER_NAME: uh-cluster
     env_file:
       - ./hadoop.env
+    healthcheck:
+      test: curl 127.0.0.1:8020
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   resourcemanager:
     image: urykhy/hadoop-resourcemanager
     container_name: resourcemanager
     hostname: resourcemanager
     depends_on:
-      - namenode
+      namenode:
+        condition: service_healthy
     networks:
       - hadoop
     env_file:
@@ -30,7 +36,8 @@ services:
     container_name: historyserver
     hostname: historyserver
     depends_on:
-      - namenode
+      namenode:
+        condition: service_healthy
     networks:
       - hadoop
     volumes:
@@ -38,63 +45,40 @@ services:
     env_file:
       - ./hadoop.env
 
-  spark:
-    image: urykhy/hadoop-spark
-    container_name: spark
-    hostname: spark
-    networks:
-      - hadoop
-    environment:
-      - SPARK_CONF_spark_eventLog_enabled=true
-      - SPARK_CONF_spark_eventLog_dir=hdfs://namenode.hadoop:8020/spark-logs
-      - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode.hadoop:8020/spark-logs
-    env_file:
-      - ./hadoop.env
-    command: historyserver
-    depends_on:
-      - namenode
-
-  notebook:
-    image: urykhy/hadoop-spark-notebook
-    container_name: notebook
-    hostname: notebook
-    networks:
-      - hadoop
-    env_file:
-      - ./hadoop.env
-    depends_on:
-      - spark
-
-  nodemanager1:
-    image: urykhy/hadoop-nodemanager
-    container_name: nodemanager1
-    hostname: nodemanager1
-    depends_on:
-      - namenode
-      - resourcemanager
-    networks:
-      - hadoop
-    env_file:
-      - ./hadoop.env
-
-  nodemanager2:
-    image: urykhy/hadoop-nodemanager
-    container_name: nodemanager2
-    hostname: nodemanager2
-    depends_on:
-      - namenode
-      - resourcemanager
-    networks:
-      - hadoop
-    env_file:
-      - ./hadoop.env
+        #  spark:
+        #    image: urykhy/hadoop-spark
+        #    container_name: spark
+        #    hostname: spark
+        #    networks:
+        #      - hadoop
+        #    environment:
+        #      - SPARK_CONF_spark_eventLog_enabled=true
+        #      - SPARK_CONF_spark_eventLog_dir=hdfs://namenode.hadoop:8020/spark-logs
+        #      - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode.hadoop:8020/spark-logs
+        #    env_file:
+        #      - ./hadoop.env
+        #    command: historyserver
+        #    depends_on:
+        #      - namenode
+        #
+        #  notebook:
+        #    image: urykhy/hadoop-spark-notebook
+        #    container_name: notebook
+        #    hostname: notebook
+        #    networks:
+        #      - hadoop
+        #    env_file:
+        #      - ./hadoop.env
+        #    depends_on:
+        #      - spark
 
   datanode1:
     image: urykhy/hadoop-datanode
     container_name: datanode1
     hostname: datanode1.hadoop
     depends_on:
-      - namenode
+      namenode:
+        condition: service_healthy
     networks:
       - hadoop
     volumes:
@@ -107,7 +91,8 @@ services:
     container_name: datanode2
     hostname: datanode2.hadoop
     depends_on:
-      - namenode
+      namenode:
+        condition: service_healthy
     networks:
       - hadoop
     volumes:
@@ -120,7 +105,8 @@ services:
     container_name: nfs
     hostname: nfs
     depends_on:
-    - namenode
+      namenode:
+        condition: service_healthy
     networks:
     - hadoop
     env_file:
@@ -131,7 +117,8 @@ services:
     container_name: minio_hdfs
     hostname: minio
     depends_on:
-    - namenode
+      namenode:
+        condition: service_healthy
     networks:
     - hadoop
     environment:

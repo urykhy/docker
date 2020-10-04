@@ -6,4 +6,5 @@ if [ ! -d $datadir ]; then
   exit 2
 fi
 
-exec $HADOOP_PREFIX/bin/hdfs --config $HADOOP_CONF_DIR datanode
+yarn --config $HADOOP_CONF_DIR nodemanager &
+exec hdfs --config $HADOOP_CONF_DIR datanode
