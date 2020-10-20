@@ -11,39 +11,106 @@ services:
       - hadoop_namenode:/hadoop/dfs/name
     environment:
       CLUSTER_NAME: uh-cluster
-    env_file:
-      - ./hadoop.env
     healthcheck:
       test: curl 127.0.0.1:8020
       interval: 5s
       timeout: 5s
       retries: 10
 
-  resourcemanager:
-    image: urykhy/hadoop-resourcemanager
-    container_name: resourcemanager
-    hostname: resourcemanager
-    depends_on:
-      namenode:
-        condition: service_healthy
-    networks:
-      - hadoop
-    env_file:
-      - ./hadoop.env
-
-  historyserver:
-    image: urykhy/hadoop-historyserver
-    container_name: historyserver
-    hostname: historyserver
+  datanode1:
+    image: urykhy/hadoop
+    container_name: datanode1
+    hostname: datanode1.hadoop
+    command: bash -c "yarn nodemanager & exec hdfs datanode"
     depends_on:
       namenode:
         condition: service_healthy
     networks:
       - hadoop
     volumes:
+      - hadoop_datanode1:/hadoop/dfs/data
+    healthcheck:
+      test: test `curl http://datanode1:9864/jmx | grep NamenodeAddresses | wc -l` = '1'
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  datanode2:
+    image: urykhy/hadoop
+    container_name: datanode2
+    hostname: datanode2.hadoop
+    command: bash -c "yarn nodemanager & exec hdfs datanode"
+    depends_on:
+      namenode:
+        condition: service_healthy
+    networks:
+      - hadoop
+    volumes:
+      - hadoop_datanode2:/hadoop/dfs/data
+    healthcheck:
+      test: test `curl http://datanode2:9864/jmx | grep NamenodeAddresses | wc -l` = '1'
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  resourcemanager:
+    image: urykhy/hadoop
+    container_name: resourcemanager
+    hostname: resourcemanager
+    command: yarn resourcemanager
+    depends_on:
+      datanode1:
+        condition: service_healthy
+      datanode2:
+        condition: service_healthy
+    networks:
+      - hadoop
+
+  historyserver:
+    image: urykhy/hadoop
+    container_name: historyserver
+    hostname: historyserver
+    command: yarn timelineserver
+    depends_on:
+      datanode1:
+        condition: service_healthy
+      datanode2:
+        condition: service_healthy
+    networks:
+      - hadoop
+    volumes:
       - hadoop_historyserver:/hadoop/yarn/timeline
-    env_file:
-      - ./hadoop.env
+
+  nfs:
+    image: urykhy/hadoop
+    container_name: nfs
+    hostname: nfs
+    command: bash -c "hdfs portmap & exec hdfs nfs3"
+    depends_on:
+      datanode1:
+        condition: service_healthy
+      datanode2:
+        condition: service_healthy
+    networks:
+    - hadoop
+
+  minio:
+    image: minio/minio
+    container_name: minio_hdfs
+    hostname: minio
+    depends_on:
+      datanode1:
+        condition: service_healthy
+      datanode2:
+        condition: service_healthy
+    networks:
+    - hadoop
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    command: gateway hdfs hdfs://namenode:8020
+    volumes:
+      - hadoop_minio:/data
 
         #  spark:
         #    image: urykhy/hadoop-spark
@@ -72,60 +139,6 @@ services:
         #    depends_on:
         #      - spark
 
-  datanode1:
-    image: urykhy/hadoop-datanode
-    container_name: datanode1
-    hostname: datanode1.hadoop
-    depends_on:
-      namenode:
-        condition: service_healthy
-    networks:
-      - hadoop
-    volumes:
-      - hadoop_datanode1:/hadoop/dfs/data
-    env_file:
-      - ./hadoop.env
-
-  datanode2:
-    image: urykhy/hadoop-datanode
-    container_name: datanode2
-    hostname: datanode2.hadoop
-    depends_on:
-      namenode:
-        condition: service_healthy
-    networks:
-      - hadoop
-    volumes:
-      - hadoop_datanode2:/hadoop/dfs/data
-    env_file:
-      - ./hadoop.env
-
-  nfs:
-    image: urykhy/hadoop-nfs
-    container_name: nfs
-    hostname: nfs
-    depends_on:
-      namenode:
-        condition: service_healthy
-    networks:
-    - hadoop
-    env_file:
-    - ./hadoop.env
-
-  minio:
-    image: minio/minio
-    container_name: minio_hdfs
-    hostname: minio
-    depends_on:
-      namenode:
-        condition: service_healthy
-    networks:
-    - hadoop
-    environment:
-      MINIO_ACCESS_KEY: minio
-      MINIO_SECRET_KEY: minio123
-    command: gateway hdfs hdfs://namenode:8020
-
 networks:
   hadoop:
     external: true
@@ -141,4 +154,7 @@ volumes:
     external: true
 
   hadoop_historyserver:
+    external: true
+
+  hadoop_minio:
     external: true

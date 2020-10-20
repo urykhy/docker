@@ -27,7 +27,9 @@ ENV MULTIHOMED_NETWORK=1
 ENV USER=root
 ENV PATH $HADOOP_HOME/bin/:$PATH
 
-ADD entrypoint.sh /entrypoint.sh
-RUN chmod a+x /entrypoint.sh
-
-ENTRYPOINT ["/entrypoint.sh"]
+ADD core-site.xml    /etc/hadoop/core-site.xml
+ADD hdfs-site.xml    /etc/hadoop/hdfs-site.xml
+ADD httpfs-site.xml  /etc/hadoop/httpfs-site.xml
+ADD kms-site.xml     /etc/hadoop/kms-site.xml
+ADD mapred-site.xml  /etc/hadoop/mapred-site.xml
+ADD yarn-site.xml    /etc/hadoop/yarn-site.xml
