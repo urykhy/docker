@@ -14,6 +14,8 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: mount-with-rclone
+  labels:
+    application: mount-with-rclone
 spec:
   volumes:
   - name: data
@@ -36,7 +38,7 @@ spec:
       mountPropagation: HostToContainer
 
   - name: rclone
-    image: quay.io/chaosaffe/rclone:latest
+    image: rclone/rclone:latest
     args:
       - "mount"
       - "k8s:"
@@ -44,6 +46,8 @@ spec:
       - "--allow-other"
       - "--config=/etc/rclone/k8s"
       - "--rc"
+      - "--rc-enable-metrics"
+      - "--rc-addr=0.0.0.0:5572"
     volumeMounts:
     - name: data
       mountPath: /data
@@ -59,3 +63,36 @@ spec:
       capabilities:
         add:
           - SYS_ADMIN
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mount-with-rclone-metrics
+  labels:
+    application: mount-with-rclone
+spec:
+  selector:
+    application: mount-with-rclone
+  ports:
+  - name: metrics
+    port: 5572
+    protocol: TCP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  namespace: prometheus
+  name: mount-with-rclone-monitor
+  labels:
+    application: mount-with-rclone
+spec:
+  jobLabel: mount-with-rclone
+  selector:
+    matchLabels:
+      application: mount-with-rclone
+  namespaceSelector:
+    matchNames:
+    - default
+  endpoints:
+  - port: metrics
+    interval: 30s
