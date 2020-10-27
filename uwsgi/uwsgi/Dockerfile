@@ -6,11 +6,13 @@ RUN    sed -ie 's|deb.debian.org|mirror.yandex.ru|' /etc/apt/sources.list \
        python3-cherrypy3 python3-elasticsearch \
        supervisor python-pip python-setuptools python-wheel procps less \
        uwsgi-plugin-python3 \
+       uwsgi-plugin-php \
     && pip install elasticsearch_dsl \
     && rm -rf /var/lib/apt/lists/*
 
 ENV USER=root
 ADD flibusta.ini /
 ADD torrent.ini  /
+ADD php.ini      /
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 CMD ["/usr/bin/supervisord"]

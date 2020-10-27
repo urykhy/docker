@@ -1,0 +1,11 @@
+version: '3'
+services:
+  uwsgi:
+    image: urykhy/uwsgi
+    build: uwsgi
+    container_name: uwsgi
+    volumes:
+    - /home/ury:/home/ury
+    network_mode: "host"
+    environment:
+      PYTHONUNBUFFERED: 1
