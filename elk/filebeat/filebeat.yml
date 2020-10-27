@@ -1,4 +1,4 @@
-filebeat.registry_file: /usr/share/filebeat/data/registry
+filebeat.registry.path: /usr/share/filebeat/data
 filebeat.inputs:
 - type: docker
   containers.ids: '*'
