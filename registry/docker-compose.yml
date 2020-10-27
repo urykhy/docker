@@ -1,0 +1,12 @@
+version: '3'
+services:
+  registry:
+    image: registry:2
+    container_name: registry
+    hostname: registry
+    volumes:
+      - registry:/var/lib/registry
+    network_mode: "bridge"
+volumes:
+  registry:
+    external: true

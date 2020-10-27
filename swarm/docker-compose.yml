@@ -25,17 +25,6 @@ services:
     depends_on:
       - swarm1
 
-  registry:
-    image: registry:2
-    container_name: registry
-    hostname: registry
-    networks:
-      - swarm
-    volumes:
-      - registry:/var/lib/registry
-    depends_on:
-      - swarm2
-
 networks:
   swarm:
     external: true
@@ -44,6 +33,4 @@ volumes:
   swarm1:
     external: true
   swarm2:
-    external: true
-  registry:
     external: true
