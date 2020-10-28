@@ -7,8 +7,6 @@ filebeat.inputs:
 - type: log
   paths:
   - /var/log/syslog
-  - /var/log/apache2/virtual/*.log
-  - /var/log/apache2/*.log
 output.logstash:
-  hosts: ["logstash.elk.docker:5044"]
+  hosts: ["logstash:5044"]
 logging.metrics.enabled: false
