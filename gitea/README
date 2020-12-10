@@ -5,6 +5,7 @@ prepare:
 docker volume create gitea_db
 docker volume create gitea_server
 docker volume create gitea_drone
+docker network create gitea      --subnet 172.16.11.0/24
 
 docker-compose create --force-recreate
 docker-compose start

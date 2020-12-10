@@ -9,7 +9,8 @@ services:
       - MYSQL_USER=gitea
       - MYSQL_PASSWORD=gitea
       - MYSQL_DATABASE=gitea
-    network_mode: "bridge"
+    networks:
+      - gitea
     volumes:
       - gitea_db:/var/lib/mysql
 
@@ -26,7 +27,8 @@ services:
       - SSH_DOMAIN=server.gitea.docker
       - RUN_MODE=prod
       - ROOT_URL="http://server.gitea.docker:3000/"
-    network_mode: "bridge"
+    networks:
+      - gitea
     volumes:
       - gitea_server:/data
     depends_on:
@@ -35,7 +37,8 @@ services:
   drone:
     image: drone/drone:latest
     container_name: gitea_drone
-    network_mode: "bridge"
+    networks:
+      - gitea
     volumes:
       - gitea_drone:/var/lib/drone/
       - gitea_drone2:/data
@@ -52,14 +55,16 @@ services:
       - DRONE_DATABASE_DATASOURCE=drone:drone@tcp(db.gitea:3306)/drone?parseTime=true
       - DRONE_LOGS_DEBUG=true
       - DRONE_AGENTS_ENABLED=true
+      - DRONE_USER_CREATE=username:urykhy,admin:true
     depends_on:
-      - db
+      - server
 
   agent:
     image: drone/agent:latest
     container_name: gitea_agent
     command: agent
-    network_mode: "bridge"
+    networks:
+      - gitea
     depends_on:
       - drone
     volumes:
@@ -80,3 +85,6 @@ volumes:
   gitea_drone2:
     external: true
 
+networks:
+  gitea:
+    external: true
