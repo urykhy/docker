@@ -1,0 +1,105 @@
+kind: pipeline
+name: default
+type: docker
+
+steps:
+- name: docker build
+  image: docker
+  commands:
+  - "docker build . -t cpp-start/build:gcc"
+  volumes:
+  - name: docker
+    path: /var/run/docker.sock
+
+- name: cache/get
+  image: minio/mc
+  commands:
+  - "mc config host add s3 http://minio.dark:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY"
+  - "if mc stat s3/drone/ccache.tar; then mc cp s3/drone/ccache.tar /root/ccache.tar; fi"
+  volumes:
+  - name: cache
+    path: /root/
+  environment:
+    MINIO_ACCESS_KEY:
+      from_secret: MINIO_ACCESS_KEY
+    MINIO_SECRET_KEY:
+      from_secret: MINIO_SECRET_KEY
+
+- name: cache/unpack
+  image: cpp-start/build:gcc
+  commands:
+  - "mkdir -p /root/.cache/ccache"
+  - "if [ -f /root/ccache.tar ]; then tar -xvf /root/ccache.tar -C /root/.cache/ccache; fi"
+  volumes:
+  - name: cache
+    path: /root/
+
+- name: configure
+  image: cpp-start/build:gcc
+  commands:
+  - "cd mock"
+  - "bash -c 'source ../.envrc && meson build'"
+  volumes:
+  - name: cache
+    path: /root
+
+- name: build
+  image: cpp-start/build:gcc
+  commands:
+  - "cd mock/build"
+  - "ninja"
+  volumes:
+  - name: cache
+    path: /root
+
+- name: test
+  image: cpp-start/build:gcc
+  commands:
+  - "cd mock/build"
+  - "ninja test"
+  - "cat meson-logs/testlog.txt"
+
+- name: ccache/stats
+  image: cpp-start/build:gcc
+  commands:
+  - "ccache -s"
+  volumes:
+  - name: cache
+    path: /root
+
+- name: ccache/pack
+  image: cpp-start/build:gcc
+  commands:
+  - "find /root/.cache/ccache/ -name stats -delete"
+  - "tar -cf /root/ccache.tar -C /root/.cache/ccache ."
+  volumes:
+  - name: cache
+    path: /root
+
+- name: ccache/put
+  image: minio/mc
+  commands:
+  - "if ! mc stat s3/drone; then mc mb s3/drone; fi"
+  - "mc cp /root/ccache.tar s3/drone/ccache.tar"
+  volumes:
+  - name: cache
+    path: /root
+
+- name: notify
+  image: drillster/drone-email
+  settings:
+    host: mail.dark
+    port: 25
+    from: drone-ci@dark
+    recipients: [ drone-ci@dark ]
+    recipients_only: true
+    skip_verify: true
+  when:
+    status: [ success, changed, failure ]
+
+volumes:
+- name: docker
+  host:
+    path: /var/run/docker.sock
+- name: cache
+  temp: {}
