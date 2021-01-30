@@ -14,35 +14,43 @@ resource "docker_image" "mysql" {
 }
 
 resource "docker_container" "mysql-master" {
-  name  = "mysql-master"
+  name     = "mysql-master"
   hostname = "mysql-master"
-  image = docker_image.mysql.name
-  command = ["--server-id=1", "--log-bin=mysql-bin", "--binlog-format=ROW", "--gtid-mode=ON", "--enforce-gtid-consistency"]
-  env   = [
+  image    = docker_image.mysql.latest
+  command  = ["--server-id=1", "--log-bin=mysql-bin", "--binlog-format=ROW", "--gtid-mode=ON", "--enforce-gtid-consistency"]
+  env      = [
     "MYSQL_ROOT_PASSWORD=root"
   ]
   volumes {
     volume_name = docker_volume.mysql-master.name
     container_path = "/var/lib/mysql"
   }
+  log_opts = {
+    max-size = "50m"
+    max-file = "5"
+  }
 }
 
 resource "docker_container" "mysql-slave" {
-  name  = "mysql-slave"
+  name      = "mysql-slave"
   hostname  = "mysql-slave"
-  image = docker_image.mysql.name
-  command = ["--server-id=2", "--log-bin=mysql-bin", "--binlog-format=ROW", "--gtid-mode=ON", "--enforce-gtid-consistency", "--log-slave-updates", "--read-only"]
-  env   = [
+  image     = docker_image.mysql.latest
+  command   = ["--server-id=2", "--log-bin=mysql-bin", "--binlog-format=ROW", "--gtid-mode=ON", "--enforce-gtid-consistency", "--log-slave-updates", "--read-only"]
+  env       = [
     "MYSQL_ROOT_PASSWORD=root"
   ]
   volumes {
     volume_name = docker_volume.mysql-slave.name
     container_path = "/var/lib/mysql"
   }
+  log_opts = {
+    max-size = "50m"
+    max-file = "5"
+  }
 }
 
 provider "mysql" {
-  endpoint = docker_container.mysql-master.ip_address
+  endpoint = docker_container.mysql-master.hostname
   username = "root"
   password = "root"
 }
