@@ -1,0 +1,9 @@
+
+docker network create minio --subnet 172.16.12.0/24
+docker-compose up
+mc config host add swarm http://node1.minio.docker:9000
+mc mb swarm/test
+mc cp <files> swarm/test
+mc ls swarm/test
+
+# distributed minio uses erasure code
