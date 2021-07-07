@@ -1,7 +1,7 @@
 version: '2'
 services:
   nextcloud:
-    image: nextcloud:21
+    image: nextcloud:22
     hostname: nextcloud
     network_mode: "bridge"
     volumes:
