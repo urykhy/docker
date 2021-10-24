@@ -1,2 +1,4 @@
 <configuration>
+    <property><name>hadoop.kms.key.provider.uri</name><value>jceks://file@/${user.home}/kms.keystore</value></property>
+    <property><name>hadoop.security.keystore.java-keystore-provider.password-file</name><value>kms.keystore.password</value></property>
 </configuration>

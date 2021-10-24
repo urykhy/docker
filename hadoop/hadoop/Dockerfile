@@ -27,9 +27,11 @@ ENV MULTIHOMED_NETWORK=1
 ENV USER=root
 ENV PATH $HADOOP_HOME/bin/:$PATH
 
-ADD core-site.xml    /etc/hadoop/core-site.xml
-ADD hdfs-site.xml    /etc/hadoop/hdfs-site.xml
-ADD httpfs-site.xml  /etc/hadoop/httpfs-site.xml
-ADD kms-site.xml     /etc/hadoop/kms-site.xml
-ADD mapred-site.xml  /etc/hadoop/mapred-site.xml
-ADD yarn-site.xml    /etc/hadoop/yarn-site.xml
+ADD core-site.xml    /etc/hadoop/
+ADD hdfs-site.xml    /etc/hadoop/
+ADD httpfs-site.xml  /etc/hadoop/
+ADD kms-site.xml     /etc/hadoop/
+ADD mapred-site.xml  /etc/hadoop/
+ADD yarn-site.xml    /etc/hadoop/
+ADD kms.keystore     /etc/hadoop/
+ADD kms.keystore.password /etc/hadoop/

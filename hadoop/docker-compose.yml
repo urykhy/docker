@@ -1,6 +1,21 @@
 version: '2.1'
 
 services:
+  kms:
+    image: urykhy/hadoop
+    container_name: kms
+    hostname: kms.hadoop
+    command: bash -c "hadoop kms"
+    networks:
+      - hadoop
+    expose:
+      - "9600"
+    healthcheck:
+      test: jps | grep -q KMSWebServer
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   namenode:
     image: urykhy/hadoop-namenode
     container_name: namenode
@@ -16,6 +31,9 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    depends_on:
+      kms:
+        condition: service_healthy
     expose:
       - "8020"
       - "9870"
