@@ -1,20 +1,33 @@
 <configuration>
     <property><name>yarn.log-aggregation-enable</name><value>true</value></property>
-    <property><name>yarn.log.server.url</name><value>http://historyserver.hadoop:8188/applicationhistory/logs/</value></property>
+    <property><name>yarn.log.server.url</name><value>http://historyserver.hadoop.docker:8188/applicationhistory/logs/</value></property>
     <property><name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name><value>org.apache.hadoop.mapred.ShuffleHandler</value></property>
     <property><name>yarn.nodemanager.aux-services</name><value>mapreduce_shuffle</value></property>
     <property><name>yarn.nodemanager.bind-host</name><value>0.0.0.0</value></property>
-    <property><name>yarn.nodemanager.bind-host</name><value>0.0.0.0</value></property>
     <property><name>yarn.nodemanager.remote-app-log-dir</name><value>/app-logs</value></property>
+    <property><name>yarn.nodemanager.recovery.enabled</name><value>true</value></property>
+    <property><name>yarn.nodemanager.address</name><value>0.0.0.0:8198</value></property>
     <property><name>yarn.resourcemanager.bind-host</name><value>0.0.0.0</value></property>
     <property><name>yarn.resourcemanager.fs.state-store.uri</name><value>/rmstate</value></property>
-    <property><name>yarn.resourcemanager.hostname</name><value>resourcemanager.hadoop</value></property>
+    <property><name>yarn.resourcemanager.hostname</name><value>resourcemanager.hadoop.docker</value></property>
     <property><name>yarn.resourcemanager.recovery.enabled</name><value>true</value></property>
     <property><name>yarn.resourcemanager.store.class</name><value>org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore</value></property>
     <property><name>yarn.resourcemanager.system-metrics-publisher.enabled</name><value>true</value></property>
     <property><name>yarn.timeline-service.bind-host</name><value>0.0.0.0</value></property>
     <property><name>yarn.timeline-service.enabled</name><value>true</value></property>
     <property><name>yarn.timeline-service.generic-application-history.enabled</name><value>true</value></property>
-    <property><name>yarn.timeline-service.hostname</name><value>historyserver.hadoop</value></property>
+    <property><name>yarn.timeline-service.hostname</name><value>historyserver.hadoop.docker</value></property>
     <property><name>yarn.timeline-service.leveldb-timeline-store.path</name><value>/hadoop/yarn/timeline</value></property>
+
+    <!-- TUNABLES -->
+    <property><name>yarn.nodemanager.resource.count-logical-processors-as-cores</name><value>true</value></property>
+
+    <!-- KERBEROS BEGIN -->
+    <property><name>yarn.resourcemanager.principal</name>  <value>hdfs/_HOST@KERBEROS.ELF.DARK</value></property>
+    <property><name>yarn.resourcemanager.keytab</name>     <value>/etc/hadoop/kerberos.keytab</value></property>
+    <property><name>yarn.nodemanager.principal</name>      <value>hdfs/_HOST@KERBEROS.ELF.DARK</value></property>
+    <property><name>yarn.nodemanager.keytab</name>         <value>/etc/hadoop/kerberos.keytab</value></property>
+    <property><name>yarn.timeline-service.principal</name> <value>hdfs/_HOST@KERBEROS.ELF.DARK</value></property>
+    <property><name>yarn.timeline-service.keytab</name>    <value>/etc/hadoop/kerberos.keytab</value></property>
+    <!-- KERBEROS END -->
 </configuration>

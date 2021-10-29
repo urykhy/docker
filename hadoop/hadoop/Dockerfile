@@ -1,3 +1,5 @@
+FROM minio/minio AS minio
+
 FROM debian:stretch
 
 RUN apt-get update \
@@ -6,9 +8,9 @@ RUN apt-get update \
 
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends net-tools curl python
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends jsvc net-tools curl python krb5-user libssl-dev
 
-ENV HADOOP_VERSION 3.2.1
+ENV HADOOP_VERSION 3.2.2
 ENV HADOOP_URL https://www.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz
 RUN set -x \
     && curl -fSL "$HADOOP_URL" -o /tmp/hadoop.tar.gz \
@@ -33,5 +35,42 @@ ADD httpfs-site.xml  /etc/hadoop/
 ADD kms-site.xml     /etc/hadoop/
 ADD mapred-site.xml  /etc/hadoop/
 ADD yarn-site.xml    /etc/hadoop/
-ADD kms.keystore     /etc/hadoop/
 ADD kms.keystore.password /etc/hadoop/
+
+# SSL
+ADD ssl-server.xml   /etc/hadoop/
+ADD ca.crt                       /tmp
+ADD server-kms.hadoop.docker.crt /tmp
+ADD server-kms.hadoop.docker.key /tmp
+RUN openssl pkcs12                                                                   \
+        -export                                                                      \
+        -in /tmp/server-kms.hadoop.docker.crt                                        \
+        -inkey /tmp/server-kms.hadoop.docker.key                                     \
+        -out /tmp/kms.hadoop.docker.p12                                              \
+        -passout pass:123456                                                         \
+ && keytool -importkeystore                                                          \
+        -keystore /etc/hadoop/ssl.keystore -deststorepass 123456 -destkeypass 123456 \
+        -srckeystore /tmp/kms.hadoop.docker.p12 -srcstorepass 123456                 \
+ && openssl x509 -outform der -in /tmp/ca.crt -out /tmp/ca.der                       \
+ && keytool -import                                                                  \
+        -keystore /etc/ssl/certs/java/cacerts -deststorepass changeit -trustcacerts  \
+        -file /tmp/ca.der -noprompt
+
+    # add kms.hadoop.docker.p12 system java certs
+    #keytool -importkeystore                                                          \
+    #    -keystore /etc/ssl/certs/java/cacerts -deststorepass changeit -trustcacerts  \
+    #    -srckeystore /tmp/kms.hadoop.docker.p12 -srcstorepass 123456
+
+ADD namenode.sh      /
+ADD datanode.sh      /
+ADD nfs.sh           /
+RUN rm /etc/hadoop/kms-log4j.properties
+
+# Kerberos support
+ADD krb5.conf        /etc/
+ADD kerberos.keytab  /etc/hadoop/kerberos.keytab
+ADD entrypoint.sh    /
+ENTRYPOINT ["/entrypoint.sh"]
+
+ADD minio.keytab     /etc
+COPY --from=minio /opt/bin/minio /usr/bin/

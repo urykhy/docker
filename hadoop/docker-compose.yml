@@ -4,10 +4,13 @@ services:
   kms:
     image: urykhy/hadoop
     container_name: kms
-    hostname: kms.hadoop
-    command: bash -c "hadoop kms"
+    hostname: kms
+    domainname: hadoop.docker
+    command: hadoop kms
     networks:
       - hadoop
+    volumes:
+      - hadoop_kms:/hadoop
     expose:
       - "9600"
     healthcheck:
@@ -17,9 +20,11 @@ services:
       retries: 10
 
   namenode:
-    image: urykhy/hadoop-namenode
+    image: urykhy/hadoop
     container_name: namenode
     hostname: namenode
+    domainname: hadoop.docker
+    command: /namenode.sh
     networks:
       - hadoop
     volumes:
@@ -41,8 +46,9 @@ services:
   datanode1:
     image: urykhy/hadoop
     container_name: datanode1
-    hostname: datanode1.hadoop
-    command: bash -c "yarn nodemanager & exec hdfs datanode"
+    hostname: datanode1
+    domainname: hadoop.docker
+    command: /datanode.sh
     depends_on:
       namenode:
         condition: service_healthy
@@ -51,7 +57,7 @@ services:
     volumes:
       - hadoop_datanode1:/hadoop/dfs/data
     healthcheck:
-      test: test `curl http://datanode1:9864/jmx | grep NamenodeAddresses | wc -l` = '1'
+      test: test `jps | grep 'DataNode\|NodeManager\|JobHistoryServer' | wc -l` = '3'
       interval: 5s
       timeout: 5s
       retries: 10
@@ -60,12 +66,14 @@ services:
       - "9864"
       - "9866"
       - "9867"
+      - "19888"
 
   datanode2:
     image: urykhy/hadoop
     container_name: datanode2
-    hostname: datanode2.hadoop
-    command: bash -c "yarn nodemanager & exec hdfs datanode"
+    hostname: datanode2
+    domainname: hadoop.docker
+    command: /datanode.sh
     depends_on:
       namenode:
         condition: service_healthy
@@ -74,7 +82,7 @@ services:
     volumes:
       - hadoop_datanode2:/hadoop/dfs/data
     healthcheck:
-      test: test `curl http://datanode2:9864/jmx | grep NamenodeAddresses | wc -l` = '1'
+      test: test `jps | grep 'DataNode\|NodeManager\|JobHistoryServer' | wc -l` = '3'
       interval: 5s
       timeout: 5s
       retries: 10
@@ -83,44 +91,51 @@ services:
       - "9864"
       - "9866"
       - "9867"
+      - "19888"
 
   resourcemanager:
     image: urykhy/hadoop
     container_name: resourcemanager
     hostname: resourcemanager
+    domainname: hadoop.docker
     command: yarn resourcemanager
     depends_on:
-      datanode1:
-        condition: service_healthy
-      datanode2:
+      namenode:
         condition: service_healthy
     networks:
       - hadoop
     expose:
       - "8088"
+    healthcheck:
+      test: jps | grep -q ResourceManager
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   historyserver:
     image: urykhy/hadoop
     container_name: historyserver
     hostname: historyserver
+    domainname: hadoop.docker
     command: yarn timelineserver
-    depends_on:
-      datanode1:
-        condition: service_healthy
-      datanode2:
-        condition: service_healthy
     networks:
       - hadoop
     volumes:
       - hadoop_historyserver:/hadoop/yarn/timeline
     expose:
       - "8188"
+    healthcheck:
+      test: jps | grep -q ApplicationHistoryServer
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   nfs:
     image: urykhy/hadoop
     container_name: nfs
     hostname: nfs
-    command: bash -c "hdfs portmap & exec hdfs nfs3"
+    domainname: hadoop.docker
+    command: /nfs.sh
     depends_on:
       datanode1:
         condition: service_healthy
@@ -133,9 +148,10 @@ services:
       - "50079"
 
   minio:
-    image: minio/minio
+    image: urykhy/hadoop
     container_name: minio_hdfs
     hostname: minio
+    domainname: hadoop.docker
     depends_on:
       datanode1:
         condition: service_healthy
@@ -146,11 +162,15 @@ services:
     environment:
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: minio123
-    command: gateway hdfs hdfs://namenode:8020
+      KRB5USERNAME: minio
+      KRB5REALM: KERBEROS.ELF.DARK
+      KRB5KEYTAB: /etc/minio.keytab
+    command: bash -c "minio gateway hdfs hdfs://namenode.hadoop.docker:8020 --console-address :9009"
     volumes:
       - hadoop_minio:/data
     expose:
       - "9000"
+      - "9009"
 
         #  spark:
         #    image: urykhy/hadoop-spark
@@ -184,6 +204,8 @@ networks:
     external: true
 
 volumes:
+  hadoop_kms:
+    external: true
   hadoop_namenode:
     external: true
   hadoop_datanode1:

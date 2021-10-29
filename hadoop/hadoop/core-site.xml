@@ -1,7 +1,16 @@
 <configuration>
-    <property><name>fs.defaultFS</name><value>hdfs://namenode.hadoop:8020</value></property>
+    <!-- property><name>fs.defaultFS</name><value>hdfs://namenode.hadoop:8020</value></!-->
+    <property><name>fs.defaultFS</name><value>hdfs://namenode.hadoop.docker:8020</value></property>
     <property><name>hadoop.http.staticuser.user</name><value>root</value></property>
     <property><name>hadoop.proxyuser.root.groups</name><value>root,nogroup</value></property>
     <property><name>hadoop.proxyuser.root.hosts</name><value>*</value></property>
-    <property><name>hadoop.security.key.provider.path</name><value>kms://http@kms.hadoop:9600/kms</value></property>
+    <property><name>hadoop.security.key.provider.path</name><value>kms://https@kms.hadoop.docker:9600/kms</value></property>
+    <property><name>hadoop.kms.authentication.kerberos.principal</name><value>*</value></property>
+
+    <!-- KERBEROS BEGIN -->
+    <property><name>hadoop.security.authentication</name><value>kerberos</value></property>
+    <property><name>hadoop.security.authorization</name><value>true</value></property>
+    <property><name>hadoop.rpc.protection</name><value>integrity</value></property>
+    <property><name>hadoop.user.group.static.mapping.overrides</name><value>user=supergroup;root=supergroup</value></property>
+    <!-- KERBEROS END -->
 </configuration>

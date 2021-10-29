@@ -1,0 +1,7 @@
+<configuration>
+    <!-- SSL BEGIN -->
+    <property><name>ssl.server.keystore.location</name><value>/etc/hadoop/ssl.keystore</value></property>
+    <property><name>ssl.server.keystore.password</name><value>123456</value></property>
+    <property><name>ssl.server.keystore.keypassword</name><value>123456</value></property>
+    <!-- SSL END -->
+</configuration>
