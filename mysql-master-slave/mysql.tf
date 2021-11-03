@@ -10,7 +10,7 @@ resource "docker_volume" "mysql-slave" {
 }
 
 resource "docker_image" "mysql" {
-  name = "mysql:5.7"
+  name = "mysql:8.0"
 }
 
 resource "docker_container" "mysql-master" {
@@ -83,7 +83,7 @@ resource "mysql_grant" "master_slave_grants" {
 
 resource "null_resource" "start_slave" {
   provisioner "local-exec" {
-    command = "mysql -proot -h \"${docker_container.mysql-slave.ip_address}\" -e \"CHANGE MASTER TO MASTER_HOST='mysql-master', MASTER_PORT=3306, MASTER_USER='${mysql_user.slave.user}', MASTER_PASSWORD='slave', MASTER_AUTO_POSITION=1; START SLAVE USER='${mysql_user.slave.user}' PASSWORD='slave'\""
+    command = "mysql -proot -h \"${docker_container.mysql-slave.ip_address}\" -e \"CHANGE MASTER TO MASTER_HOST='mysql-master', MASTER_PORT=3306, MASTER_USER='${mysql_user.slave.user}', MASTER_PASSWORD='slave', MASTER_AUTO_POSITION=1, MASTER_SSL=1; START SLAVE USER='${mysql_user.slave.user}' PASSWORD='slave'\""
   }
 }
 
