@@ -1,0 +1,10 @@
+bit of kerberos.
+    db password: kerberos
+
+some users:
+    admin/admin : admin
+    hadoop/admin : hadoop
+
+    root : root
+    user : user
+    ury  : ury

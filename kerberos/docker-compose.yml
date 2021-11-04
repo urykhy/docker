@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  kerberos:
+    image: urykhy/kerberos
+    hostname: kerberos
+    container_name: kerberos
+    build: .
+    network_mode: "host"
+    privileged: true
+    volumes:
+      - "kerberos:/var/lib/krb5kdc"
+
+volumes:
+  kerberos:
+    external: true
