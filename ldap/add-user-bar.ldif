@@ -1,0 +1,27 @@
+# User primary group
+dn: cn=bar,ou=groups,dc=elf,dc=dark
+cn: bar
+objectClass: top
+objectClass: posixGroup
+gidNumber: 10002
+
+# User account
+dn: uid=bar,ou=people,dc=elf,dc=dark
+cn: bar Test User
+givenName: bar
+sn: Testing
+uid: bar
+uidNumber: 10002
+gidNumber: 10002
+homeDirectory: /tmp/bar
+mail: bar@elf.dark
+objectClass: top
+objectClass: posixAccount
+objectClass: shadowAccount
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+loginShell: /bin/bash
+userPassword: bar
+
+

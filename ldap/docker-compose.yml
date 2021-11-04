@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+  ldap:
+    image: urykhy/ldap
+    hostname: ldap
+    container_name: ldap
+    build: .
+    network_mode: "host"
+    privileged: true
+    environment:
+      LDAPTLS_CACERT: /etc/ldap/ssl/ca.crt
+      LDAPURI: ldaps://ldap.elf.dark
+      LDAPBASE: dc=elf,dc=dark
+    volumes:
+      - "ldap:/var/lib/ldap"
+
+volumes:
+  ldap:
+    external: true

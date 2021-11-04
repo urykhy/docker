@@ -1,0 +1,21 @@
+basic test
+    ldapwhoami -H ldap:// -x
+    ldapwhoami -H ldap:// -x -D cn=admin,dc=dark -w admin
+
+tls
+    ldapmodify -c -QY EXTERNAL -H ldapi:/// -f /tmp/tls.ldif
+
+    LDAPTLS_CACERT=/etc/ldap/ssl/ca.crt ldapwhoami -H 'ldaps://ldap.elf.dark/dc=dark' -x
+    LDAPTLS_CACERT=/etc/ldap/ssl/ca.crt ldapwhoami -H 'ldap://ldap.elf.dark/dc=dark' -x -ZZ
+
+search:
+    ldapsearch -LLLQ -H ldapi:/// -b cn=config dn
+    ldapsearch -LLLQ -H ldapi:/// -b dc=dark dn
+    ldapsearch -LLL -H ldap://localhost -D cn=admin,dc=dark -w admin -b dc=dark dn
+    ldapsearch -LLL -H ldap://localhost -D cn=admin,dc=dark -w admin -b dc=dark "(uid=bar)" homeDirectory
+
+with env from compose:
+    ldapwhoami -x
+    ldapsearch -LLL -D cn=admin,dc=dark -w admin "(uid=bar)" homeDirectory
+    ldapsearch -LLL -H ldapi:/// "(uid=bar)"
+    ldapsearch -LLL -x "(&(objectClass=posixAccount)(objectClass=person))"

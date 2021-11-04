@@ -1,0 +1,21 @@
+dn: cn=admin,dc=dark
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: admin
+description: LDAP administrator
+userPassword: admin
+
+dn: dc=elf,dc=dark
+dc: elf
+o: Elf Dark Organization
+objectClass: top
+objectclass: dcObject
+objectclass: organization
+
+dn: ou=people,dc=elf,dc=dark
+ou: people
+objectClass: organizationalUnit
+
+dn: ou=groups,dc=elf,dc=dark
+ou: groups
+objectClass: organizationalUnit

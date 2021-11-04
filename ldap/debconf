@@ -1,0 +1,11 @@
+slapd slapd/internal/adminpw select admin
+slapd slapd/password2 select admin
+slapd slapd/password1 select admin
+slapd slapd/purge_database select true
+slapd slapd/domain select dark
+slapd slapd/dump_database select when needed
+slapd slapd/move_old_database select false
+slapd shared/organization select dark
+slapd slapd/dump_database_destdir select /var/lib/ldap/backup-VERSION
+slapd slapd/no_configuration select false
+slapd slapd/allow_ldap_v2 select false
