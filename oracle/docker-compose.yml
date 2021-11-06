@@ -3,5 +3,6 @@ services:
   oracle:
     image: urykhy/oracle
     hostname: oracle
+    container_name: oracle
     network_mode: "bridge"
     stop_grace_period: 1m

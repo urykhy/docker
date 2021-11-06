@@ -3,6 +3,7 @@ services:
   jenkins:
     image: jenkinsci/blueocean
     hostname: jenkins
+    container_name: jenkins
     network_mode: "bridge"
     volumes:
       - "jenkins:/var/jenkins_home"

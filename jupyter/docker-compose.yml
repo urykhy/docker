@@ -4,6 +4,7 @@ services:
     build: .
     image: urykhy/jupyter
     hostname: jupyter
+    container_name: jupyter
     network_mode: "bridge"
     command: jupyter notebook --port=8888 --ip=0.0.0.0 --allow-root --no-browser .
     volumes:
