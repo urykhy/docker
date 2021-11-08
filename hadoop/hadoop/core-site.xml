@@ -5,7 +5,6 @@
     <property><name>hadoop.proxyuser.root.groups</name><value>root,nogroup</value></property>
     <property><name>hadoop.proxyuser.root.hosts</name><value>*</value></property>
     <property><name>hadoop.security.key.provider.path</name><value>kms://https@kms.hadoop.docker:9600/kms</value></property>
-    <property><name>hadoop.kms.authentication.kerberos.principal</name><value>*</value></property>
 
     <!-- KERBEROS BEGIN -->
     <property><name>hadoop.security.authentication</name><value>kerberos</value></property>
