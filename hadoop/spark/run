@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker run -it --rm --name spark-shell --hostname spark-shell --domainname docker --network hadoop --volume `pwd`:/task urykhy/hadoop-spark bash -c '/task/main.sh'

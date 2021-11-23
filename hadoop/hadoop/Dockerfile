@@ -8,7 +8,7 @@ RUN apt-get update \
 
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends jsvc net-tools curl python krb5-user libssl-dev
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends jsvc net-tools curl python krb5-user libssl-dev libzstd-dev libsnappy-dev
 
 ENV HADOOP_VERSION 3.2.2
 ENV HADOOP_URL https://www.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz
@@ -20,14 +20,13 @@ RUN set -x \
 RUN ln -s /opt/hadoop-$HADOOP_VERSION/etc/hadoop /etc/hadoop
 RUN mkdir /opt/hadoop-$HADOOP_VERSION/logs
 
-RUN mkdir /hadoop-data
-
 ENV HADOOP_HOME=/opt/hadoop-$HADOOP_VERSION
 ENV HADOOP_CONF_DIR=/etc/hadoop
 ENV MULTIHOMED_NETWORK=1
 
 ENV USER=root
-ENV PATH $HADOOP_HOME/bin/:$PATH
+ENV PATH=$HADOOP_HOME/bin/:$PATH
+RUN ln -vsf $HADOOP_HOME/lib/native/lib* /usr/lib/
 
 ADD core-site.xml    /etc/hadoop/
 ADD hdfs-site.xml    /etc/hadoop/

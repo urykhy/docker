@@ -173,6 +173,22 @@ services:
       - "9000"
       - "9009"
 
+  spark:
+    image: urykhy/hadoop-spark
+    container_name: spark
+    hostname: spark
+    networks:
+      - hadoop
+    command: ./bin/spark-class org.apache.spark.deploy.history.HistoryServer
+    depends_on:
+      - namenode
+    profiles: ["spark"]
+    healthcheck:
+      test: jps | grep -q HistoryServer
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
 networks:
   hadoop:
     external: true

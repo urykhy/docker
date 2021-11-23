@@ -10,6 +10,6 @@
     <property><name>hadoop.security.authentication</name><value>kerberos</value></property>
     <property><name>hadoop.security.authorization</name><value>true</value></property>
     <property><name>hadoop.rpc.protection</name><value>integrity</value></property>
-    <property><name>hadoop.user.group.static.mapping.overrides</name><value>user=supergroup;root=supergroup</value></property>
+    <property><name>hadoop.user.group.static.mapping.overrides</name><value>user=supergroup;root=supergroup;minio=supergroup</value></property>
     <!-- KERBEROS END -->
 </configuration>
