@@ -17,7 +17,7 @@ resource "docker_container" "mysql-master" {
   name     = "mysql-master"
   hostname = "mysql-master"
   image    = docker_image.mysql.latest
-  command  = ["--server-id=1", "--log-bin=mysql-bin", "--binlog-format=ROW", "--gtid-mode=ON", "--enforce-gtid-consistency"]
+  command  = ["--server-id=1", "--log-bin=mysql-bin", "--binlog-format=ROW", "--gtid-mode=ON", "--enforce-gtid-consistency", "--performance-schema-instrument=statement/%=ON", "--performance-schema-consumer-statements-digest=ON", "--innodb-monitor-enable=ALL"]
   env      = [
     "MYSQL_ROOT_PASSWORD=root"
   ]
