@@ -1,0 +1,12 @@
+{
+  "Debug": true,
+  "EnableSyslog": false,
+  "ListenAddress": ":3000",
+  "MySQLTopologyUser": "orchestrator",
+  "MySQLTopologyPassword": "orchestrator",
+  "MySQLTopologySSLSkipVerify": true,
+  "MySQLTopologyUseMutualTLS": false,
+  "BackendDB": "sqlite",
+  "SQLite3DataFile": "/var/lib/orchestrator/orchestrator.sqlite3",
+  "RemoveTextFromHostnameDisplay": ".dark:3306"
+}

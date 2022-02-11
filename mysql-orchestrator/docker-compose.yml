@@ -1,0 +1,14 @@
+version: '2'
+services:
+  orchestrator:
+    build: .
+    image: urykhy/orchestrator
+    container_name: orchestrator
+    hostname: orchestrator
+    network_mode: "bridge"
+    volumes:
+      - orchestrator:/var/lib/orchestrator
+
+volumes:
+  orchestrator:
+    external: true
