@@ -1,0 +1,16 @@
+version: '2'
+services:
+  pmm-server:
+    image: percona/pmm-server:2
+    container_name: pmm-server
+    hostname: pmm-server
+    network_mode: "bridge"
+    volumes:
+      - pmm-server:/srv
+    environment:
+      DISABLE_UPDATES: 1
+      DISABLE_TELEMETRY: 1
+
+volumes:
+  pmm-server:
+    external: true

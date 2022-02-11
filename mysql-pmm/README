@@ -1,0 +1,13 @@
+prepare:
+    docker volume create pmm-server
+
+create mysql user:
+    CREATE USER 'pmm'@'%' IDENTIFIED BY 'pmm' WITH MAX_USER_CONNECTIONS 10;
+    GRANT SELECT, PROCESS, REPLICATION CLIENT, RELOAD, BACKUP_ADMIN ON *.* TO 'pmm'@'%';
+
+server ui:
+    https://pmm-server.mysql-pmm:443
+    admin:admin
+
+add instance:
+    configuration -> pmm inventory -> add instance
