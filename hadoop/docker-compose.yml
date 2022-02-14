@@ -177,6 +177,7 @@ services:
     image: urykhy/hadoop-spark
     container_name: spark
     hostname: spark
+    domainname: hadoop.docker
     networks:
       - hadoop
     command: ./bin/spark-class org.apache.spark.deploy.history.HistoryServer

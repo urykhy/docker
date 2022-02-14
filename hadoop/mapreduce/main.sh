@@ -2,7 +2,9 @@
 
 set -x
 
-echo root | kinit root
+if [ "$WITH_KERBEROS" == "true" ]; then
+    echo root | kinit root
+fi
 
 hadoop fs -rm -r    /root/task-input
 hadoop fs -rm -r    /root/task-output

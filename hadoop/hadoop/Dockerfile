@@ -73,3 +73,8 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 ADD minio.keytab     /etc
 COPY --from=minio /opt/bin/minio /usr/bin/
+
+ARG WITH_KERBEROS=true
+ADD finalize.sh      /tmp/
+ENV WITH_KERBEROS=$WITH_KERBEROS
+RUN /tmp/finalize.sh

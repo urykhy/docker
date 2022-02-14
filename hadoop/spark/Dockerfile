@@ -15,3 +15,5 @@ ADD spark-defaults.conf $SPARK_HOME/conf/spark-defaults.conf
 RUN echo "export SPARK_DIST_CLASSPATH=$(hadoop classpath)" >> $SPARK_HOME/conf/spark-env.sh
 
 WORKDIR  $SPARK_HOME
+
+RUN if [ "$WITH_KERBEROS" != "true" ]; then echo "strip kerberos parts from configuration files ..." && sed -i '/KERBEROS BEGIN/,/KERBEROS END/d' $SPARK_HOME/conf/spark-defaults.conf; fi
