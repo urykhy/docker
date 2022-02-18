@@ -1,1 +1,0 @@
-DROP TABLE hits_2 ON CLUSTER sharded

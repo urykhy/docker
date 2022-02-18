@@ -1,7 +1,5 @@
-
 ## Clickhouse Cluster
 very simple and basic cluster via docker-compose
-for demonstration and tests
 
 ### prepare
 docker network create clickhouse
@@ -16,3 +14,11 @@ docker volume create --name=clickhouse-zk2
 # check it
 docker-compose exec master clickhouse-client -mn
 > SELECT * FROM system.clusters
+
+# migrate / https://github.com/golang-migrate/migrate
+migrate -path ./migrations -database 'clickhouse://master.clickhouse.docker:9000?&x-multi-statement=true' up
+
+# once vector running
+select container_name, uuid, query from vector where length(query) > 0 order by timestamp desc limit 20;
+select message from vector where query like '%1085664e-c82a-469e-b5a7-d986937b2294%' order by timestamp desc;
+select message from vector where uuid = '{581f2464-f9be-4539-bef6-51dc0d6c4600}' order by timestamp desc;
