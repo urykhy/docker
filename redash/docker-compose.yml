@@ -12,7 +12,7 @@ services:
       PYTHONUNBUFFERED: 0
       REDASH_LOG_LEVEL: "INFO"
       REDASH_REDIS_URL: "redis://redis.redash:6379/0"
-      REDASH_DATABASE_URL: "postgresql://postgres@postgres.redash/postgres"
+      REDASH_DATABASE_URL: "postgresql://postgres:postgres@postgres.redash/postgres"
       REDASH_DATE_FORMAT: "YYYY-MM-DD"
   worker:
     image: redash/redash:latest
@@ -25,7 +25,7 @@ services:
       PYTHONUNBUFFERED: 0
       REDASH_LOG_LEVEL: "INFO"
       REDASH_REDIS_URL: "redis://redis.redash:6379/0"
-      REDASH_DATABASE_URL: "postgresql://postgres@postgres.redash/postgres"
+      REDASH_DATABASE_URL: "postgresql://postgres:postgres@postgres.redash/postgres"
       QUEUES: "queries,scheduled_queries,celery"
       WORKERS_COUNT: 2
   redis:
@@ -39,6 +39,8 @@ services:
     container_name: redash_postgres
     network_mode: "bridge"
     command: "postgres -c fsync=off -c full_page_writes=off -c synchronous_commit=OFF"
+    environment:
+      POSTGRES_PASSWORD: postgres
     volumes:
       - "redash_pg:/var/lib/postgresql/data"
 
