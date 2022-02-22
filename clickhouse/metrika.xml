@@ -1,4 +1,43 @@
 <yandex>
+    <clickhouse_storage_configuration>
+<!--
+        <disks>
+            <hdfs1>
+                <type>hdfs</type>
+                <endpoint>hdfs://namenode.hadoop.docker:8020/data/clickhouse/%SHARD%/</endpoint>
+            </hdfs1>
+        </disks>
+        <policies>
+            <default>
+                <volumes>
+                    <default>
+                        <disk>default</disk>
+                    </default>
+                </volumes>
+            </default>
+            <hdfs_only>
+                <volumes>
+                    <hdfs>
+                        <disk>hdfs1</disk>
+                    </hdfs>
+                </volumes>
+            </hdfs_only>
+            <hdfs_too>
+                <move_factor>0</move_factor>
+                <volumes>
+                    <default>
+                        <disk>default</disk>
+                    </default>
+                    <hdfs>
+                        <disk>hdfs1</disk>
+                        <prefer_not_to_merge>true</prefer_not_to_merge>
+                    </hdfs>
+                </volumes>
+            </hdfs_too>
+        </policies>
+-->
+    </clickhouse_storage_configuration>
+
     <clickhouse_remote_servers> <!-- name of substitution-->
         <events>                <!-- name of cluster (arbitary) to be specified in parameter of Distributed table -->
             <shard>
@@ -13,12 +52,14 @@
             </shard>
         </events>
     </clickhouse_remote_servers>
-    <zookeeper-servers>
+
+    <zookeeper_servers>
         <node index="1">
             <host>zk</host>
             <port>2181</port>
         </node>
-    </zookeeper-servers>
+    </zookeeper_servers>
+
     <macros>
         <host>%HOST%</host>
         <shard>%SHARD%</shard>

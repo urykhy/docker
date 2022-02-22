@@ -35,8 +35,9 @@
     <!-- <umask>022</umask> -->
     <mlock_executable>false</mlock_executable>
 
+    <storage_configuration incl="clickhouse_storage_configuration" />
     <remote_servers incl="clickhouse_remote_servers" />
-    <zookeeper incl="zookeeper-servers" optional="true" />
+    <zookeeper incl="zookeeper_servers" optional="true" />
     <macros incl="macros" optional="true" />
 
     <builtin_dictionaries_reload_interval>3600</builtin_dictionaries_reload_interval>
