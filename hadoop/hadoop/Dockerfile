@@ -1,3 +1,6 @@
+FROM golang:1.17-stretch AS forego
+RUN go install github.com/ddollar/forego@master
+
 FROM minio/minio AS minio
 
 FROM debian:stretch
@@ -22,7 +25,6 @@ RUN mkdir /opt/hadoop-$HADOOP_VERSION/logs
 
 ENV HADOOP_HOME=/opt/hadoop-$HADOOP_VERSION
 ENV HADOOP_CONF_DIR=/etc/hadoop
-ENV MULTIHOMED_NETWORK=1
 
 ENV USER=root
 ENV PATH=$HADOOP_HOME/bin/:$PATH
@@ -61,20 +63,21 @@ RUN openssl pkcs12                                                              
     #    -srckeystore /tmp/kms.hadoop.docker.p12 -srcstorepass 123456
 
 ADD namenode.sh      /
-ADD datanode.sh      /
+ADD datanode.proc    /
 ADD nfs.sh           /
 RUN rm /etc/hadoop/kms-log4j.properties
 
 # Kerberos support
+ARG WITH_KERBEROS=true
+ENV WITH_KERBEROS=$WITH_KERBEROS
 ADD krb5.conf        /etc/
+ADD minio.keytab     /etc
 ADD kerberos.keytab  /etc/hadoop/kerberos.keytab
+ADD finalize.sh      /tmp/
+RUN /tmp/finalize.sh
+
 ADD entrypoint.sh    /
 ENTRYPOINT ["/entrypoint.sh"]
 
-ADD minio.keytab     /etc
-COPY --from=minio /opt/bin/minio /usr/bin/
-
-ARG WITH_KERBEROS=true
-ADD finalize.sh      /tmp/
-ENV WITH_KERBEROS=$WITH_KERBEROS
-RUN /tmp/finalize.sh
+COPY --from=minio    /opt/bin/minio /usr/bin/
+COPY --from=forego   /go/bin/forego /usr/bin/

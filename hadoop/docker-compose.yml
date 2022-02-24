@@ -48,7 +48,7 @@ services:
     container_name: datanode1
     hostname: datanode1
     domainname: hadoop.docker
-    command: /datanode.sh
+    command: forego start -r -f /datanode.proc
     depends_on:
       namenode:
         condition: service_healthy
@@ -73,7 +73,7 @@ services:
     container_name: datanode2
     hostname: datanode2
     domainname: hadoop.docker
-    command: /datanode.sh
+    command: forego start -r -f /datanode.proc
     depends_on:
       namenode:
         condition: service_healthy
@@ -100,7 +100,9 @@ services:
     domainname: hadoop.docker
     command: yarn resourcemanager
     depends_on:
-      namenode:
+      datanode1:
+        condition: service_healthy
+      datanode2:
         condition: service_healthy
     networks:
       - hadoop
@@ -118,6 +120,11 @@ services:
     hostname: historyserver
     domainname: hadoop.docker
     command: yarn timelineserver
+    depends_on:
+      datanode1:
+        condition: service_healthy
+      datanode2:
+        condition: service_healthy
     networks:
       - hadoop
     volumes:
