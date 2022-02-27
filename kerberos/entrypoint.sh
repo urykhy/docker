@@ -12,4 +12,4 @@ if [ ! -f /var/lib/krb5kdc/principal.ok ]; then
     echo -e 'hadoop\nhadoop' | kadmin.local -q "addprinc hadoop/admin"
 fi
 
-exec /usr/bin/supervisord
+exec forego start -r -f /kerberos.proc

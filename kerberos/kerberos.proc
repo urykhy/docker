@@ -1,0 +1,2 @@
+kdc: /usr/sbin/krb5kdc -P /var/run/krb5kdc.pid -n
+kadmin: /usr/sbin/kadmind -P /var/run/kadmind.pid -nofork
