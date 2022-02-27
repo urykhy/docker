@@ -6,6 +6,7 @@ services:
     container_name: uwsgi
     volumes:
     - /home/ury:/home/ury
+    command: forego start -r -f /uwsgi.proc
     network_mode: "host"
     environment:
       PYTHONUNBUFFERED: 1
