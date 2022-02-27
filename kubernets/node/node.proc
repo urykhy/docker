@@ -1,0 +1,4 @@
+docker: dockerd --dns=$NODE_DNS --storage-driver=overlay2 --bip=$FLANNEL_SUBNET --mtu=$FLANNEL_MTU
+proxy: kube-proxy --kubeconfig=/kubeconfig --v=2 --conntrack-max-per-core=0
+kubelet: kubelet --hostname-override=$NODE_NAME --v=2 --address=0.0.0.0 --enable_server --kubeconfig=/kubeconfig --fail-swap-on=false --cluster-dns=172.16.9.4 --cluster-domain=k8s --client-ca-file=/kube.ca
+autorestart = true

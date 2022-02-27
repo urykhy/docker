@@ -113,11 +113,7 @@ start:
 	docker-compose start etcd
 	sleep 1
 	etcdctl set /coreos.com/network/config '{ "Network": "172.17.0.0/16", "Backend": {"Type": "vxlan"}}'
-	docker-compose start master
-	sleep 10
-	docker-compose start dns
-	sleep 3
-	docker-compose up node1 node2
+	docker-compose start
 define subnet_script =
 	for x in `etcdctl ls /coreos.com/network/subnets/`; do n=`basename $x`; echo -n "$n\t"; etcdctl get $x; done
 endef

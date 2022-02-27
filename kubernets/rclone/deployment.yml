@@ -43,6 +43,7 @@ spec:
       - "mount"
       - "k8s:"
       - "/data"
+      - "--allow-non-empty"
       - "--allow-other"
       - "--config=/etc/rclone/k8s"
       - "--rc"

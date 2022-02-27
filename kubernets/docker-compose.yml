@@ -1,4 +1,5 @@
-version: '2'
+version: '3.9'
+
 services:
   etcd:
     image: quay.io/coreos/etcd
@@ -8,7 +9,7 @@ services:
     command: etcd -name etcd0 -initial-cluster-token etcd-cluster-1 --listen-client-urls 'http://0.0.0.0:2379' --advertise-client-urls 'http://172.16.9.2:2379' --data-dir /var/lib/etcd
     volumes:
       - kube-etcd:/var/lib/etcd
-      
+
   master:
     image: urykhy/kube-master
     build: ./master
@@ -18,15 +19,21 @@ services:
       kube:
     depends_on:
       - etcd
+    healthcheck:
+      test: kubectl get --raw='/readyz?'
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   dns:
     image: coredns/coredns:latest
     container_name: kube-dns
+    command: -conf /etc/coredns/Corefile
     networks:
       kube:
     depends_on:
-      - master
-    command: -conf /etc/coredns/Corefile
+      master:
+        condition: service_healthy
     volumes:
       - ./Corefile:/etc/coredns/Corefile
 
@@ -40,6 +47,11 @@ services:
     privileged: true
     depends_on:
       - dns
+    healthcheck:
+      test: kubectl --kubeconfig=/kubeconfig get node kube-node1
+      interval: 5s
+      timeout: 5s
+      retries: 10
     volumes:
       - kube-node1:/var/lib/docker
     environment:
@@ -54,7 +66,13 @@ services:
       kube:
     privileged: true
     depends_on:
-      - node1
+      node1:
+        condition: service_healthy
+    healthcheck:
+      test: kubectl --kubeconfig=/kubeconfig get node kube-node2
+      interval: 5s
+      timeout: 5s
+      retries: 10
     volumes:
       - kube-node2:/var/lib/docker
     environment:
