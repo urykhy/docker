@@ -1,0 +1,15 @@
+general:
+  remote_storage: s3
+
+clickhouse:
+  restart_command: "false"
+
+s3:
+  access_key: minio
+  secret_key: minio123
+  bucket: backup
+  endpoint: "minio.dark:9000"
+  disable_ssl: true
+  force_path_style: true
+  compression_format: tar
+  path: "%SHARD%:%HOST%"

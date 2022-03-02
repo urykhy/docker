@@ -22,3 +22,10 @@ migrate -path ./migrations -database 'clickhouse://master.clickhouse.docker:9000
 select container_name, uuid, query from vector where length(query) > 0 order by timestamp desc limit 20;
 select message from vector where query like '%1085664e-c82a-469e-b5a7-d986937b2294%' order by timestamp desc;
 select message from vector where uuid = '{581f2464-f9be-4539-bef6-51dc0d6c4600}' order by timestamp desc;
+
+# backup
+docker-compose exec shard1-a bash
+    clickhouse-backup tables
+    clickhouse-backup create
+    clickhouse-backup list
+    clickhouse-backup upload XXX
