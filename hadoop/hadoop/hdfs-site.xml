@@ -9,6 +9,7 @@
     <property><name>dfs.namenode.rpc-bind-host</name><value>0.0.0.0</value></property>
     <property><name>dfs.namenode.safemode.extension</name><value>5000</value></property>
     <property><name>dfs.namenode.servicerpc-bind-host</name><value>0.0.0.0</value></property>
+    <property><name>dfs.namenode.fs-limits.min-block-size</name><value>131072</value></property>
     <property><name>dfs.replication</name><value>2</value></property>
     <property><name>nfs.dump.dir</name><value>/tmp</value></property>
 
