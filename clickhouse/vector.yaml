@@ -1,0 +1,32 @@
+data_dir: /var/lib/vector
+api:
+  enabled: true
+sources:
+  docker:
+    type: docker_logs
+transforms:
+  docker_remap:
+    inputs: [docker]
+    type: remap
+    source: |
+      .timestamp = to_int!(.timestamp)
+sinks:
+  out:
+    inputs: [docker_remap]
+    type: clickhouse
+    host: http://master:8123
+    table: vector
+    encoding:
+      only_fields:
+        - timestamp
+        - container_name
+        - message
+    batch:
+      timeout_secs: 5
+#  out_file:
+#    inputs:
+#      - docker_remap
+#    type: file
+#    path: /var/lib/vector/debug-%Y-%m-%d.log
+#    encoding:
+#      codec: ndjson

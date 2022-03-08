@@ -1,5 +1,5 @@
 ## Clickhouse Cluster
-very simple and basic cluster via docker-compose
+very simple and basic cluster via docker compose
 
 ### prepare
 docker network create clickhouse
@@ -10,13 +10,17 @@ docker volume create --name=clickhouse-2b
 docker volume create --name=clickhouse-master
 docker volume create --name=clickhouse-zk1
 docker volume create --name=clickhouse-zk2
+docker volume create --name=clickhouse-vector
 
 # check it
-docker-compose exec master clickhouse-client -mn
+docker compose exec master clickhouse-client -mn
 > SELECT * FROM system.clusters
 
 # migrate / https://github.com/golang-migrate/migrate
 migrate -path ./migrations -database 'clickhouse://master.clickhouse.docker:9000?&x-multi-statement=true' up
+
+# run vector
+docker compose --profile=vector start vector
 
 # once vector running
 select container_name, uuid, query from vector where length(query) > 0 order by timestamp desc limit 20;
@@ -24,7 +28,7 @@ select message from vector where query like '%1085664e-c82a-469e-b5a7-d986937b22
 select message from vector where uuid = '{581f2464-f9be-4539-bef6-51dc0d6c4600}' order by timestamp desc;
 
 # backup
-docker-compose exec shard1-a bash
+docker compose exec shard1-a bash
     clickhouse-backup tables
     clickhouse-backup create
     clickhouse-backup list
