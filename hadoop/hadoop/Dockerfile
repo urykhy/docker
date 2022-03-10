@@ -3,13 +3,13 @@ RUN go install github.com/ddollar/forego@master
 
 FROM minio/minio AS minio
 
-FROM debian:stretch
+FROM debian:11
 
 RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends openjdk-8-jdk \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends openjdk-11-jdk-headless \
     && rm -rf /var/lib/apt/lists/*
 
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends jsvc net-tools curl python krb5-user libssl-dev libzstd-dev libsnappy-dev
 
@@ -64,7 +64,6 @@ RUN openssl pkcs12                                                              
 
 ADD namenode.sh      /
 ADD datanode.proc    /
-ADD nfs.sh           /
 RUN rm /etc/hadoop/kms-log4j.properties
 
 # Kerberos support
@@ -75,6 +74,8 @@ ADD minio.keytab     /etc
 ADD kerberos.keytab  /etc/hadoop/kerberos.keytab
 ADD finalize.sh      /tmp/
 RUN /tmp/finalize.sh
+
+ENV HADOOP_OPTS="-Djava.net.preferIPv4Stack=true -XX:+UseShenandoahGC -Xms64m -Xmx256m"
 
 ADD entrypoint.sh    /
 ENTRYPOINT ["/entrypoint.sh"]

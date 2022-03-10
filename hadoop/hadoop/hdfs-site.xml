@@ -11,7 +11,6 @@
     <property><name>dfs.namenode.servicerpc-bind-host</name><value>0.0.0.0</value></property>
     <property><name>dfs.namenode.fs-limits.min-block-size</name><value>131072</value></property>
     <property><name>dfs.replication</name><value>2</value></property>
-    <property><name>nfs.dump.dir</name><value>/tmp</value></property>
 
     <!-- KERBEROS BEGIN -->
     <property><name>ignore.secure.ports.for.testing</name><value>true</value></property>
@@ -27,9 +26,6 @@
 
     <property><name>dfs.datanode.kerberos.principal</name>          <value>hdfs/_HOST@KERBEROS.ELF.DARK</value></property>
     <property><name>dfs.datanode.keytab.file</name>                 <value>/etc/hadoop/kerberos.keytab</value></property>
-
-    <property><name>nfs.kerberos.principal</name>                   <value>hdfs/_HOST@KERBEROS.ELF.DARK</value></property>
-    <property><name>nfs.keytab.file</name>                          <value>/etc/hadoop/kerberos.keytab</value></property>
 
     <property><name>dfs.web.authentication.kerberos.principal</name><value>HTTP/_HOST@KERBEROS.ELF.DARK</value></property>
     <property><name>dfs.web.authentication.kerberos.keytab</name>   <value>/etc/hadoop/kerberos.keytab</value></property>

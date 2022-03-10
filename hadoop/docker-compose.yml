@@ -137,27 +137,9 @@ services:
       timeout: 5s
       retries: 10
 
-  nfs:
-    image: urykhy/hadoop
-    container_name: nfs
-    hostname: nfs
-    domainname: hadoop.docker
-    command: /nfs.sh
-    depends_on:
-      datanode1:
-        condition: service_healthy
-      datanode2:
-        condition: service_healthy
-    networks:
-    - hadoop
-    expose:
-      - "111"
-      - "50079"
-    profiles: ["nfs"]
-
   minio:
     image: urykhy/hadoop
-    container_name: minio_hdfs
+    container_name: minio-hdfs
     hostname: minio
     domainname: hadoop.docker
     depends_on:

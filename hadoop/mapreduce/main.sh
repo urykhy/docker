@@ -6,8 +6,8 @@ if [ "$WITH_KERBEROS" == "true" ]; then
     echo root | kinit root
 fi
 
-hadoop fs -rm -r    /root/task-input
-hadoop fs -rm -r    /root/task-output
+hadoop fs -rm -r /root/task-input
+hadoop fs -rm -r /root/task-output
 
 hadoop fs -mkdir -p /root/task-input
 hadoop fs -put      /task/*.txt /root/task-input/

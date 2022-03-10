@@ -2,7 +2,7 @@
 
 D="hadoop.docker"
 rm /tmp/keytab || true
-for x in namenode datanode1 datanode2 kms resourcemanager historyserver nfs spark;
+for x in namenode datanode1 datanode2 kms resourcemanager historyserver spark;
 do
     echo -e "hadoop\ndelprinc hdfs/$x.$D\nyes" | kadmin -p hadoop/admin
     echo -e "hadoop\ndelprinc HTTP/$x.$D\nyes" | kadmin -p hadoop/admin
