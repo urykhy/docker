@@ -10,6 +10,7 @@ docker volume create --name=clickhouse-2b
 docker volume create --name=clickhouse-master
 docker volume create --name=clickhouse-zk1
 docker volume create --name=clickhouse-zk2
+docker volume create --name=clickhouse-zk3
 docker volume create --name=clickhouse-vector
 
 # check it
