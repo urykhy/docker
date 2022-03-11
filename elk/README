@@ -6,4 +6,8 @@ docker volume create --name=filebeat
 web: http://kibana.elk:5601
 
 get some ES state:
-curl 'elasticsearch.elk.docker:9200/_cat/nodes?v&h=ip,port,version,heap.current,heap.max,master'
+curl 'server.elk:9200/_cluster/health' | jq .
+curl 'server.elk:9200/_cat/nodes?v&h=ip,port,version,heap.current,heap.max,master'
+
+logstash state:
+curl logstash.elk:9600/_node/stats | jq .jvm.mem
