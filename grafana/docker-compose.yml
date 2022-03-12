@@ -1,14 +1,28 @@
-version: '2'
+version: '3.9'
+
 services:
-  influxdb:
-    image: influxdb
-    hostname: influxdb
-    container_name: influxdb
+  grafana:
+    image: grafana/grafana
+    hostname: grafana
+    container_name: grafana
     networks:
       - grafana
     volumes:
-      - "influxdb:/var/lib/influxdb"
-      - "./influxdb.conf:/etc/influxdb/influxdb.conf"
+      - "grafana_data:/var/lib/grafana"
+
+  tempo:
+    image: grafana/tempo:latest
+    hostname: tempo
+    container_name: tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    networks:
+      - grafana
+    volumes:
+      - "./tempo.yaml:/etc/tempo.yaml"
+      - "grafana_tempo:/data"
+    #  ports
+    #  80      # tempo api
+    #  6831    # jaeger/thrift_compact on udp
 
   graphite:
     image: nickstenning/graphite
@@ -19,44 +33,17 @@ services:
     volumes:
       - "graphite:/var/lib/graphite/storage/whisper/"
 
-  telegraf:
-    image: telegraf
-    hostname: telegraf
-    container_name: telegraf
-    networks:
-      - grafana
-    volumes:
-      - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      - influxdb
-      - graphite
-
-  grafana:
-    image: grafana/grafana
-    hostname: grafana
-    container_name: grafana
-    networks:
-      - grafana
-    depends_on:
-      - influxdb
-      - graphite
-    volumes:
-      - "grafana:/var/lib/grafana"
-      - "grafana_log:/var/log/grafana"
-      - "grafana_etc:/etc/grafana"
-
 networks:
   grafana:
     external: true
 volumes:
-  influxdb:
-    external: true
   graphite:
     external: true
-  grafana:
+  grafana_data:
     external: true
   grafana_log:
     external: true
   grafana_etc:
+    external: true
+  grafana_tempo:
     external: true

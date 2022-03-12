@@ -1,0 +1,21 @@
+docker volume create --name=graphite
+docker volume create --name=grafana_data
+docker volume create --name=grafana_tempo
+docker network create grafana
+
+grafana sources:
+    graphite: http://graphite:80
+       tempo: http://tempo:80
+         elk: http://server.elk:9200, index: logstash, message field name: message, version: 7.7+
+
+web interface:
+    http://grafana.grafana:3000 as admin:admin
+    http://graphite.grafana
+
+tempo status:
+    curl http://tempo.grafana:80/status
+
+cleanup old graphite data:
+    cd /u01/docker/volumes/graphite/_data/ # to volume
+    find . -type f -mtime +7 -name \*.wsp -delete;
+    find . -depth -type d -empty -delete
