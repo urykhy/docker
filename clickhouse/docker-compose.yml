@@ -88,7 +88,7 @@ services:
 
   vector:
     image: timberio/vector:latest-alpine
-    container_name: vector
+    container_name: clickhouse-vector
     hostname: vector
     command: --config /etc/vector/vector.yaml
     networks:
@@ -101,6 +101,18 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - clickhouse-vector:/var/lib/vector
     profiles: ["vector"]
+
+  exporter:
+    image: urykhy/clickhouse-exporter
+    build: exporter
+    container_name: clickhouse-exporter
+    hostname: exporter
+    networks:
+      clickhouse:
+    depends_on:
+      - shard1-b
+      - shard2-b
+    profiles: ["prometheus"]
 
 networks:
   clickhouse:
