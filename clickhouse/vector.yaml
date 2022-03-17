@@ -4,15 +4,9 @@ api:
 sources:
   docker:
     type: docker_logs
-transforms:
-  docker_remap:
-    inputs: [docker]
-    type: remap
-    source: |
-      .timestamp = to_int!(.timestamp)
 sinks:
   out:
-    inputs: [docker_remap]
+    inputs: [docker]
     type: clickhouse
     host: http://master:8123
     table: vector
@@ -21,6 +15,7 @@ sinks:
         - timestamp
         - container_name
         - message
+      timestamp_format: unix
     batch:
       timeout_secs: 5
 #  out_file:
