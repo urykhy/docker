@@ -14,11 +14,12 @@ ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends jsvc net-tools curl python krb5-user libssl-dev libzstd-dev libsnappy-dev
 
 ENV HADOOP_VERSION 3.2.2
-ENV HADOOP_URL https://www.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz
-RUN set -x \
+ENV HADOOP_URL https://archive.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz
+RUN set -x                                           \
     && curl -fSL "$HADOOP_URL" -o /tmp/hadoop.tar.gz \
-    && tar -xvf /tmp/hadoop.tar.gz -C /opt/ \
-    && rm /tmp/hadoop.tar.gz*
+    && tar -xvf /tmp/hadoop.tar.gz -C /opt/          \
+    && rm /tmp/hadoop.tar.gz*                        \
+    && rm -rf /opt/hadoop-$HADOOP_VERSION/share/doc/hadoop
 
 RUN ln -s /opt/hadoop-$HADOOP_VERSION/etc/hadoop /etc/hadoop
 RUN mkdir /opt/hadoop-$HADOOP_VERSION/logs
