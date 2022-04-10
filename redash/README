@@ -1,4 +1,5 @@
 
+docker network create redash     --subnet 172.16.13.0/24
 docker volume create redash_pg
 docker volume create redash_redis
 

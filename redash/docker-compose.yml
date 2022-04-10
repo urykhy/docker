@@ -1,48 +1,57 @@
-version: '2'
+version: '3.9'
+
+x-redash-environment: &redash-environment
+  PYTHONUNBUFFERED: 0
+  REDASH_LOG_LEVEL: "INFO"
+  REDASH_REDIS_URL: "redis://redis.redash:6379/0"
+  REDASH_DATABASE_URL: "postgresql://postgres:postgres@postgres.redash/postgres"
+  REDASH_DATE_FORMAT: "YYYY-MM-DD"
+
 services:
   server:
     image: redash/redash:latest
     container_name: redash_server
     command: server
-    network_mode: "bridge"
+    networks:
+      - redash
     depends_on:
       - postgres
       - redis
     environment:
-      PYTHONUNBUFFERED: 0
-      REDASH_LOG_LEVEL: "INFO"
-      REDASH_REDIS_URL: "redis://redis.redash:6379/0"
-      REDASH_DATABASE_URL: "postgresql://postgres:postgres@postgres.redash/postgres"
-      REDASH_DATE_FORMAT: "YYYY-MM-DD"
+      <<: *redash-environment
   worker:
     image: redash/redash:latest
     container_name: redash_worker
     command: scheduler
-    network_mode: "bridge"
+    networks:
+      - redash
     depends_on:
       - server
     environment:
-      PYTHONUNBUFFERED: 0
-      REDASH_LOG_LEVEL: "INFO"
-      REDASH_REDIS_URL: "redis://redis.redash:6379/0"
-      REDASH_DATABASE_URL: "postgresql://postgres:postgres@postgres.redash/postgres"
+      <<: *redash-environment
       QUEUES: "queries,scheduled_queries,celery"
       WORKERS_COUNT: 2
   redis:
     image: redis:3-alpine
     container_name: redash_redis
-    network_mode: "bridge"
+    networks:
+      - redash
     volumes:
       - "redash_redis:/data"
   postgres:
     image: postgres:9-alpine
     container_name: redash_postgres
-    network_mode: "bridge"
     command: "postgres -c fsync=off -c full_page_writes=off -c synchronous_commit=OFF"
+    networks:
+      - redash
     environment:
       POSTGRES_PASSWORD: postgres
     volumes:
       - "redash_pg:/var/lib/postgresql/data"
+
+networks:
+  redash:
+    external: true
 
 volumes:
   redash_pg:
