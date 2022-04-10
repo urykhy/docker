@@ -1,0 +1,57 @@
+version: '3.9'
+services:
+  jekyll:
+    image: urykhy/jekyll
+    build: jekyll
+    container_name: jekyll
+    network_mode: "bridge"
+    command: bash -c "bundler install && jekyll serve --trace --verbose --port 80 --host 0.0.0.0"
+    volumes:
+    - /home/ury/devel/jekyll/stuff:/srv/jekyll
+
+  uwsgi-php:
+    image: urykhy/uwsgi
+    build: uwsgi
+    container_name: uwsgi-php
+    volumes:
+    - /home/ury:/home/ury
+    command: uwsgi php.ini
+    network_mode: "bridge"
+
+  uwsgi-torrent:
+    image: urykhy/uwsgi
+    build: uwsgi
+    container_name: uwsgi-torrent
+    volumes:
+    - /home/ury:/home/ury
+    command: uwsgi torrent.ini
+    network_mode: "bridge"
+    environment:
+      PYTHONUNBUFFERED: 1
+
+  uwsgi-flibusta:
+    image: urykhy/uwsgi
+    build: uwsgi
+    container_name: uwsgi-flibusta
+    volumes:
+    - /home/ury:/home/ury
+    command: uwsgi flibusta.ini
+    network_mode: "bridge"
+    environment:
+      PYTHONUNBUFFERED: 1
+
+  nginx:
+    image: nginx:stable-alpine
+    hostname: nginx
+    container_name: nginx
+    network_mode: "host"
+    volumes:
+    - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    - ./nginx/nginx.js:/etc/nginx/nginx.js
+    - /home/ury:/home/ury
+    - /etc/ssl/elf:/etc/ssl/elf
+    depends_on:
+    - jekyll
+    - uwsgi-php
+    - uwsgi-torrent
+    - uwsgi-flibusta

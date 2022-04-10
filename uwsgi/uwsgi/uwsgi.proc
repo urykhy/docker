@@ -1,3 +1,0 @@
-flibusta: uwsgi flibusta.ini
-torrent: uwsgi torrent.ini
-php: uwsgi php.ini
