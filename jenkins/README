@@ -1,6 +1,13 @@
 
 docker volume create jenkins
-open http://jenkins.jenkins:8080
+open http://jenkins:8080/blue
 admin password in /var/jenkins_home/secrets/initialAdminPassword
 
-blue: http://jenkins.jenkins:8080/blue
+memory/metrics:
+    install https://github.com/jenkinsci/metrics-plugin
+    open http://jenkins:8080/configure
+    generate metrics token: HFQEYYVGk1eP9Vt0Afs9mjsLEMzLnFF0ou_KfUYq4pW32tnZLpadxecYMGtaNrvt
+    press apply
+    get memory usage:
+        curl http://jenkins:8080/metrics/b7qRA65Keh7FsNAXtGTvohKsOijqg_qLry1i_JVhQKWhIqwIYHxl6FcsmVHut3uL/metrics?pretty=true | jq .gauges[\"vm.memory.heap.usage\"]
+
