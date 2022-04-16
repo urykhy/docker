@@ -25,8 +25,9 @@ services:
       - DB_USER=gitea
       - DB_PASSWD=gitea
       - SSH_DOMAIN=server.gitea.docker
-      - RUN_MODE=prod
+      - RUN_MODE=dev
       - ROOT_URL="http://server.gitea.docker:3000/"
+      - GITEA__OAUTH2__JWT_SIGNING_ALGORITHM="HS256"
     networks:
       - gitea
     volumes:
@@ -44,10 +45,10 @@ services:
       - gitea_drone2:/data
     environment:
       - DRONE_OPEN=true
-      - DRONE_GIT_ALWAYS_AUTH=false
+      - DRONE_GIT_ALWAYS_AUTH=true
       - DRONE_GITEA_SERVER=http://server.gitea.docker:3000/
       - DRONE_GITEA_CLIENT_ID=c7a66454-7333-4226-b95d-408fdfb1ed72
-      - DRONE_GITEA_CLIENT_SECRET=I8S2sUa0zYP_kdZLmRCZMG2ZtlZeMaeOI2YH01kU1C4=
+      - DRONE_GITEA_CLIENT_SECRET=hB04e7qInamIxf2Xk4fhjn19ckMG7uXYt5L1QaDT4zmI
       - DRONE_SERVER_HOST=drone.gitea.docker:80
       - DRONE_SERVER_PROTO=http
       - DRONE_RPC_SECRET=123
