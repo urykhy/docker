@@ -1,0 +1,5 @@
+webserver: airflow webserver
+scheduler: airflow scheduler
+triggerer: airflow triggerer
+worker: airflow celery worker
+flower: airflow celery flower

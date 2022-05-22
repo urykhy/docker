@@ -1,0 +1,67 @@
+version: '3'
+services:
+
+  postgres:
+    image: postgres:13-alpine
+    container_name: airflow-postgres
+    command: "postgres -c fsync=off -c full_page_writes=off -c synchronous_commit=OFF"
+    networks:
+      - airflow
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - "airflow-postgres:/var/lib/postgresql/data"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 1s
+      retries: 10
+
+  redis:
+    image: redis:3-alpine
+    container_name: airflow-redis
+    networks:
+      - airflow
+    volumes:
+      - "airflow-redis:/data"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      retries: 10
+
+  airflow:
+    image: urykhy/airflow
+    build: .
+    container_name: airflow-server
+    hostname: airflow
+    command: /run.sh
+    networks:
+      - airflow
+    volumes:
+      - "airflow-server:/airflow"
+    environment:
+      AIRFLOW_HOME: /airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
+      AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+      AIRFLOW__API__AUTH_BACKENDS: airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session
+      AIRFLOW__WEBSERVER__WORKERS: 2
+      AIRFLOW__CELERY__WORKER_CONCURRENCY: 2
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+volumes:
+  airflow-postgres:
+    external: true
+  airflow-redis:
+    external: true
+  airflow-server:
+    external: true
+networks:
+  airflow:
+    external: true

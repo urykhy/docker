@@ -1,0 +1,10 @@
+api:    curl --user admin:admin http://airflow.docker:8080/api/v1/pools
+ui:     http://airflow.docker:8080
+flower: http://airflow.docker:5555
+
+view info:
+    docker compose exec airflow gosu airflow bash
+    airflow info
+
+ps:
+    docker compose exec airflow ps --forest -eo pid,command:62,maj_flt,min_flt,rss
