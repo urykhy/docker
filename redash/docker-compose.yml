@@ -10,7 +10,7 @@ x-redash-environment: &redash-environment
 services:
   server:
     image: redash/redash:latest
-    container_name: redash_server
+    container_name: redash-server
     command: server
     networks:
       - redash
@@ -21,7 +21,7 @@ services:
       <<: *redash-environment
   worker:
     image: redash/redash:latest
-    container_name: redash_worker
+    container_name: redash-worker
     command: scheduler
     networks:
       - redash
@@ -33,14 +33,14 @@ services:
       WORKERS_COUNT: 2
   redis:
     image: redis:3-alpine
-    container_name: redash_redis
+    container_name: redash-redis
     networks:
       - redash
     volumes:
       - "redash_redis:/data"
   postgres:
     image: postgres:9-alpine
-    container_name: redash_postgres
+    container_name: redash-postgres
     command: "postgres -c fsync=off -c full_page_writes=off -c synchronous_commit=OFF"
     networks:
       - redash

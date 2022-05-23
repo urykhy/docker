@@ -3,7 +3,7 @@ version: "2"
 services:
   db:
     image: mysql:5.7
-    container_name: gitea_db
+    container_name: gitea-mysql
     environment:
       - MYSQL_ROOT_PASSWORD=gitea
       - MYSQL_USER=gitea
@@ -16,7 +16,7 @@ services:
 
   server:
     image: gitea/gitea:latest
-    container_name: gitea_server
+    container_name: gitea-server
     environment:
       - USER_UID=1000
       - USER_GID=100
@@ -37,7 +37,7 @@ services:
 
   drone:
     image: drone/drone:latest
-    container_name: gitea_drone
+    container_name: gitea-drone
     networks:
       - gitea
     volumes:
@@ -62,7 +62,7 @@ services:
 
   agent:
     image: drone/agent:latest
-    container_name: gitea_agent
+    container_name: gitea-agent
     command: agent
     networks:
       - gitea
