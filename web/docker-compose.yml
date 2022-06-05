@@ -50,8 +50,13 @@ services:
     - ./nginx/nginx.js:/etc/nginx/nginx.js
     - /home/ury:/home/ury
     - /etc/ssl/elf:/etc/ssl/elf
+    - nginx-cache:/cache
     depends_on:
     - jekyll
     - uwsgi-php
     - uwsgi-torrent
     - uwsgi-flibusta
+
+volumes:
+  nginx-cache:
+    external: true
