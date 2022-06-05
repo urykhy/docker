@@ -32,7 +32,12 @@ services:
 
   airflow:
     image: urykhy/airflow
-    build: .
+    build:
+      context: .
+      args:
+        APT_PROXY: http://elf.dark:8081
+        PIP_INDEX_URL: http://elf.dark:8080/simple
+        PIP_TRUSTED_HOST: elf.dark
     container_name: airflow-server
     hostname: airflow
     command: /run.sh
@@ -42,7 +47,9 @@ services:
       - "airflow-server:/airflow"
     environment:
       AIRFLOW_HOME: /airflow
+      AIRFLOW__WEBSERVER__BASE_URL: http://airflow.docker:8080
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
