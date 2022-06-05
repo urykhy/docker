@@ -15,9 +15,9 @@ services:
       - "9600"
     healthcheck:
       test: jps | grep -q KMSWebServer
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
 
   namenode:
     image: urykhy/hadoop
@@ -33,9 +33,9 @@ services:
       CLUSTER_NAME: uh-cluster
     healthcheck:
       test: curl 127.0.0.1:8020
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
     depends_on:
       kms:
         condition: service_healthy
@@ -58,9 +58,9 @@ services:
       - hadoop_datanode1:/hadoop/dfs/data
     healthcheck:
       test: test `jps | grep 'DataNode\|NodeManager\|JobHistoryServer' | wc -l` = '3'
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
     expose:
       - "8042"
       - "9864"
@@ -83,9 +83,9 @@ services:
       - hadoop_datanode2:/hadoop/dfs/data
     healthcheck:
       test: test `jps | grep 'DataNode\|NodeManager\|JobHistoryServer' | wc -l` = '3'
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
     expose:
       - "8042"
       - "9864"
@@ -110,9 +110,9 @@ services:
       - "8088"
     healthcheck:
       test: jps | grep -q ResourceManager
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
 
   historyserver:
     image: urykhy/hadoop
@@ -133,9 +133,9 @@ services:
       - "8188"
     healthcheck:
       test: jps | grep -q ApplicationHistoryServer
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
 
   minio:
     image: urykhy/hadoop
@@ -175,9 +175,9 @@ services:
     profiles: ["spark"]
     healthcheck:
       test: jps | grep -q HistoryServer
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
 
 networks:
   hadoop:

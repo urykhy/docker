@@ -21,9 +21,9 @@ services:
       - etcd
     healthcheck:
       test: kubectl get --raw='/readyz?'
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
 
   dns:
     image: coredns/coredns:latest
@@ -49,9 +49,9 @@ services:
       - dns
     healthcheck:
       test: kubectl --kubeconfig=/kubeconfig get node kube-node1
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
     volumes:
       - kube-node1:/var/lib/docker
     environment:
@@ -70,9 +70,9 @@ services:
         condition: service_healthy
     healthcheck:
       test: kubectl --kubeconfig=/kubeconfig get node kube-node2
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
     volumes:
       - kube-node2:/var/lib/docker
     environment:

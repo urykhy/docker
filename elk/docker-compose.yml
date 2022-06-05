@@ -30,9 +30,9 @@ services:
     healthcheck:
       test: >
         test `curl -s localhost:9200/_cluster/health?pretty | grep status | cut -d\" -f4` = "green"
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
 
   logstash:
     hostname: logstash
@@ -50,9 +50,9 @@ services:
     healthcheck:
       test: >
         test `curl -s localhost:9600/?pretty | grep status | cut -d\" -f4` = "green"
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
     environment:
       LS_JAVA_OPTS: "-Xms64m -Xmx1g"
 
@@ -69,9 +69,9 @@ services:
     healthcheck:
       test: >
         curl -s localhost:5601/api/status
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
     environment:
       SERVER_NAME: "kibana"
       SERVER_HOST: "0.0.0.0"

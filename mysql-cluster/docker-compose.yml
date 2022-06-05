@@ -26,9 +26,9 @@ services:
     healthcheck:
       test: >
         echo '2 report memoryusage' | ndb_mgm | grep 'Data usage'
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
 
   data2:
     image: urykhy/mysql-data
@@ -45,9 +45,9 @@ services:
     healthcheck:
       test: >
         echo '3 report memoryusage' | ndb_mgm | grep 'Data usage'
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
 
   sql1:
     image: urykhy/mysql-sql
@@ -66,9 +66,9 @@ services:
     privileged: true
     healthcheck:
       test: mysqladmin ping
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
 
   sql2:
     image: urykhy/mysql-sql
@@ -87,9 +87,9 @@ services:
     privileged: true
     healthcheck:
       test: mysqladmin ping
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 1s
+      timeout: 1s
+      retries: 30
 
 volumes:
   mysql:
