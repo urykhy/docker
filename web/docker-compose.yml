@@ -56,6 +56,7 @@ services:
     - uwsgi-php
     - uwsgi-torrent
     - uwsgi-flibusta
+    restart: unless-stopped
 
 volumes:
   nginx-cache:
