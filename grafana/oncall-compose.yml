@@ -1,0 +1,84 @@
+services:
+  oncall:
+    image: grafana/oncall
+    container_name: oncall-server
+    command: uwsgi --ini uwsgi.ini
+    networks:
+      - grafana
+    env_file: oncall-env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_started
+      redis:
+        condition: service_started
+
+  celery:
+    image: grafana/oncall
+    container_name: oncall-celery
+    command: ./celery_with_exporter.sh
+    networks:
+      - grafana
+    env_file: oncall-env
+    depends_on:
+      - oncall
+
+  redis:
+    image: redis
+    container_name: oncall-redis
+    networks:
+      - grafana
+    volumes:
+      - "grafana-oncall-redis:/data"
+
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    container_name: oncall-rabbitmq
+    networks:
+      - grafana
+    env_file: oncall-env
+    volumes:
+      - grafana-oncall-rabbitmq:/var/lib/rabbitmq
+
+  mysql:
+    image: mysql:5.7
+    container_name: oncall-mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - grafana
+    env_file: oncall-env
+    volumes:
+      - grafana-oncall-mysql:/var/lib/mysql
+    healthcheck:
+      test: mysql -u$$MYSQL_USER -p$$MYSQL_PASSWORD -h127.0.0.1 -e 'select 1'
+      timeout: 1s
+      interval: 1s
+      retries: 10
+
+  migrate:
+    image: grafana/oncall
+    container_name: oncall-migrate
+    command: python manage.py migrate --noinput
+    networks:
+      - grafana
+    env_file: oncall-env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+
+volumes:
+networks:
+  grafana:
+    external: true
+volumes:
+  grafana-oncall-redis:
+    external: true
+  grafana-oncall-rabbitmq:
+    external: true
+  grafana-oncall-mysql:
+    external: true
