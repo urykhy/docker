@@ -1,0 +1,77 @@
+version: '3'
+services:
+  zookeeper:
+    image: zookeeper:latest
+    container_name: kafka-zk
+    hostname: zookeeper
+    networks:
+      kafka:
+    volumes:
+      - kafka-zk1:/data
+      - kafka-zk2:/datalog
+      - kafka-zk3:/logs
+    environment:
+      JVMFLAGS: "-Xms64m -Xmx256m"
+      ZOO_AUTOPURGE_PURGEINTERVAL: 24
+      ZOO_CFG_EXTRA: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7070"
+
+  broker-1:
+    image: urykhy/kafka
+    build:
+      context: .
+      args:
+        APT_PROXY: http://elf.dark:8081
+    container_name: kafka-broker1
+    hostname: kafka-broker1
+    networks:
+      kafka:
+    depends_on:
+      - zookeeper
+    volumes:
+      - kafka-data:/data
+      - ./properties/broker1:/broker.properties
+      - ./exporter.yml:/exporter.yml
+    environment:
+      KAFKA_OPTS: -javaagent:/opt/jmx_prometheus_javaagent.jar=7071:/exporter.yml
+      KAFKA_HEAP_OPTS: "-Xms64m -Xmx256m"
+      KAFKA_JVM_PERFORMANCE_OPTS: -XX:+UseShenandoahGC
+    expose:
+      - "7071"
+      - "9092"
+
+  broker-2:
+    extends:
+      service: broker-1
+    container_name: kafka-broker2
+    hostname: kafka-broker2
+    volumes:
+      - kafka-data:/data
+      - ./properties/broker2:/broker.properties
+      - ./exporter.yml:/exporter.yml
+    depends_on:
+      - broker-1
+
+  broker-3:
+    extends:
+      service: broker-1
+    container_name: kafka-broker3
+    hostname: kafka-broker3
+    volumes:
+      - kafka-data:/data
+      - ./properties/broker3:/broker.properties
+      - ./exporter.yml:/exporter.yml
+    depends_on:
+      - broker-2
+
+volumes:
+  kafka-zk1:
+    external: true
+  kafka-zk2:
+    external: true
+  kafka-zk3:
+    external: true
+  kafka-data:
+    external: true
+networks:
+  kafka:
+    external: true

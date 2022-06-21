@@ -1,0 +1,6 @@
+auto.create.topics.enable=false
+broker.id=2
+listeners=PLAINTEXT://:9092
+log.dir=/data/2
+log.retention.hours=24
+zookeeper.connect=zookeeper.kafka.docker:2181
