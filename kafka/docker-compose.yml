@@ -22,7 +22,8 @@ services:
       args:
         APT_PROXY: http://elf.dark:8081
     container_name: kafka-broker1
-    hostname: kafka-broker1
+    hostname: broker-1
+    domainname: kafka
     networks:
       kafka:
     depends_on:
@@ -43,7 +44,7 @@ services:
     extends:
       service: broker-1
     container_name: kafka-broker2
-    hostname: kafka-broker2
+    hostname: broker-2
     volumes:
       - kafka-data:/data
       - ./properties/broker2:/broker.properties
@@ -55,7 +56,7 @@ services:
     extends:
       service: broker-1
     container_name: kafka-broker3
-    hostname: kafka-broker3
+    hostname: broker-3
     volumes:
       - kafka-data:/data
       - ./properties/broker3:/broker.properties
