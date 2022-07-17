@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec docker run --rm -it -v `pwd`:/data --workdir=/data --hostname "hadoop-cli" urykhy/hadoop hadoop "$@"
