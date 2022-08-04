@@ -22,6 +22,7 @@ RUN    apt-get update               \
 
 RUN pip install "apache-airflow[celery,postgres,hdfs,ssh,sftp,amazon]==2.3.0" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.3.0/constraints-3.9.txt"
 RUN pip install "airflow-clickhouse-plugin"
+RUN pip install "apache-airflow-providers-jenkins"
 
 RUN useradd -ms /bin/bash airflow
 RUN mkdir /airflow

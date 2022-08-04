@@ -3,6 +3,12 @@ docker volume create jenkins
 open http://jenkins:8080/blue
 admin password in /var/jenkins_home/secrets/initialAdminPassword
 
+configure Jenkins URL: http://jenkins:8080/configure
+    http://jenkins:8080/
+
+create API token: http://jenkins:8080/user/admin/configure
+    airflow:112b48b38c24d2e0fc7e4847540937fc28
+
 memory/metrics:
     install https://github.com/jenkinsci/metrics-plugin
     open http://jenkins:8080/configure

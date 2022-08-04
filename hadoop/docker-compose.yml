@@ -98,7 +98,7 @@ services:
     container_name: resourcemanager
     hostname: resourcemanager
     domainname: hadoop.docker
-    command: yarn resourcemanager
+    command: forego start -r -f /resourcemanager.proc
     depends_on:
       datanode1:
         condition: service_healthy

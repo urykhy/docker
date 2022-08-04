@@ -1,12 +1,15 @@
 version: '2'
 services:
   jenkins:
-    image: jenkinsci/blueocean
+    image: urykhy/jenkins
+    build: .
     hostname: jenkins
+    domainname: docker
     container_name: jenkins
     network_mode: "bridge"
     volumes:
       - "jenkins:/var/jenkins_home"
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       JAVA_OPTS: "-XX:+UseShenandoahGC -Xms64m -Xmx256m"
 

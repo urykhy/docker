@@ -63,8 +63,9 @@ RUN openssl pkcs12                                                              
     #    -keystore /etc/ssl/certs/java/cacerts -deststorepass changeit -trustcacerts  \
     #    -srckeystore /tmp/kms.hadoop.docker.p12 -srcstorepass 123456
 
-ADD namenode.sh      /
-ADD datanode.proc    /
+ADD namenode.sh          /
+ADD datanode.proc        /
+ADD resourcemanager.proc /
 RUN rm /etc/hadoop/kms-log4j.properties
 
 # Kerberos support
