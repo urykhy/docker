@@ -20,14 +20,15 @@ services:
     environment:
       - USER_UID=1000
       - USER_GID=100
-      - DB_TYPE=mysql
-      - DB_HOST=db.gitea:3306
-      - DB_USER=gitea
-      - DB_PASSWD=gitea
-      - SSH_DOMAIN=server.gitea.docker
-      - RUN_MODE=dev
-      - ROOT_URL="http://server.gitea.docker:3000/"
+      - GITEA__DATABASE__DB_TYPE=mysql
+      - GITEA__DATABASE__HOST=db.gitea:3306
+      - GITEA__DATABASE__USER=gitea
+      - GITEA__DATABASE__PASSWD=gitea
+      - GITEA__SERVER__HTTP_PORT=3000
+      - GITEA__SERVER__SSH_DOMAIN=server.gitea.docker
+      - GITEA__SERVER__ROOT_URL="http://server.gitea.docker:3000/"
       - GITEA__OAUTH2__JWT_SIGNING_ALGORITHM="HS256"
+      - GITEA__REPOSITORY__DEFAULT_BRANCH=master
     networks:
       - gitea
     volumes:
