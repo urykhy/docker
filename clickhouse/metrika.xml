@@ -1,6 +1,5 @@
 <yandex>
     <clickhouse_storage_configuration>
-<!--
         <disks>
             <hdfs1>
                 <type>hdfs</type>
@@ -35,7 +34,6 @@
                 </volumes>
             </hdfs_too>
         </policies>
--->
     </clickhouse_storage_configuration>
 
     <clickhouse_remote_servers> <!-- name of substitution-->

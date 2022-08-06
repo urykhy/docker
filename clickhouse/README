@@ -34,3 +34,6 @@ docker compose exec shard1-a bash
     clickhouse-backup create
     clickhouse-backup list
     clickhouse-backup upload XXX
+
+build without hdfs:
+    docker build -t urykhy/clickhouse . --build-arg WITH_HDFS=false
