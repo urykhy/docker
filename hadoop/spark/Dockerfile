@@ -16,4 +16,4 @@ RUN echo "export SPARK_DIST_CLASSPATH=$(hadoop classpath)" >> $SPARK_HOME/conf/s
 
 WORKDIR  $SPARK_HOME
 
-RUN if [ "$WITH_KERBEROS" != "true" ]; then echo "strip kerberos parts from configuration files ..." && sed -i '/KERBEROS BEGIN/,/KERBEROS END/d' $SPARK_HOME/conf/spark-defaults.conf; fi
+RUN if [ "$WITH_KERBEROS" != "true" ]; then sed -i '/KERBEROS BEGIN/,/KERBEROS END/d' $SPARK_HOME/conf/spark-defaults.conf; fi

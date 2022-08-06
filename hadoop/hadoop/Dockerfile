@@ -69,18 +69,17 @@ ADD resourcemanager.proc /
 RUN rm /etc/hadoop/kms-log4j.properties
 
 # Kerberos support
-ARG WITH_KERBEROS=true
-ENV WITH_KERBEROS=$WITH_KERBEROS
 ADD krb5.conf        /etc/
 ADD minio.keytab     /etc
 ADD kerberos.keytab  /etc/hadoop/kerberos.keytab
-ADD finalize.sh      /tmp/
-RUN /tmp/finalize.sh
-
-ENV HADOOP_OPTS="-Djava.net.preferIPv4Stack=true -XX:+UseShenandoahGC -Xms64m -Xmx256m"
 
 ADD entrypoint.sh    /
 ENTRYPOINT ["/entrypoint.sh"]
+ENV HADOOP_OPTS="-Djava.net.preferIPv4Stack=true -XX:+UseShenandoahGC -Xms64m -Xmx256m"
+
+ARG WITH_KERBEROS=true
+ENV WITH_KERBEROS=$WITH_KERBEROS
+RUN if [ "$WITH_KERBEROS" != "true" ]; then sed -i '/KERBEROS BEGIN/,/KERBEROS END/d' /etc/hadoop/*.xml; fi
 
 COPY --from=minio    /opt/bin/minio /usr/bin/
 COPY --from=forego   /go/bin/forego /usr/bin/
