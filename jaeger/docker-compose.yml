@@ -4,7 +4,7 @@ services:
     jaeger-collector:
       container_name: jaeger-collector
       image: jaegertracing/jaeger-collector
-      command: ["--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=cassandra.jaeger", "--collector.zipkin.http-port=9411"]
+      command: ["--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=cassandra.jaeger"]
       ports:
         - "14269"
         - "14268"
@@ -36,9 +36,6 @@ services:
       image: jaegertracing/jaeger-agent
       command: ["--collector.host-port=jaeger-collector.jaeger:14267"]
       ports:
-        - "5775"
-        - "6831"
-        - "6832"
         - "5778"
       depends_on:
         - jaeger-collector
@@ -51,7 +48,7 @@ services:
       volumes:
         - "jaeger-cassandra:/var/lib/cassandra"
       environment:
-        JVM_OPTS: "-Xms1024M -Xmx2048M"
+        JVM_OPTS: "-Xms64m -Xmx1024m"
       healthcheck:
         test: /usr/bin/cqlsh -k jaeger_v1_dc1 -e "DESCRIBE tables"
         interval: 1s
