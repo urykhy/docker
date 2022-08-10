@@ -15,6 +15,7 @@ networks:
 services:
   redis:
     image: redis
+    container_name: sentry-redis
     volumes:
     - sentry-redis:/data
     networks:
@@ -22,6 +23,7 @@ services:
 
   postgres:
     image: postgres
+    container_name: sentry-postgres
     environment:
       POSTGRES_USER: sentry
       POSTGRES_PASSWORD: sentry
@@ -36,6 +38,8 @@ services:
     - redis
     - postgres
     image: sentry
+    container_name: sentry-web
+    command: "sentry run web -w 2"
     networks:
     - sentry
     volumes:
@@ -47,6 +51,7 @@ services:
     - redis
     - postgres
     image: sentry
+    container_name: sentry-cron
     command: "sentry run cron"
     networks:
     - sentry
@@ -59,7 +64,8 @@ services:
     - redis
     - postgres
     image: sentry
-    command: "sentry run worker"
+    container_name: sentry-worker
+    command: "sentry run worker -c 2"
     networks:
     - sentry
     volumes:
