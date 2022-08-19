@@ -8,9 +8,7 @@ docker volume create --name=clickhouse-1b
 docker volume create --name=clickhouse-2a
 docker volume create --name=clickhouse-2b
 docker volume create --name=clickhouse-master
-docker volume create --name=clickhouse-zk1
-docker volume create --name=clickhouse-zk2
-docker volume create --name=clickhouse-zk3
+docker volume create --name=clickhouse-zk
 docker volume create --name=clickhouse-vector
 
 # check it

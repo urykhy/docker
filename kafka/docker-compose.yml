@@ -1,19 +1,13 @@
 version: '3'
 services:
   zookeeper:
-    image: zookeeper:latest
+    image: urykhy/zookeeper
     container_name: kafka-zk
     hostname: zookeeper
     networks:
       kafka:
     volumes:
-      - kafka-zk1:/data
-      - kafka-zk2:/datalog
-      - kafka-zk3:/logs
-    environment:
-      JVMFLAGS: "-Xms64m -Xmx256m"
-      ZOO_AUTOPURGE_PURGEINTERVAL: 24
-      ZOO_CFG_EXTRA: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7070"
+      - kafka-zk:/data
 
   broker-1:
     image: urykhy/kafka
@@ -65,11 +59,7 @@ services:
       - broker-2
 
 volumes:
-  kafka-zk1:
-    external: true
-  kafka-zk2:
-    external: true
-  kafka-zk3:
+  kafka-zk:
     external: true
   kafka-data:
     external: true

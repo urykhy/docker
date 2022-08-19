@@ -1,7 +1,5 @@
 prepare:
-    docker volume create kafka-zk1
-    docker volume create kafka-zk2
-    docker volume create kafka-zk3
+    docker volume create kafka-zk
     docker volume create kafka-data
     docker network create kafka --subnet 172.16.15.0/24
 

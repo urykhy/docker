@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   zookeeper:
-    image: zookeeper:latest
+    image: urykhy/zookeeper
     container_name: clickhouse-zk
     hostname: zookeeper
     networks:
@@ -10,13 +10,7 @@ services:
         aliases:
           - zk
     volumes:
-      - clickhouse-zk1:/data
-      - clickhouse-zk2:/datalog
-      - clickhouse-zk3:/logs
-    environment:
-      JVMFLAGS: "-Xms64m -Xmx256m"
-      ZOO_AUTOPURGE_PURGEINTERVAL: 24
-      ZOO_CFG_EXTRA: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7070"
+      - clickhouse-zk:/data
 
   master:
     build: .
@@ -129,11 +123,7 @@ volumes:
     external: true
   clickhouse-2b:
     external: true
-  clickhouse-zk1:
-    external: true
-  clickhouse-zk2:
-    external: true
-  clickhouse-zk3:
+  clickhouse-zk:
     external: true
   clickhouse-vector:
     external: true
