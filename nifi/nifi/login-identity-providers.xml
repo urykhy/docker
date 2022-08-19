@@ -1,0 +1,8 @@
+<loginIdentityProviders>
+    <provider>
+        <identifier>single-user-provider</identifier>
+        <class>org.apache.nifi.authentication.single.user.SingleUserLoginIdentityProvider</class>
+        <property name="Username">19e6be6a-917f-44d2-8ce6-891dbfbbdaf4</property>
+        <property name="Password">bn27S1r9zxjn+1ekXp1KRO2xytsdXe6t</property>
+    </provider>
+</loginIdentityProviders>
