@@ -22,7 +22,7 @@ services:
     - sentry
 
   postgres:
-    image: postgres
+    image: postgres:12
     container_name: sentry-postgres
     environment:
       POSTGRES_USER: sentry
@@ -37,7 +37,7 @@ services:
     depends_on:
     - redis
     - postgres
-    image: sentry
+    image: sentry:9.1.2
     container_name: sentry-web
     command: "sentry run web -w 2"
     networks:
@@ -50,7 +50,7 @@ services:
     depends_on:
     - redis
     - postgres
-    image: sentry
+    image: sentry:9.1.2
     container_name: sentry-cron
     command: "sentry run cron"
     networks:
@@ -63,7 +63,7 @@ services:
     depends_on:
     - redis
     - postgres
-    image: sentry
+    image: sentry:9.1.2
     container_name: sentry-worker
     command: "sentry run worker -c 2"
     networks:
