@@ -1,6 +1,6 @@
 FROM debian:buster
 
-ENV ALLURE_VER 2.13.3
+ENV ALLURE_VER 2.19.0
 ENV ALLURE_URL https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/$ALLURE_VER/allure-commandline-$ALLURE_VER.tgz
 
 RUN    sed -ie 's|deb.debian.org|mirror.yandex.ru|' /etc/apt/sources.list \
