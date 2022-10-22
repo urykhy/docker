@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<yandex>
+    <logger>
+        <level>debug</level>
+        <console>1</console> <!-- Default behavior is autodetection (log to console if not daemon mode and is tty) -->
+    </logger>
+    <http_port>8123</http_port>
+    <tcp_port>9000</tcp_port>
+    <listen_host>0.0.0.0</listen_host>
+    <users_config>users.xml</users_config>
+</yandex>

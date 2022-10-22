@@ -1,6 +1,7 @@
 docker network create jaeger
-docker volume create jaeger-cassandra
+docker volume create jaeger-clickhouse
 docker-compose create
 docker-compose start
 
 open in browser: http://query.jaeger.docker:16686/search
+push UDP(thrift) traces to agent.jaeger:6831

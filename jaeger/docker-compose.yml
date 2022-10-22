@@ -1,82 +1,53 @@
 version: '2.1'
 
 services:
-    collector:
-      container_name: jaeger-collector
-      image: jaegertracing/jaeger-collector
-      command: ["--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=cassandra.jaeger"]
+    clickhouse:
+      container_name: jaeger-clickhouse
+      image: clickhouse/clickhouse-server:22.9
       networks:
-        jaeger:
-      ports:
-        - "14269"
-        - "14268"
-        - "14267"
-        - "9411"
-      depends_on:
-        cassandra-schema:
-          condition: service_started
-        cassandra:
-          condition: service_healthy
+        - jaeger
+      volumes:
+        - jaeger-clickhouse:/var/lib/clickhouse
+        - ./clickhouse.xml:/etc/clickhouse-server/config.xml
+      healthcheck:
+        test: clickhouse-local -q 'select 1'
+        interval: 1s
+        timeout: 1s
+        retries: 10
 
-    query:
-      container_name: jaeger-query
-      image: jaegertracing/jaeger-query
-      command: ["--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=cassandra.jaeger"]
+    collector:
+      build: .
+      image: urykhy/jaeger
+      container_name: jaeger-collector
+      command: jaeger-collector
       networks:
         jaeger:
-      ports:
-        - "16686"
-        - "16687"
       depends_on:
-        cassandra-schema:
-          condition: service_started
-        cassandra:
+        clickhouse:
           condition: service_healthy
 
     agent:
       container_name: jaeger-agent
-      image: jaegertracing/jaeger-agent
-      command: ["--collector.host-port=jaeger-collector.jaeger:14267"]
-      networks:
-        jaeger:
-      ports:
-        - "5778"
-      depends_on:
-        - jaeger-collector
-
-    cassandra:
-      container_name: jaeger-cassandra
-      image: cassandra:3.9
-      networks:
-        jaeger:
-      volumes:
-        - "jaeger-cassandra:/var/lib/cassandra"
-      environment:
-        JVM_OPTS: "-Xms64m -Xmx1024m"
-      healthcheck:
-        test: /usr/bin/cqlsh -k jaeger_v1_dc1 -e "DESCRIBE tables"
-        interval: 1s
-        timeout: 1s
-        retries: 30
-
-    cassandra-schema:
-      container_name: jaeger-schema
-      image: jaegertracing/jaeger-cassandra-schema
+      image: urykhy/jaeger
+      command: jaeger-agent --reporter.grpc.host-port=jaeger-collector.jaeger:14250
       networks:
         jaeger:
       depends_on:
-        - cassandra
-      environment:
-        CQLSH_HOST: "cassandra.jaeger"
-      volumes:
-        - "jaeger-schema:/var/lib/cassandra"
+        - collector
+
+    query:
+      container_name: jaeger-query
+      image: urykhy/jaeger
+      command: jaeger-query
+      networks:
+        jaeger:
+      depends_on:
+        - agent
 
 networks:
   jaeger:
     external: true
 
 volumes:
-  jaeger-cassandra:
-    external: true
-  jaeger-schema:
+  jaeger-clickhouse:
     external: true

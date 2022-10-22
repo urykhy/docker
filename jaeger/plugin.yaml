@@ -1,0 +1,2 @@
+address: tcp://clickhouse:9000
+batch_flush_interval: 1
