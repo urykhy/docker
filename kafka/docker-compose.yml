@@ -24,12 +24,11 @@ services:
       - zookeeper
     volumes:
       - kafka-data:/data
-      - ./properties/broker1:/broker.properties
-      - ./exporter.yml:/exporter.yml
     environment:
       KAFKA_OPTS: -javaagent:/opt/jmx_prometheus_javaagent.jar=7071:/exporter.yml
       KAFKA_HEAP_OPTS: "-Xms64m -Xmx256m"
       KAFKA_JVM_PERFORMANCE_OPTS: -XX:+UseShenandoahGC
+      KAFKA_BROKER_ID: 1
     expose:
       - "7071"
       - "9092"
@@ -39,24 +38,20 @@ services:
       service: broker-1
     container_name: kafka-broker2
     hostname: broker-2
-    volumes:
-      - kafka-data:/data
-      - ./properties/broker2:/broker.properties
-      - ./exporter.yml:/exporter.yml
     depends_on:
       - broker-1
+    environment:
+      KAFKA_BROKER_ID: 2
 
   broker-3:
     extends:
       service: broker-1
     container_name: kafka-broker3
     hostname: broker-3
-    volumes:
-      - kafka-data:/data
-      - ./properties/broker3:/broker.properties
-      - ./exporter.yml:/exporter.yml
     depends_on:
       - broker-2
+    environment:
+      KAFKA_BROKER_ID: 3
 
 volumes:
   kafka-zk:

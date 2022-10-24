@@ -14,5 +14,10 @@ RUN    wget -O - https://dlcdn.apache.org/kafka/$KAFKA_VERSION/kafka_$SCALA_VERS
     && ln -s /opt/* /opt/kafka
 ADD https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.17.0/jmx_prometheus_javaagent-0.17.0.jar /opt/jmx_prometheus_javaagent.jar
 
+ADD broker.properties /broker.properties
+ADD exporter.yml /exporter.yml
+
 WORKDIR /opt/kafka/bin
-CMD ["bash", "-c", "exec ./kafka-server-start.sh /broker.properties"]
+
+ADD entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
