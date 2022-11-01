@@ -1,0 +1,93 @@
+pipeline {
+    agent any
+    options {
+        skipDefaultCheckout()
+    }
+    stages {
+        stage('Checkout') {
+            steps { dir('source') {
+                checkout scm
+                sh 'env'
+            }}
+        }
+        stage('Download') {
+            steps { dir('input') {
+                sh '''
+                if [ ! -f 4300-0.txt ]; then wget https://www.gutenberg.org/files/4300/4300-0.txt; fi
+                if [ ! -f pg20417.txt ]; then wget https://www.gutenberg.org/cache/epub/20417/pg20417.txt; fi
+                '''
+            }}
+        }
+        stage('Cleanup') {
+            agent { docker {
+                image 'urykhy/hadoop'
+                args '-u root'
+                reuseNode true
+            }}
+            steps {
+                sh '''
+                if $(hadoop fs -test -d /root/task-input) ; then
+                    hadoop fs -rm -r /root/task-input
+                fi
+                if $(hadoop fs -test -d /root/task-output) ; then
+                    hadoop fs -rm -r /root/task-output
+                fi
+                '''
+            }
+        }
+        stage('Prepare') {
+            agent { docker {
+                image 'urykhy/hadoop'
+                args '-u root'
+                reuseNode true
+            }}
+            steps { dir('input') {
+                sh '''
+                hadoop fs -mkdir -p /root/task-input
+                hadoop fs -put *.txt /root/task-input/
+                hadoop fs -ls  /root/task-input
+                '''
+            }}
+        }
+        stage('Map-Reduce') {
+            agent { docker {
+                image 'urykhy/hadoop'
+                args '-u root'
+                reuseNode true
+            }}
+            steps { dir('source') {
+                sh '''
+                hadoop jar /opt/hadoop-*/share/hadoop/tools/lib/hadoop-streaming-*.jar \
+                    -Dmapreduce.map.output.compress=true \
+                    -Dmapreduce.map.output.compress.codec=org.apache.hadoop.io.compress.Lz4Codec \
+                    -Dmapreduce.output.fileoutputformat.compress=true \
+                    -Dmapreduce.output.fileoutputformat.compress.codec=org.apache.hadoop.io.compress.ZStandardCodec \
+                    -Dmapreduce.output.fileoutputformat.compress.type=Block \
+                    -file     mapper.py    \
+                    -mapper   mapper.py    \
+                    -file     reducer.py   \
+                    -combiner reducer.py   \
+                    -reducer  reducer.py   \
+                    -input    /root/task-input/* \
+                    -output   /root/task-output
+                '''
+            }}
+        }
+        stage('Collect') {
+            agent { docker {
+                image 'urykhy/hadoop'
+                args '-u root'
+                reuseNode true
+            }}
+            steps {
+                sh '''
+                if [ -d result ]; then rm -rf result; fi
+                mkdir result
+                hadoop fs -get /root/task-output/* ./result/
+                chown -R --reference source/Jenkinsfile ./result
+                '''
+                archiveArtifacts artifacts: 'result/*'
+            }
+        }
+    }
+}
