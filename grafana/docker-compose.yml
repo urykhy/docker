@@ -41,9 +41,5 @@ volumes:
     external: true
   grafana_data:
     external: true
-  grafana_log:
-    external: true
-  grafana_etc:
-    external: true
   grafana_tempo:
     external: true
