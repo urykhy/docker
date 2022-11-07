@@ -24,6 +24,7 @@ services:
   postgres:
     image: postgres:12
     container_name: sentry-postgres
+    command: "postgres -c fsync=off -c full_page_writes=off -c synchronous_commit=OFF"
     environment:
       POSTGRES_USER: sentry
       POSTGRES_PASSWORD: sentry
