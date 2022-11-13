@@ -1,0 +1,20 @@
+version: '2.3'
+services:
+  jupyter:
+    build:
+      context: .
+      args:
+        APT_PROXY: http://elf.dark:8081
+        PIP_INDEX_URL: http://elf.dark:8080/simple
+        PIP_TRUSTED_HOST: elf.dark
+    image: urykhy/jupyter-spark
+    hostname: jupyter-spark
+    container_name: jupyter-spark
+    network_mode: "bridge"
+    command: jupyter notebook --port=8888 --ip=0.0.0.0 --allow-root --no-browser --NotebookApp.token='' .
+    volumes:
+      - "jupyter:/work"
+
+volumes:
+  jupyter:
+    external: true
