@@ -1,0 +1,71 @@
+version: "3"
+
+tasks:
+  tables:
+    desc: show size for all tables in database
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            SELECT database, table, count(distinct partition) partition_count, formatReadableSize(sum(bytes_on_disk)) as on_disk
+              FROM cluster({{ $.cluster }}, system, parts)
+             WHERE database='{{ $.database }}' AND active
+             GROUP BY database, table
+             ORDER BY sum(bytes_on_disk) DESC
+
+  partitions:
+    desc: show table partitions
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            SELECT table, partition, count() parts, sum(rows) rows,
+                   formatReadableSize(sum(bytes_on_disk)) on_disk,
+                   formatReadableSize(sum(data_uncompressed_bytes)) uncompressed
+              FROM cluster({{ $.cluster }}, system, parts)
+             WHERE database='{{ $.database }}' AND table LIKE '{{ $.table }}' AND active
+             GROUP BY table, partition
+             ORDER BY partition DESC
+             LIMIT {{ $.limit }}
+
+  shards:
+    desc: show table size on shards
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            SELECT getMacro('shard') AS shard_id, table, formatReadableSize(sum(bytes_on_disk)) as on_disk
+              FROM cluster({{ $.cluster }}, system, parts)
+             WHERE database='{{ $.database }}' AND table LIKE '{{ $.table }}' AND active
+             GROUP BY shard_id, table
+             ORDER BY shard_id, table
+
+  columns:
+    desc: show table column sizes
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            SELECT table, name,
+                   formatReadableSize(sum(data_compressed_bytes)) AS on_disk,
+                   formatReadableSize(sum(data_uncompressed_bytes)) AS uncompressed,
+                   formatReadableSize(sum(marks_bytes)) AS marks,
+                   round(sum(data_uncompressed_bytes) / sum(data_compressed_bytes), 1) AS ratio
+              FROM cluster({{ $.cluster }}, system, columns)
+             WHERE database='{{ $.database }}' AND table LIKE '{{ $.table }}'
+             GROUP BY table, name
+             ORDER BY table, name
+
+  pk:
+    desc: show table primary key size
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            SELECT table,
+                   formatReadableSize(sum(primary_key_bytes_in_memory)) AS used,
+                   formatReadableSize(sum(primary_key_bytes_in_memory_allocated)) AS allocated
+              FROM cluster({{ $.cluster }}, system, parts_columns)
+             WHERE database='{{ $.database }}' AND table LIKE '{{ $.table }}'
+             GROUP BY table
+             ORDER BY table DESC

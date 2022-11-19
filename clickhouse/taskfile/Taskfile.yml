@@ -1,0 +1,38 @@
+version: "3"
+
+includes:
+  merges: Merges.yml
+  size: Size.yml
+  vector: Vector.yml
+
+vars:
+  cluster: "events"
+  database: "default"
+  table: "%vector%"
+  column: "uuid"
+  format: "PrettyCompactMonoBlock"
+  limit: 20
+
+tasks:
+  query:
+    dir: ".."
+    internal: true
+    cmds:
+      - docker compose exec master clickhouse-client -mn -q "/* taskfile */ {{ $.query }} FORMAT {{ $.format }}"
+
+  desc:column:
+    # task show:column "column=query"
+    desc: show column description
+    cmds:
+      - task: query
+        vars:
+          query: |
+            SELECT distinct hostname(), table, name, type, default_expression
+              FROM cluster({{ $.cluster }}, system, columns)
+             WHERE database='{{ $.database }}' AND table LIKE '{{ $.table }}' AND name='{{ $.column }}'
+      - task: query
+        vars:
+          query: |
+            SELECT distinct hostname(), table, name, type, default_expression
+              FROM system.columns
+             WHERE database='{{ $.database }}' AND table LIKE '{{ $.table }}' AND name='{{ $.column }}'
