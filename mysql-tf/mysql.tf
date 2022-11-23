@@ -17,7 +17,7 @@ resource "docker_container" "mysql-master" {
   name     = "mysql-master"
   hostname = "mysql-master"
   image    = docker_image.mysql.latest
-  command  = ["--server-id=1", "--log-bin=mysql-bin", "--binlog-format=ROW", "--gtid-mode=ON", "--enforce-gtid-consistency", "--performance-schema-instrument=statement/%=ON", "--performance-schema-consumer-statements-digest=ON", "--innodb-monitor-enable=ALL", "--log_output=FILE", "--general_log_file=/var/lib/mysql/log", "--general_log=1"]
+  command  = ["--server-id=1", "--log-bin=mysql-bin", "--binlog-format=ROW", "--gtid-mode=ON", "--enforce-gtid-consistency", "--plugin-load-add=rpl_semi_sync_source=semisync_source.so", "--rpl_semi_sync_source_enabled=1", "--performance-schema-instrument=statement/%=ON", "--performance-schema-consumer-statements-digest=ON", "--innodb-monitor-enable=ALL", "--log_output=FILE", "--general_log_file=/var/lib/mysql/log", "--general_log=1"]
   env      = [
     "MYSQL_ROOT_PASSWORD=root"
   ]
@@ -35,7 +35,7 @@ resource "docker_container" "mysql-slave" {
   name      = "mysql-slave"
   hostname  = "mysql-slave"
   image     = docker_image.mysql.latest
-  command   = ["--server-id=2", "--log-bin=mysql-bin", "--binlog-format=ROW", "--gtid-mode=ON", "--enforce-gtid-consistency", "--log-slave-updates", "--read-only"]
+  command   = ["--server-id=2", "--log-bin=mysql-bin", "--binlog-format=ROW", "--gtid-mode=ON", "--enforce-gtid-consistency", "--plugin-load-add=rpl_semi_sync_replica=semisync_replica.so", "--rpl_semi_sync_replica_enabled=1", "--log_replica_updates", "--read-only"]
   env       = [
     "MYSQL_ROOT_PASSWORD=root"
   ]
