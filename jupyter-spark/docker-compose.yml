@@ -7,6 +7,7 @@ services:
         APT_PROXY: http://elf.dark:8081
         PIP_INDEX_URL: http://elf.dark:8080/simple
         PIP_TRUSTED_HOST: elf.dark
+        CURL_PROXY: http://elf.dark:8082
     image: urykhy/jupyter-spark
     hostname: jupyter-spark
     container_name: jupyter-spark

@@ -1,5 +1,6 @@
 FROM urykhy/hadoop-spark
 
+ARG CURL_PROXY
 ARG APT_PROXY
 ARG PIP_INDEX_URL
 ARG PIP_TRUSTED_HOST
@@ -20,9 +21,9 @@ RUN    pip3 install jupyter toree \
     && rm -rf /root/.cache
 
 # jars
-RUN curl -fSL https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.31/mysql-connector-j-8.0.31.jar -o $SPARK_HOME/jars/mysql-connector-j-8.0.31.jar
-RUN curl -fSL https://repo1.maven.org/maven2/com/github/housepower/clickhouse-spark-runtime-3.2_2.12/0.5.0/clickhouse-spark-runtime-3.2_2.12-0.5.0.jar -o $SPARK_HOME/jars/clickhouse-spark-runtime-3.2_2.12-0.5.0.jar
-RUN curl -fSL https://repo1.maven.org/maven2/com/clickhouse/clickhouse-jdbc/0.3.2-patch11/clickhouse-jdbc-0.3.2-patch11-all.jar -o $SPARK_HOME/jars/clickhouse-jdbc-0.3.2-patch11-all.jar
+RUN curl -x $CURL_PROXY -fSL http://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.31/mysql-connector-j-8.0.31.jar -o $SPARK_HOME/jars/mysql-connector-j-8.0.31.jar
+RUN curl -x $CURL_PROXY -fSL http://repo1.maven.org/maven2/com/github/housepower/clickhouse-spark-runtime-3.2_2.12/0.5.0/clickhouse-spark-runtime-3.2_2.12-0.5.0.jar -o $SPARK_HOME/jars/clickhouse-spark-runtime-3.2_2.12-0.5.0.jar
+RUN curl -x $CURL_PROXY -fSL http://repo1.maven.org/maven2/com/clickhouse/clickhouse-jdbc/0.3.2-patch11/clickhouse-jdbc-0.3.2-patch11-all.jar -o $SPARK_HOME/jars/clickhouse-jdbc-0.3.2-patch11-all.jar
 
 # last steps
 ADD spark-defaults.conf $SPARK_HOME/conf/spark-defaults.conf
