@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec docker run --rm -it -v `pwd`:/data --hostname "allure-`hostname`" --entrypoint allure --workdir=/data urykhy/allure-engine "$@"

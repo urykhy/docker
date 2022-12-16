@@ -1,23 +1,21 @@
 version: '2'
 services:
-  allure:
-    image: urykhy/allure
+  engine:
+    image: urykhy/allure-engine
     build: allure
-    hostname: cli
-    container_name: allure-cli
+    hostname:  allure-engine
+    container_name: allure-engine
     network_mode: "bridge"
     volumes:
       - "allure:/data"
   web:
-    image: urykhy/nginx-allure-fe
+    image: urykhy/allure-web
     build: nginx
-    hostname: web
+    hostname: allure-web
     container_name: allure-web
     network_mode: "bridge"
     volumes:
       - "allure:/data"
-    depends_on:
-      - allure
 
 volumes:
   allure:
