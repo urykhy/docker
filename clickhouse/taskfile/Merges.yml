@@ -11,6 +11,7 @@ tasks:
                    length(source_part_names) src_parts,
                    round(elapsed) as elapsed,
                    round(progress*100, 4) pct,
+                   round(bytes_read_uncompressed/rows_read) avg_row_size,
                    formatReadableSize(total_size_bytes_compressed) as on_disk,
                    formatReadableSize(memory_usage) AS memory_usage
               FROM cluster({{ $.cluster }}, system, merges)
@@ -27,6 +28,7 @@ tasks:
                    length(merged_from) src_parts,
                    rows,
                    duration_ms,
+                   round(bytes_uncompressed/rows) avg_row_size,
                    formatReadableSize(size_in_bytes) on_disk,
                    formatReadableSize(peak_memory_usage) memory_usage
               FROM cluster({{ $.cluster }}, system, part_log)
