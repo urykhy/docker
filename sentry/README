@@ -2,9 +2,26 @@ docker network create sentry     --subnet 172.16.10.0/24
 docker volume create sentry-files
 docker volume create sentry-db
 docker volume create sentry-redis
+docker volume create sentry-clickhouse
+
+X="--partitions 1 --replication-factor 1"
+kafkactl create topic event-replacements    $X
+kafkactl create topic events                $X
+kafkactl create topic ingest-attachments    $X
+kafkactl create topic ingest-events         $X
+kafkactl create topic ingest-sessions       $X
+kafkactl create topic ingest-transactions   $X
+kafkactl create topic outcomes              $X
+kafkactl create topic snuba-commit-log      $X
+kafkactl create topic transactions          $X
+kafkactl create topic events-subscription-results $X
+kafkactl create topic snuba-transactions-commit-log $X
+kafkactl create topic transactions-subscription-results $X
 
 docker-compose up
 docker-compose run web upgrade
+docker-compose run snuba snuba migrations migrate --force
+
 docker-compose exec web sentry createuser --email urykhy@gmail.com --password 123 --superuser --no-input
 
 get cli:

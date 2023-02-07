@@ -1,0 +1,13 @@
+relay:
+  upstream: "http://web.sentry.docker:9000/"
+  host: 0.0.0.0
+  port: 3000
+  mode: static
+logging:
+  level: debug
+processing:
+  enabled: true
+  kafka_config:
+    - {name: "bootstrap.servers", value: "broker-1.kafka.docker:9092"}
+    - {name: "message.max.bytes", value: 2097176}
+  redis: redis://redis:6379

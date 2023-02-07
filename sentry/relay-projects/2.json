@@ -1,0 +1,12 @@
+{
+  "slug": "test",
+  "publicKeys": [
+    {
+      "publicKey": "626d891753d6489ba426baa41d7c79fc",
+      "isEnabled": true
+    }
+  ],
+  "config": {
+    "allowedDomains": ["*"]
+  }
+}

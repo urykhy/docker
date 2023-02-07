@@ -7,12 +7,20 @@ volumes:
     external: true
   sentry-redis:
     external: true
+  sentry-clickhouse:
+    external: true
 
 networks:
   sentry:
     external: true
 
 services:
+  memcache:
+    image: memcached:1.6.18-alpine
+    container_name: sentry-memcache
+    networks:
+    - sentry
+
   redis:
     image: redis
     container_name: sentry-redis
@@ -34,41 +42,71 @@ services:
     networks:
     - sentry
 
+  clickhouse:
+    image: clickhouse/clickhouse-server:22.9
+    container_name: sentry-clickhouse
+    volumes:
+      - sentry-clickhouse:/var/lib/clickhouse
+      - ./clickhouse.xml:/etc/clickhouse-server/config.xml
+    networks:
+      - sentry
+    healthcheck:
+      test: clickhouse-local -q 'select 1'
+      interval: 1s
+      timeout: 1s
+      retries: 10
+
+  snuba:
+    image: urykhy/sentry-snuba
+    build:
+      context: snuba
+    container_name: sentry-snuba
+    networks:
+      - sentry
+    depends_on:
+    - clickhouse
+    env_file: .snuba-env
+
   web:
     depends_on:
+    - memcache
     - redis
     - postgres
-    image: sentry:9.1.2
+    - snuba
+    image: getsentry/sentry:23.1.1
     container_name: sentry-web
     command: "sentry run web -w 2"
     networks:
     - sentry
     volumes:
-    - sentry-files:/var/lib/sentry/files
-    env_file: .env
-
-  cron:
-    depends_on:
-    - redis
-    - postgres
-    image: sentry:9.1.2
-    container_name: sentry-cron
-    command: "sentry run cron"
-    networks:
-    - sentry
-    volumes:
-    - sentry-files:/var/lib/sentry/files
-    env_file: .env
+    - sentry-files:/data
+    - ./sentry.conf.py:/etc/sentry/sentry.conf.py
+    env_file: .sentry-env
+    user: sentry
 
   worker:
-    depends_on:
-    - redis
-    - postgres
-    image: sentry:9.1.2
+    extends:
+      service: web
+    image: urykhy/sentry-worker
+    command: forego start -r -f /Procfile
+    build:
+      context: worker
     container_name: sentry-worker
-    command: "sentry run worker -c 2"
+    depends_on:
+      - web
+    user: sentry
+
+  relay:
+    image: getsentry/relay:23.1.1
+    container_name: sentry-relay
+    command: run -c /etc/relay
     networks:
     - sentry
     volumes:
-    - sentry-files:/var/lib/sentry/files
-    env_file: .env
+    - sentry-files:/work
+    - sentry-files:/etc/relay
+    - ./relay.yml:/etc/relay/config.yml
+    - ./credentials.json:/etc/relay/credentials.json
+    - ./relay-projects:/etc/relay/projects
+    depends_on:
+    - worker

@@ -1,0 +1,8 @@
+FROM golang:1.17-stretch AS forego
+RUN go install github.com/ddollar/forego@master
+
+FROM getsentry/snuba:23.1.1
+ADD Procfile /
+ENTRYPOINT []
+CMD ["forego", "start", "-r", "-f", "/Procfile"]
+COPY --from=forego   /go/bin/forego /usr/bin/
