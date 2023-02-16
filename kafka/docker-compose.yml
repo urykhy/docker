@@ -53,6 +53,22 @@ services:
     environment:
       KAFKA_BROKER_ID: 3
 
+  ui:
+    image: provectuslabs/kafka-ui:v0.5.0
+    container_name: kafka-ui
+    hostname: ui
+    domainname: kafka
+    networks:
+      kafka:
+    depends_on:
+      - broker-3
+    environment:
+      JAVA_OPTS: -Xms64m -Xmx256m -XX:+UseShenandoahGC
+      KAFKA_CLUSTERS_0_NAME: docker
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker-1:9092
+      KAFKA_CLUSTERS_0_METRICS_TYPE: PROMETHEUS
+      KAFKA_CLUSTERS_0_METRICS_PORT: 7071
+
 volumes:
   kafka-zk:
     external: true
