@@ -11,6 +11,9 @@ docker volume create --name=clickhouse-master
 docker volume create --name=clickhouse-zk
 docker volume create --name=clickhouse-vector
 
+# start
+COMPOSE_PROFILES=vector,prometheus docker compose start
+
 # check it
 docker compose exec master clickhouse-client -mn
 > SELECT * FROM system.clusters

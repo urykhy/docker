@@ -4,7 +4,7 @@ RUN  go install github.com/AlexAkulov/clickhouse-backup/cmd/clickhouse-backup@v1
 FROM golang:1.17-stretch AS gosu
 RUN  go install github.com/tianon/gosu@1.14
 
-FROM yandex/clickhouse-server:22.1.3.7
+FROM clickhouse/clickhouse-server:23.1
 
 ADD metrika.xml   /etc/metrika.xml
 ADD config.xml    /etc/clickhouse-server/config.xml
