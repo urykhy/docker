@@ -36,6 +36,7 @@
     <mlock_executable>false</mlock_executable>
 
     <storage_configuration incl="clickhouse_storage_configuration" />
+    <backups incl="clickhouse_backups" />
     <remote_servers incl="clickhouse_remote_servers" />
     <zookeeper incl="zookeeper_servers" optional="true" />
     <macros incl="macros" optional="true" />

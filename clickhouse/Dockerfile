@@ -19,4 +19,4 @@ COPY --from=gosu   /go/bin/gosu /usr/bin/
 COPY --from=backup /go/bin/clickhouse-backup /usr/bin/
 
 ARG WITH_HDFS=true
-RUN if [ "$WITH_HDFS" != "true" ]; then sed -i '/clickhouse_storage_configuration/,/clickhouse_storage_configuration/d' /etc/metrika.xml; fi
+RUN if [ "$WITH_HDFS" != "true" ]; then sed -i '/clickhouse_storage_configuration/,/<\/clickhouse_backups>/d' /etc/metrika.xml; fi

@@ -5,6 +5,10 @@
                 <type>hdfs</type>
                 <endpoint>hdfs://namenode.hadoop.docker:8020/data/clickhouse/%SHARD%/</endpoint>
             </hdfs1>
+            <backup>
+                <type>hdfs</type>
+                <endpoint>hdfs://namenode.hadoop.docker:8020/data/clickhouse/backup/%SHARD%/</endpoint>
+            </backup>
         </disks>
         <policies>
             <default>
@@ -35,6 +39,10 @@
             </hdfs_too>
         </policies>
     </clickhouse_storage_configuration>
+    <clickhouse_backups>
+        <allowed_disk>backup</allowed_disk>
+        <allowed_path>/</allowed_path>
+    </clickhouse_backups>
 
     <clickhouse_remote_servers> <!-- name of substitution-->
         <events>                <!-- name of cluster (arbitary) to be specified in parameter of Distributed table -->
