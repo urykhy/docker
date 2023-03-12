@@ -14,7 +14,7 @@ services:
     expose:
       - "9600"
     healthcheck:
-      test: jps | grep -q KMSWebServer
+      test: ps -elf | grep -q org.apache.hadoop.crypto.key.kms.server.KMSWebServer$
       interval: 1s
       timeout: 1s
       retries: 30
@@ -32,7 +32,7 @@ services:
     environment:
       CLUSTER_NAME: uh-cluster
     healthcheck:
-      test: curl 127.0.0.1:8020
+      test: ps -elf | grep -q org.apache.hadoop.hdfs.server.namenode.NameNode$
       interval: 1s
       timeout: 1s
       retries: 30
@@ -57,7 +57,8 @@ services:
     volumes:
       - hadoop_datanode1:/hadoop/dfs/data
     healthcheck:
-      test: test `jps | grep 'DataNode\|NodeManager\|JobHistoryServer' | wc -l` = '3'
+      test: >
+        test `ps -elf | grep -c 'org.apache.hadoop.hdfs.server.datanode.DataNode$\|org.apache.hadoop.mapreduce.v2.hs.JobHistoryServer$\|org.apache.hadoop.yarn.server.nodemanager.NodeManager$'` = '3' -a `curl -s http://namenode:9870/jmx | grep -c '"Safemode" : ""'` = '1'
       interval: 1s
       timeout: 1s
       retries: 30
@@ -82,7 +83,8 @@ services:
     volumes:
       - hadoop_datanode2:/hadoop/dfs/data
     healthcheck:
-      test: test `jps | grep 'DataNode\|NodeManager\|JobHistoryServer' | wc -l` = '3'
+      test: >
+        test `ps -elf | grep -c 'org.apache.hadoop.hdfs.server.datanode.DataNode$\|org.apache.hadoop.mapreduce.v2.hs.JobHistoryServer$\|org.apache.hadoop.yarn.server.nodemanager.NodeManager$'` = '3' -a `curl -s http://namenode:9870/jmx | grep -c '"Safemode" : ""'` = '1'
       interval: 1s
       timeout: 1s
       retries: 30
@@ -109,7 +111,7 @@ services:
     expose:
       - "8088"
     healthcheck:
-      test: jps | grep -q ResourceManager
+      test: ps -elf | grep -q org.apache.hadoop.yarn.server.resourcemanager.ResourceManager$
       interval: 1s
       timeout: 1s
       retries: 30
@@ -132,7 +134,7 @@ services:
     expose:
       - "8188"
     healthcheck:
-      test: jps | grep -q ApplicationHistoryServer
+      test: ps -elf | grep -q org.apache.hadoop.yarn.server.applicationhistoryservice.ApplicationHistoryServer$
       interval: 1s
       timeout: 1s
       retries: 30
@@ -171,10 +173,13 @@ services:
       - hadoop
     command: ./bin/spark-class org.apache.spark.deploy.history.HistoryServer
     depends_on:
-      - namenode
+      datanode1:
+        condition: service_healthy
+      datanode2:
+        condition: service_healthy
     profiles: ["spark"]
     healthcheck:
-      test: jps | grep -q HistoryServer
+      test: ps -elf | grep -q org.apache.spark.deploy.history.HistoryServer$
       interval: 1s
       timeout: 1s
       retries: 30

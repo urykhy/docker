@@ -1,7 +1,7 @@
 FROM golang:1.17-stretch AS forego
 RUN go install github.com/ddollar/forego@master
 
-FROM minio/minio AS minio
+FROM minio/minio:RELEASE.2022-04-16T04-26-02Z AS minio
 
 FROM debian:11
 
@@ -11,7 +11,7 @@ RUN apt-get update \
 
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends jsvc net-tools curl python krb5-user libssl-dev libzstd-dev libsnappy-dev
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends jsvc net-tools curl python krb5-user libssl-dev libzstd-dev libsnappy-dev procps
 
 ENV HADOOP_VERSION 3.2.2
 ENV HADOOP_URL https://archive.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz
