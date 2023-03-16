@@ -1,51 +1,68 @@
 version: "3"
 
 tasks:
-  latest:
+  logs:containers:
+    desc: show available containers
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            SELECT DISTINCT container_name FROM vector WHERE date=today() ORDER BY container_name
+  logs:latest:
+    desc: show latest messages (pass variable 'name')
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            SELECT container_name, message FROM vector WHERE date=today() AND container_name like '{{ .name }}' ORDER BY timestamp DESC LIMIT {{.limit}}
+    vars:
+      name: '{{.name | default "%"}}'
+
+  click:latest:
     desc: show latest queries
     cmds:
       - task: :query
         vars:
           query: |
-            SELECT timestamp, container_name, uuid, query FROM vector WHERE date=today() AND length(query) > 0 ORDER BY timestamp DESC LIMIT {{.limit}}
+            SELECT x_timestamp, container_name, uuid, query FROM vector WHERE date=today() AND length(query) > 0 ORDER BY x_timestamp DESC LIMIT {{.limit}}
 
-  search:
+  click:search:
     desc: search query by pattern (pass variable 'like')
     # task vector:search like=%vector_data%
     cmds:
       - task: :query
         vars:
           query: |
-            SELECT timestamp, container_name, uuid, query FROM vector WHERE date=today() AND query LIKE '{{ $.like }}' ORDER BY timestamp DESC LIMIT {{.limit}}
+            SELECT x_timestamp, container_name, uuid, query FROM vector WHERE date=today() AND query LIKE '{{ $.like }}' ORDER BY x_timestamp DESC LIMIT {{.limit}}
     preconditions:
       - sh: '[ -n "{{ $.like }}" ]'
         msg: "variable `like` required"
 
-  derived:
+  click:derived:
     desc: find derived queries by initial uuid (pass variable 'uuid')
     # task vector:derived uuid=d354d0a0-7bc4-4a30-8e2b-3832b6d3d7e2
     cmds:
       - task: :query
         vars:
           query: |
-            SELECT timestamp, container_name, uuid, query FROM vector WHERE query LIKE '(from %, initial_query_id: {{ $.uuid }})%' ORDER BY timestamp DESC
+            SELECT x_timestamp, container_name, uuid, query FROM vector WHERE query LIKE '(from %, initial_query_id: {{ $.uuid }})%' ORDER BY x_timestamp DESC
     preconditions:
       - sh: '[ -n "{{ $.uuid }}" ]'
         msg: "variable `uuid` required"
 
-  verbose:
+  click:verbose:
     desc: verbose log by uuid (pass variable 'uuid')
     # task vector:verbose uuid=57947515-377f-4655-9545-cc66cff65fd2
     cmds:
       - task: :query
         vars:
           query: |
-            SELECT timestamp, container_name, message FROM vector WHERE uuid = '{{ `{` }}{{ $.uuid }}{{ `}` }}' ORDER BY timestamp DESC
+            SELECT x_timestamp, container_name, message FROM vector WHERE uuid = '{{ `{` }}{{ $.uuid }}{{ `}` }}' ORDER BY x_timestamp DESC
     preconditions:
       - sh: '[ -n "{{ $.uuid }}" ]'
         msg: "variable `uuid` required"
 
-  perf:
+  click:perf:
     desc: perf metrics by uuid (pass variable 'uuid')
     # task vector:perf uuid=57947515-377f-4655-9545-cc66cff65fd2
     cmds:
