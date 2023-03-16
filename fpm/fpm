@@ -1,3 +1,3 @@
 #!/bin/bash
 
-exec docker run --rm -it -v `pwd`:/data --hostname "fpm-`hostname`" urykhy/fpm fpm "$@"
+exec docker run --rm -it -v `pwd`:/data --name "fpm-`hostname`" --hostname "fpm-`hostname`" urykhy/fpm fpm "$@"
