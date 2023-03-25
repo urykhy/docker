@@ -59,6 +59,17 @@
         <flush_interval_milliseconds>7500</flush_interval_milliseconds>
     </part_log>
 
+    <opentelemetry_span_log>
+        <engine>
+            engine MergeTree
+            partition by toYYYYMMDD(finish_date)
+            order by (finish_date, finish_time_us, trace_id)
+        </engine>
+        <database>system</database>
+        <table>opentelemetry_span_log</table>
+        <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+    </opentelemetry_span_log>
+
     <!-- <path_to_regions_hierarchy_file>/opt/geo/regions_hierarchy.txt</path_to_regions_hierarchy_file> -->
     <!-- <path_to_regions_names_files>/opt/geo/</path_to_regions_names_files> -->
     <!-- <dictionaries_config>*_dictionary.xml</dictionaries_config> -->

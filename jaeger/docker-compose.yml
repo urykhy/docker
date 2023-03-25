@@ -19,7 +19,7 @@ services:
       build: .
       image: urykhy/jaeger
       container_name: jaeger-collector
-      command: jaeger-collector
+      command: jaeger-collector --collector.zipkin.host-port=:9411
       networks:
         jaeger:
       depends_on:
