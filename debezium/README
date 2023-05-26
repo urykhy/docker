@@ -1,0 +1,10 @@
+# prepare:
+
+kafkactl create topic debezium-history
+kafkactl create topic debezium-transaction_log
+
+* data directory must be `chmod 777`
+
+# run
+
+docker compose up
