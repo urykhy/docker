@@ -69,3 +69,17 @@ tasks:
              WHERE database='{{ $.database }}' AND table LIKE '{{ $.table }}'
              GROUP BY table
              ORDER BY table DESC
+
+  index:
+    desc: show table data skipping indices
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            SELECT table, name, type,
+                   formatReadableSize(sum(data_compressed_bytes)) AS compressed,
+                   formatReadableSize(sum(data_uncompressed_bytes)) AS uncompressed
+              FROM cluster({{ $.cluster }}, system, data_skipping_indices)
+             WHERE database='{{ $.database }}' AND table LIKE '{{ $.table }}'
+             GROUP BY table, name, type
+             ORDER BY table, name ASC
