@@ -9,7 +9,7 @@ services:
       - "nextcloud:/var/www/html"
 
   cron:
-    image: nextcloud:25.0.0
+    image: nextcloud:26.0.0
     hostname: nextcloud-cron
     container_name: nextcloud-cron
     network_mode: "bridge"
