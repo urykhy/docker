@@ -1,6 +1,5 @@
 docker volume create jupyter
-download cudnn-11.4-linux-x64-v8.2.4.15.tgz to current directory
-docker-compose build
+docker compose build
 ...
 modprobe nvidia_uvm
 

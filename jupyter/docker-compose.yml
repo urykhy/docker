@@ -1,7 +1,13 @@
 version: '2.3'
 services:
   jupyter:
-    build: .
+    build:
+      context: .
+      args:
+        APT_PROXY: http://elf.dark:8081
+        S_PROXY: http://elf.dark:8082
+        PIP_INDEX_URL: http://elf.dark:8080/simple
+        PIP_TRUSTED_HOST: elf.dark
     image: urykhy/jupyter
     hostname: jupyter
     container_name: jupyter
