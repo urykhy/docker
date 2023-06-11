@@ -65,7 +65,7 @@ resource "mysql_grant" "master_user_grants" {
   user       = mysql_user.user.user
   host       = mysql_user.user.host
   database   = "*"
-  privileges = ["CREATE","INSERT","SELECT","UPDATE","DELETE","DROP","INDEX","PROCESS"]
+  privileges = ["CREATE","INSERT","SELECT","UPDATE","DELETE","DROP","INDEX","PROCESS","CREATE VIEW","ALTER"]
 }
 
 resource "mysql_user" "slave" {
