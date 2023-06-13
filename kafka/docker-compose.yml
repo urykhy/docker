@@ -15,6 +15,7 @@ services:
       context: .
       args:
         APT_PROXY: http://elf.dark:8081
+        S_PROXY: http://elf.dark:8082
     container_name: kafka-broker1
     hostname: broker-1
     domainname: kafka
