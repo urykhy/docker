@@ -5,21 +5,25 @@ FROM minio/minio:RELEASE.2022-04-16T04-26-02Z AS minio
 
 FROM debian:11
 
+ARG S_PROXY
+ARG APT_PROXY
+RUN echo "Acquire::http::Proxy \"${APT_PROXY}\";" > /etc/apt/apt.conf.d/02proxy
+
 RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends openjdk-11-jdk-headless \
-    && rm -rf /var/lib/apt/lists/*
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends openjdk-11-jdk-headless \
+ && rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends jsvc net-tools curl python krb5-user libssl-dev libzstd-dev libsnappy-dev procps
 
 ENV HADOOP_VERSION 3.2.2
-ENV HADOOP_URL https://archive.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz
-RUN set -x                                           \
-    && curl -fSL "$HADOOP_URL" -o /tmp/hadoop.tar.gz \
-    && tar -xvf /tmp/hadoop.tar.gz -C /opt/          \
-    && rm /tmp/hadoop.tar.gz*                        \
-    && rm -rf /opt/hadoop-$HADOOP_VERSION/share/doc/hadoop
+ENV HADOOP_URL http://archive.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz
+RUN set -x                                                              \
+ && http_proxy=${S_PROXY} curl -fSL "$HADOOP_URL" -o /tmp/hadoop.tar.gz \
+ && tar -xvf /tmp/hadoop.tar.gz -C /opt/                                \
+ && rm /tmp/hadoop.tar.gz                                               \
+ && rm -rf /opt/hadoop-$HADOOP_VERSION/share/doc/hadoop
 
 RUN ln -s /opt/hadoop-$HADOOP_VERSION/etc/hadoop /etc/hadoop
 RUN mkdir /opt/hadoop-$HADOOP_VERSION/logs
