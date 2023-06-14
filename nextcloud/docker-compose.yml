@@ -1,7 +1,7 @@
 version: '2'
 services:
   nextcloud:
-    image: nextcloud:26.0.0
+    image: nextcloud:27.0.0
     hostname: nextcloud
     container_name: nextcloud
     network_mode: "bridge"
@@ -9,7 +9,7 @@ services:
       - "nextcloud:/var/www/html"
 
   cron:
-    image: nextcloud:26.0.0
+    image: nextcloud:27.0.0
     hostname: nextcloud-cron
     container_name: nextcloud-cron
     network_mode: "bridge"
