@@ -2,6 +2,8 @@
 
 kafkactl create topic debezium-history
 kafkactl create topic debezium-transaction_log
+kafkactl alter topic debezium-history -c retention.ms=-1 -c retention.bytes=10485760
+kafkactl alter topic debezium-transaction_log -c retention.ms=-1 -c retention.bytes=10485760
 
 * data directory must be `chmod 777`
 
