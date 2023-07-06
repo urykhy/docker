@@ -83,3 +83,17 @@ tasks:
              WHERE database='{{ $.database }}' AND table LIKE '{{ $.table }}'
              GROUP BY table, name, type
              ORDER BY table, name ASC
+
+  marks:
+    desc: show table index marks
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            SELECT table,
+                   formatReadableSize(sum(marks_bytes)) AS marks
+              FROM cluster({{ $.cluster }}, system, columns)
+             WHERE database='{{ $.database }}' AND table LIKE '{{ $.table }}'
+               AND marks_bytes > 0
+             GROUP BY table WITH TOTALS
+             ORDER BY table ASC
