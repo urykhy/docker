@@ -5,10 +5,15 @@ prepare:
 docker volume create gitea_db
 docker volume create gitea_server
 docker volume create gitea_drone
+docker volume create gitea_runner
 docker network create gitea      --subnet 172.16.11.0/24
 
 docker-compose create --force-recreate
 docker-compose start
+
+# tune mysql DB
+mysql -uroot -pgitea -hdb.gitea
+$ ALTER DATABASE gitea CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci';
 
 # Drone does not create your database automatically.
 echo "create database drone" | mysql -hdb.gitea -uroot -pgitea
@@ -26,3 +31,8 @@ register drone application in gitea. settings -> applications -> Manage OAuth2 a
     -> secret:    I8S2sUa0zYP_kdZLmRCZMG2ZtlZeMaeOI2YH01kU1C4=
     set client ids in compose file
     works from FF, not chrome
+
+runner token:
+    create at http://server.gitea.docker:3000/admin/actions/runners
+    enable at http://server.gitea.docker:3000/urykhy/cpp-start/settings
+

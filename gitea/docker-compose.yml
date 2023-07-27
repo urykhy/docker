@@ -15,7 +15,7 @@ services:
       - gitea_db:/var/lib/mysql
 
   server:
-    image: gitea/gitea:latest
+    image: gitea/gitea:1.20
     container_name: gitea-server
     environment:
       - USER_UID=1000
@@ -29,6 +29,8 @@ services:
       - GITEA__SERVER__ROOT_URL="http://server.gitea.docker:3000/"
       - GITEA__OAUTH2__JWT_SIGNING_ALGORITHM="HS256"
       - GITEA__REPOSITORY__DEFAULT_BRANCH=master
+      - GITEA__ACTIONS__ENABLED=true
+      - GITEA__webhook__ALLOWED_HOST_LIST=*
     networks:
       - gitea
     volumes:
@@ -36,8 +38,22 @@ services:
     depends_on:
       - db
 
+  runner:
+    image: gitea/act_runner:0.2.3
+    container_name: gitea-runner
+    networks:
+      - gitea
+    volumes:
+      - gitea_runner:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - GITEA_INSTANCE_URL=http://server.gitea.docker:3000/
+      - GITEA_RUNNER_REGISTRATION_TOKEN=yJwKNsf8qGxJZVDrV7OrLoYydcUEqV2HuaJ58Ut7
+    depends_on:
+      - server
+
   drone:
-    image: drone/drone:latest
+    image: drone/drone:2.18.0
     container_name: gitea-drone
     networks:
       - gitea
@@ -62,7 +78,7 @@ services:
       - server
 
   agent:
-    image: drone/agent:latest
+    image: drone/drone-runner-docker:1.8.3
     container_name: gitea-agent
     command: agent
     networks:
@@ -81,6 +97,8 @@ volumes:
   gitea_db:
     external: true
   gitea_server:
+    external: true
+  gitea_runner:
     external: true
   gitea_drone:
     external: true
