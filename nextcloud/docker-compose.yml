@@ -1,6 +1,7 @@
 version: '2'
 services:
   nextcloud:
+    cpus: 1
     image: nextcloud:27.0.0
     hostname: nextcloud
     container_name: nextcloud
