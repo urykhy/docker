@@ -1,13 +1,11 @@
-FROM jaegertracing/jaeger-query:1.38 AS query
-FROM jaegertracing/jaeger-agent:1.38 AS agent
-FROM jaegertracing/jaeger-collector:1.38 AS collector
+FROM jaegertracing/jaeger-query:1.47 AS query
+FROM jaegertracing/jaeger-collector:1.47 AS collector
 FROM golang:1.18-stretch AS builder
 RUN  go install github.com/jaegertracing/jaeger-clickhouse/cmd/jaeger-clickhouse@0.12.0
 
 FROM debian:11
 COPY --from=builder     /go/bin/jaeger-clickhouse /usr/bin/
 COPY --from=query       /go/bin/query-linux /usr/bin/jaeger-query
-COPY --from=agent       /go/bin/agent-linux /usr/bin/jaeger-agent
 COPY --from=collector   /go/bin/collector-linux /usr/bin/jaeger-collector
 
 ADD plugin.yaml /etc/jaeger-clickhouse.yaml

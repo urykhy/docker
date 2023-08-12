@@ -19,21 +19,17 @@ services:
       build: .
       image: urykhy/jaeger
       container_name: jaeger-collector
-      command: jaeger-collector --collector.zipkin.host-port=:9411
+      command: jaeger-collector --collector.zipkin.host-port=:9411 --collector.otlp.http.host-port=:12345
       networks:
         jaeger:
+      healthcheck:
+        test: "jaeger-collector status | grep -q 'Server available'"
+        interval: 1s
+        timeout: 1s
+        retries: 10
       depends_on:
         clickhouse:
           condition: service_healthy
-
-    agent:
-      container_name: jaeger-agent
-      image: urykhy/jaeger
-      command: jaeger-agent --reporter.grpc.host-port=jaeger-collector.jaeger:14250
-      networks:
-        jaeger:
-      depends_on:
-        - collector
 
     query:
       container_name: jaeger-query
@@ -41,8 +37,13 @@ services:
       command: jaeger-query
       networks:
         jaeger:
+      healthcheck:
+        test: "jaeger-query status | grep -q 'Server available'"
+        interval: 1s
+        timeout: 1s
+        retries: 10
       depends_on:
-        - agent
+        - collector
 
 networks:
   jaeger:

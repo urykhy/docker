@@ -4,5 +4,4 @@ docker-compose create
 docker-compose start
 
 open in browser: http://query.jaeger.docker:16686/search
-push UDP(thrift) traces to agent.jaeger:6831
-push JSON over HTTP (zipkin v2) traces: collector.jaeger:9411/api/v2/spans
+push protobuf over HTTP to collector.jaeger.docker:12345/v1/traces
