@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ $# -lt 1 ]; then
+   echo "usage: $0 <shard> <clickhouse-backup options ...>"
+   exit -1
+fi
+SHARD=$1
+shift
+
+if [ "$SHARD" = "master" ]; then
+   VOLUME=clickhouse-master
+else
+   VOLUME=`echo ${SHARD/shard/clickhouse-} | sed -ne 's/^\(.*\)-\(.*\)$/\1\2/p'`
+fi
+docker volume inspect ${VOLUME} >/dev/null 2>&1 || exit -2
+
+exec docker run --rm -it \
+   --name "clickhouse-backup" --hostname "clickhouse-backup" \
+   -e CLICKHOUSE_HOST=${SHARD}.clickhouse                    \
+   -v `pwd`/clickhouse-backup.yml:/etc/clickhouse-backup/config.yml                      \
+   -v ${VOLUME}:/var/lib/clickhouse alexakulov/clickhouse-backup:2.2.7 clickhouse-backup "$@"
