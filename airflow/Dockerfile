@@ -20,7 +20,7 @@ RUN    apt-get update               \
        python3-pip python3-redis    \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install "apache-airflow[celery,postgres,hdfs,ssh,sftp,amazon]==2.3.0" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.3.0/constraints-3.9.txt"
+RUN pip install "apache-airflow[celery,postgres,hdfs,ssh,sftp,amazon]==2.7.1" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.7.1/constraints-3.9.txt"
 RUN pip install "airflow-clickhouse-plugin"
 RUN pip install "apache-airflow-providers-jenkins"
 
