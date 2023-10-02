@@ -1,5 +1,5 @@
 # docker compose exec airflow gosu airflow airflow connections add 'clickhouse_master' --conn-uri 'clickhouse://master.clickhouse.docker:9000'
-# docker cp map.py airflow-server:/airflow/dags/
+# docker cp clickhouse.py airflow-server:/airflow/dags/
 
 from __future__ import annotations
 

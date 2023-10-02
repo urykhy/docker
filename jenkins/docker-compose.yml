@@ -2,7 +2,10 @@ version: '2'
 services:
   jenkins:
     image: urykhy/jenkins
-    build: .
+    build:
+      context: .
+      args:
+        APT_PROXY: http://elf.dark:8081
     hostname: jenkins
     domainname: docker
     container_name: jenkins
@@ -11,7 +14,7 @@ services:
       - "jenkins:/var/jenkins_home"
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      JAVA_OPTS: "-XX:+UseShenandoahGC -Xms64m -Xmx256m"
+      JAVA_OPTS: "-XX:+UseShenandoahGC -Xms64m -Xmx512m"
 
 volumes:
   jenkins:

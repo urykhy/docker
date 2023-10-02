@@ -1,19 +1,24 @@
 
 docker volume create jenkins
-open http://jenkins:8080/blue
 admin password in /var/jenkins_home/secrets/initialAdminPassword
-
 configure Jenkins URL: http://jenkins:8080/configure
-    http://jenkins:8080/
 
 create API token: http://jenkins:8080/user/admin/configure
-    airflow:112b48b38c24d2e0fc7e4847540937fc28
+    airflow:118aa1737abc4baa35d42b88279af89fc1
+
+plugins:
+    Pipeline Utility Steps
+    Docker Pipeline
+    Blue Ocean
+    Metrics
+
+dump pipeline configuration:
+    curl -X GET http://jenkins:8080/job/mapreduce/config.xml -u admin:admin -o mapreduce.xml
 
 memory/metrics:
-    install https://github.com/jenkinsci/metrics-plugin
     open http://jenkins:8080/configure
-    generate metrics token: HFQEYYVGk1eP9Vt0Afs9mjsLEMzLnFF0ou_KfUYq4pW32tnZLpadxecYMGtaNrvt
+    create Metrics Access key: GlGGS7yayIsIlQj9OBfemM7kWCg9J7uyPa7vj6FEy8Ympppokpkeoi-PFvxF4OGa
     press apply
     get memory usage:
-        curl http://jenkins:8080/metrics/b7qRA65Keh7FsNAXtGTvohKsOijqg_qLry1i_JVhQKWhIqwIYHxl6FcsmVHut3uL/metrics?pretty=true | jq .gauges[\"vm.memory.heap.usage\"]
+        curl http://jenkins:8080/metrics/GlGGS7yayIsIlQj9OBfemM7kWCg9J7uyPa7vj6FEy8Ympppokpkeoi-PFvxF4OGa/metrics?pretty=true | jq .gauges[\"vm.memory.heap.usage\"]
 
