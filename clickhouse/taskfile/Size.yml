@@ -28,6 +28,19 @@ tasks:
              ORDER BY partition DESC
              LIMIT {{ $.limit }}
 
+  partitions_minmax:
+    desc: show min/max table partitions
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            SELECT table, min(partition), max(partition)
+              FROM cluster({{ $.cluster }}, system, parts)
+             WHERE database='{{ $.database }}' AND table LIKE '{{ $.table }}' AND active
+             GROUP BY table
+             ORDER BY table DESC
+             LIMIT {{ $.limit }}
+
   shards:
     desc: show table size on shards
     cmds:
