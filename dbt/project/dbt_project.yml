@@ -1,0 +1,10 @@
+name: click
+config-version: 2
+version: 1.0.0
+profile: profile_click
+
+vars:
+  s3: "http://elf.dark:9000/clickhouse-wordcount"
+  files: "{4300-0.txt,pg20417.txt}"
+  access_key: "minio"
+  secret_key: "minio123"

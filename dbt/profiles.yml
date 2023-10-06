@@ -1,0 +1,12 @@
+config:
+  send_anonymous_usage_stats: false
+  use_colors: true
+  debug: false
+
+profile_click:
+  target: click
+  outputs:
+    click:
+      type: clickhouse
+      host: master.clickhouse
+      schema: dbt

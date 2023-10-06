@@ -1,0 +1,11 @@
+version: '3'
+services:
+
+  dbt:
+    image: urykhy/dbt
+    build:
+      context: .
+      args:
+        APT_PROXY: http://elf.dark:8081
+        PIP_INDEX_URL: http://elf.dark:8080/simple
+        PIP_TRUSTED_HOST: elf.dark
