@@ -9,7 +9,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
 ENV SCALA_VERSION 2.13
-ENV KAFKA_VERSION 3.2.3
+ENV KAFKA_VERSION 3.6.0
 RUN http_proxy=${S_PROXY} wget http://dlcdn.apache.org/kafka/$KAFKA_VERSION/kafka_$SCALA_VERSION-$KAFKA_VERSION.tgz -O - \
     | tar -zxf - -C /opt      \
  && ln -s /opt/* /opt/kafka

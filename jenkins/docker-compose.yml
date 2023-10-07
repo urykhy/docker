@@ -5,7 +5,7 @@ services:
     build:
       context: .
       args:
-        APT_PROXY: http://elf.dark:8081
+        APT_PROXY: ${APT_PROXY}
     hostname: jenkins
     domainname: docker
     container_name: jenkins

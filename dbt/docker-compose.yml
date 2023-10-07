@@ -6,6 +6,6 @@ services:
     build:
       context: .
       args:
-        APT_PROXY: http://elf.dark:8081
-        PIP_INDEX_URL: http://elf.dark:8080/simple
-        PIP_TRUSTED_HOST: elf.dark
+        APT_PROXY: ${APT_PROXY}
+        PIP_INDEX_URL: ${PIP_INDEX_URL}
+        PIP_TRUSTED_HOST: ${PIP_TRUSTED_HOST}

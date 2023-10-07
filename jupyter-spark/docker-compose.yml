@@ -4,10 +4,10 @@ services:
     build:
       context: .
       args:
-        APT_PROXY: http://elf.dark:8081
-        PIP_INDEX_URL: http://elf.dark:8080/simple
-        PIP_TRUSTED_HOST: elf.dark
-        S_PROXY: http://elf.dark:8082
+        APT_PROXY: ${APT_PROXY}
+        S_PROXY: ${S_PROXY}
+        PIP_INDEX_URL: ${PIP_INDEX_URL}
+        PIP_TRUSTED_HOST: ${PIP_TRUSTED_HOST}
     image: urykhy/jupyter-spark
     hostname: jupyter-spark
     container_name: jupyter-spark
