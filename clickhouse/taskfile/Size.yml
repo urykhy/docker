@@ -41,6 +41,20 @@ tasks:
              ORDER BY table DESC
              LIMIT {{ $.limit }}
 
+  parts:
+    desc: show table parts (pass variable 'partition')
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            SELECT name, hostName(), hash_of_all_files, rows,
+                   formatReadableSize(bytes_on_disk) on_disk,
+                   formatReadableSize(data_uncompressed_bytes) uncompressed
+              FROM cluster({{ $.cluster }}, system, parts)
+             WHERE database='{{ $.database }}' AND table LIKE '{{ $.table }}' AND partition LIKE '{{ $.partition }}%' AND active
+             ORDER BY name DESC, hostName() DESC
+             LIMIT {{ $.limit }}
+
   shards:
     desc: show table size on shards
     cmds:
