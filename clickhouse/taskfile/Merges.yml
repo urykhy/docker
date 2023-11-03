@@ -36,3 +36,16 @@ tasks:
                AND event_type='MergeParts'
              ORDER BY event_time DESC
              LIMIT {{ $.limit }}
+
+  queue:
+    desc: show replication queue
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            SELECT hostname(), database, table, count(), countIf(type ILIKE 'merge%') AS merges, countIf(type ILIKE 'get_part%') AS fetches, max(num_postponed)
+              FROM clusterAllReplicas({{ $.cluster }}, system, replication_queue)
+             WHERE database='{{ $.database }}' AND table LIKE '{{ $.table }}'
+             GROUP BY ALL
+             ORDER BY count() DESC
+             LIMIT {{ $.limit }}
