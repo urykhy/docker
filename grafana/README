@@ -27,8 +27,8 @@ oncall:
     docker volume create grafana-oncall-mysql
 
     configure:
-    1. install oncall plugin
-    2. request invite token `docker compose exec oncall python manage.py issue_invite_for_the_frontend --override`
-    3. configure 'Invite token' with it.
-    4. configure 'OnCall backend URL' as http://oncall:8080
-    5. configure 'Grafana URL' as http://grafana.docker:3000
+    install plugin
+    set 'OnCall backend URL' as 'http://oncall:8080'
+
+use:
+    COMPOSE_PROFILES=oncall docker compose start

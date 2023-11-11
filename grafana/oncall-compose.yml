@@ -2,24 +2,23 @@ version: '3.9'
 
 services:
   oncall:
-    image: grafana/oncall
+    image: grafana/oncall:latest
     container_name: oncall-server
-    command: uwsgi --ini uwsgi.ini
+    command: bash -c "python manage.py migrate --noinput && exec uwsgi --ini uwsgi.ini"
     networks:
       - grafana
     env_file: oncall-env
     depends_on:
       mysql:
         condition: service_healthy
-      migrate:
-        condition: service_completed_successfully
       rabbitmq:
         condition: service_started
       redis:
         condition: service_started
+    profiles: ["oncall"]
 
   celery:
-    image: grafana/oncall
+    image: grafana/oncall:latest
     container_name: oncall-celery
     command: ./celery_with_exporter.sh
     networks:
@@ -27,6 +26,7 @@ services:
     env_file: oncall-env
     depends_on:
       - oncall
+    profiles: ["oncall"]
 
   redis:
     image: redis
@@ -35,6 +35,7 @@ services:
       - grafana
     volumes:
       - "grafana-oncall-redis:/data"
+    profiles: ["oncall"]
 
   rabbitmq:
     image: rabbitmq:management-alpine
@@ -44,11 +45,12 @@ services:
     env_file: oncall-env
     volumes:
       - grafana-oncall-rabbitmq:/var/lib/rabbitmq
+    profiles: ["oncall"]
 
   mysql:
-    image: mysql:5.7
+    image: mysql:8.0-debian
     container_name: oncall-mysql
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --log-error-verbosity=1
     networks:
       - grafana
     env_file: oncall-env
@@ -59,24 +61,10 @@ services:
       timeout: 1s
       interval: 1s
       retries: 10
+    cap_add:
+      - SYS_NICE  # CAP_SYS_NICE
+    profiles: ["oncall"]
 
-  migrate:
-    image: grafana/oncall
-    container_name: oncall-migrate
-    command: python manage.py migrate --noinput
-    networks:
-      - grafana
-    env_file: oncall-env
-    depends_on:
-      mysql:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_started
-
-volumes:
-networks:
-  grafana:
-    external: true
 volumes:
   grafana-oncall-redis:
     external: true

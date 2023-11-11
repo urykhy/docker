@@ -1,10 +1,10 @@
-BASE_URL=http://grafana.docker:3000/
+BASE_URL=http://oncall.grafana:8080
 CELERY_WORKER_BEAT_ENABLED="True"
 CELERY_WORKER_CONCURRENCY="1"
 CELERY_WORKER_MAX_TASKS_PER_CHILD="100"
-CELERY_WORKER_QUEUE="default,critical,long,slack,telegram,webhook,retry,celery"
-CELERY_WORKER_SHUTDOWN_INTERVAL="65m"
+CELERY_WORKER_QUEUE="default,critical,long,slack,telegram,webhook,retry,celery,grafana"
 DJANGO_SETTINGS_MODULE=settings.hobby
+GRAFANA_API_URL=http://grafana.docker:3000
 GRAFANA_PASSWORD=admin
 GRAFANA_USER=admin
 MYSQL_DATABASE=oncall
