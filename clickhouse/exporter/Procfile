@@ -1,5 +1,0 @@
-master: clickhouse_exporter -scrape_uri=http://master:8123/ -telemetry.address=:9000 -clickhouse_only=true
-shard1-a: clickhouse_exporter -scrape_uri=http://shard1-a:8123/ -telemetry.address=:9001 -clickhouse_only=true
-shard1-b: clickhouse_exporter -scrape_uri=http://shard1-b:8123/ -telemetry.address=:9002 -clickhouse_only=true
-shard2-a: clickhouse_exporter -scrape_uri=http://shard2-a:8123/ -telemetry.address=:9003 -clickhouse_only=true
-shard2-b: clickhouse_exporter -scrape_uri=http://shard2-b:8123/ -telemetry.address=:9004 -clickhouse_only=true

@@ -96,18 +96,6 @@ services:
       - clickhouse-vector:/var/lib/vector
     profiles: ["vector"]
 
-  exporter:
-    image: urykhy/clickhouse-exporter
-    build: exporter
-    container_name: clickhouse-exporter
-    hostname: exporter
-    networks:
-      clickhouse:
-    depends_on:
-      - shard1-b
-      - shard2-b
-    profiles: ["prometheus"]
-
 networks:
   clickhouse:
     external: true
