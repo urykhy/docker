@@ -1,0 +1,31 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+      - targets:
+        - alertmanager:9093
+
+rule_files:
+ - 'rules.yml'
+
+scrape_configs:
+- job_name: 'prometheus'
+  static_configs:
+  - targets: ['localhost:9090']
+- job_name: 'clickhouse'
+  static_configs:
+  - targets: ['zookeeper.clickhouse:7070']
+  - targets: ['master.clickhouse:9363']
+  - targets: ['shard1-a.clickhouse:9363']
+  - targets: ['shard1-b.clickhouse:9363']
+  - targets: ['shard2-a.clickhouse:9363']
+  - targets: ['shard2-b.clickhouse:9363']
+- job_name: 'kafka'
+  static_configs:
+  - targets: ['zookeeper.kafka:7070']
+  - targets: ['broker-1.kafka:7071']
+  - targets: ['broker-2.kafka:7071']
+  - targets: ['broker-3.kafka:7071']

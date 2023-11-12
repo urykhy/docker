@@ -11,8 +11,6 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-      rabbitmq:
-        condition: service_started
       redis:
         condition: service_started
     profiles: ["oncall"]
@@ -37,16 +35,6 @@ services:
       - "grafana-oncall-redis:/data"
     profiles: ["oncall"]
 
-  rabbitmq:
-    image: rabbitmq:management-alpine
-    container_name: oncall-rabbitmq
-    networks:
-      - grafana
-    env_file: oncall-env
-    volumes:
-      - grafana-oncall-rabbitmq:/var/lib/rabbitmq
-    profiles: ["oncall"]
-
   mysql:
     image: mysql:8.0-debian
     container_name: oncall-mysql
@@ -67,8 +55,6 @@ services:
 
 volumes:
   grafana-oncall-redis:
-    external: true
-  grafana-oncall-rabbitmq:
     external: true
   grafana-oncall-mysql:
     external: true

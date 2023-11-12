@@ -1,0 +1,28 @@
+version: "prometheus/v1"
+service: "clickhouse"
+labels:
+  owner: "myteam"
+  repo: "myorg/clickhouse"
+  tier: "2"
+slos:
+  - name: "pagecache"
+    objective: 99.00
+    description: "Common SLO based on pagecache hits rate"
+    sli:
+      events:
+        error_query: sum(rate(ClickHouseProfileEvents_ThreadPoolReaderPageCacheMissBytes[{{.window}}]))
+        total_query: sum(rate(ClickHouseProfileEvents_ReadBufferFromFileDescriptorReadBytes[{{.window}}]))
+    alerting:
+      name: ClickhousePagecacheMiss
+      labels:
+        category: "performance"
+      annotations:
+        summary: "High error rate of page cache miss reads"
+      page_alert:
+        labels:
+          severity: pageteam
+          routing_key: myteam
+      ticket_alert:
+        labels:
+          severity: "slack"
+          slack_channel: "#alerts-myteam"

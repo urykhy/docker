@@ -23,12 +23,19 @@ cleanup old graphite data:
 oncall:
     prepare:
     docker volume create grafana-oncall-redis
-    docker volume create grafana-oncall-rabbitmq
     docker volume create grafana-oncall-mysql
 
     configure:
     install plugin
     set 'OnCall backend URL' as 'http://oncall:8080'
 
+prometheus:
+    prepare:
+    docker volume create prometheus
+    docker volume create alertmanager
+
+    generate/update rules:
+    sloth generate -i sloth.yml -o rules.yml
+
 use:
-    COMPOSE_PROFILES=oncall docker compose start
+    COMPOSE_PROFILES=oncall,prometheus docker compose start

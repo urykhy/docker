@@ -2,6 +2,7 @@ version: '3.9'
 
 include:
   - oncall-compose.yml
+  - prometheus-compose.yml
 
 services:
   grafana:
