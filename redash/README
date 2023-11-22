@@ -1,11 +1,17 @@
 
-docker network create redash     --subnet 172.16.13.0/24
+docker network create redash --subnet 172.16.13.0/24
 docker volume create redash_pg
 docker volume create redash_redis
 
-docker-compose create --force-recreate
-docker-compose run --rm server create_db
+docker-compose create
 docker-compose start
+docker compose exec server ./manage.py database create_tables
 
 access:
-http://server.redash:5000
+web: http://server.redash:5000
+api: curl -H 'Authorization: Key zN4XEDtdCa5d7jfjuUDp441cV81ssUsKLSqE7xuT' 'http://server.redash.docker:5000/api/queries'
+
+upgrade db:
+# docker compose run --rm -it postgres bash -c 'pg_dumpall -d postgresql://postgres:postgres@postgres.redash/postgres > /var/lib/postgresql/data/dump_all'
+# store dump_all. clear volume, start new version. restore dump_all
+# docker compose run --rm -it postgres bash -c 'psql -d postgresql://postgres:postgres@postgres.redash/postgres < /var/lib/postgresql/data/dump_all'

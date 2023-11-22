@@ -6,10 +6,15 @@ x-redash-environment: &redash-environment
   REDASH_REDIS_URL: "redis://redis.redash:6379/0"
   REDASH_DATABASE_URL: "postgresql://postgres:postgres@postgres.redash/postgres"
   REDASH_DATE_FORMAT: "YYYY-MM-DD"
+  REDASH_COOKIE_SECRET: U70RBSkfWQwpVyXjjR3sVv25cdPRnY
+  REDASH_SECRET_KEY:  TA4oOHq5aO2ZGsy3BODn6OQgiytlPV
+  REDASH_VERSION_CHECK: false
+  REDASH_WEB_WORKERS: 1
+  WORKERS_COUNT: 1
 
 services:
   server:
-    image: redash/redash:latest
+    image: redash/redash:preview
     container_name: redash-server
     command: server
     networks:
@@ -19,9 +24,9 @@ services:
       - redis
     environment:
       <<: *redash-environment
-  worker:
-    image: redash/redash:latest
-    container_name: redash-worker
+  scheduler:
+    image: redash/redash:preview
+    container_name: redash-scheduler
     command: scheduler
     networks:
       - redash
@@ -29,23 +34,32 @@ services:
       - server
     environment:
       <<: *redash-environment
-      QUEUES: "queries,scheduled_queries,celery"
-      WORKERS_COUNT: 2
+  worker:
+    image: redash/redash:preview
+    container_name: redash-worker
+    command: worker
+    networks:
+      - redash
+    depends_on:
+      - server
+    environment:
+      <<: *redash-environment
   redis:
-    image: redis:3-alpine
+    image: redis:7-alpine
     container_name: redash-redis
     networks:
       - redash
     volumes:
       - "redash_redis:/data"
   postgres:
-    image: postgres:9-alpine
+    image: postgres:15-alpine
     container_name: redash-postgres
     command: "postgres -c fsync=off -c full_page_writes=off -c synchronous_commit=OFF"
     networks:
       - redash
     environment:
       POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST_AUTH_METHOD: "trust"
     volumes:
       - "redash_pg:/var/lib/postgresql/data"
 
