@@ -1,0 +1,76 @@
+version: '2'
+
+tasks:
+  adm:
+    internal: true
+    cmds:
+      - docker compose exec keycloak /opt/keycloak/bin/kcadm.sh {{ $.query }}
+
+  prepare:
+    desc: prepare admin connection, tune realm
+    cmds:
+      - task: adm
+        vars:
+          query: config credentials --server http://localhost:8080 --realm master --user admin --password admin
+      - task: adm
+        vars:
+          query: update realms/master -s accessTokenLifespan=3600
+      - task: adm
+        vars:
+          query: update realms/master -s defaultSignatureAlgorithm=HS256
+
+  realm:show:
+    desc: show realms
+    cmds:
+      - task: adm
+        vars:
+          query: get realms --fields 'realm,displayName,defaultSignatureAlgorithm,otpPolicyAlgorithm,webAuthnPolicySignatureAlgorithms,webAuthnPolicyPasswordlessSignatureAlgorithms'
+  realm:keys:
+    desc: show realm keys
+    cmds:
+      - PGPASSWORD=keycloak echo "SELECT value FROM component_config CC INNER JOIN component C ON(CC.component_id = C.id) WHERE provider_id = 'hmac-generated' AND CC.name='secret'" | psql -h postgres.keycloak -U keycloak --csv
+
+  client:create:
+    desc: create client app
+    cmds:
+      - task: adm
+        vars:
+          query: create clients -s clientId=myapp -s enabled=true -s directAccessGrantsEnabled=true -s publicClient=true
+  client:show:
+    desc: show clients
+    cmds:
+      - task: adm
+        vars:
+          query: get clients
+
+  user:create:
+    desc: create user
+    cmds:
+      - task: adm
+        vars:
+          query: create users -s username=myuser -s enabled=true
+  user:set_password:
+    desc: set password
+    cmds:
+      - task: adm
+        vars:
+          query: set-password --username myuser --new-password mypassword
+  user:token:
+    desc: login via curl to get token
+    cmds:
+      - 'curl -s http://keycloak:8080/realms/master/protocol/openid-connect/token -H "Content-Type: application/x-www-form-urlencoded" -d "client_id=myapp" -d "grant_type=password" -d "username=myuser" -d "password=mypassword" | jq .'
+  user:jwt:
+    desc: decode and validate token
+    cmds:
+      - python -c 'import jwt, base64, json; s="{{.secret}}"; s=base64.urlsafe_b64decode(s + "=" * (-len(s) % 4)); print(json.dumps(jwt.decode("{{.token}}", s, algorithms=["HS256"], audience="account")))' | jq '(.exp, .iat) |= todateiso8601'
+    vars:
+      token:
+        sh: task -s user:token | jq -r .access_token
+      secret:
+        sh: task -s realm:keys | tail -n1
+  user:show:
+    desc: show users
+    cmds:
+      - task: adm
+        vars:
+          query: get users
