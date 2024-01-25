@@ -1,0 +1,98 @@
+# apt install python3-pymysql
+# ansible-playbook ansible.yaml -i inventory.ini
+- hosts: docker
+  connection: local
+  gather_facts: yes
+  tasks:
+  - name: master volume
+    community.docker.docker_volume: name="{{ master }}"
+  - name: slave volume
+    community.docker.docker_volume: name="{{ slave }}"
+  - name: image
+    community.docker.docker_image: source=pull name={{ image }}
+
+  - name: master container
+    community.docker.docker_container:
+      name: "{{ master }}"
+      hostname: "{{ master }}"
+      image: "{{ image }}"
+      command: ["--server-id=1",
+                "--log-bin=mysql-bin",
+                "--binlog-format=ROW",
+                "--expire-logs-days=7",
+                "--gtid-mode=ON",
+                "--enforce-gtid-consistency",
+                "--performance-schema-instrument=statement/%=ON",
+                "--performance-schema-consumer-statements-digest=ON",
+                "--innodb-monitor-enable=ALL",
+                "--log_output=FILE",
+                "--general_log_file=/var/lib/mysql/log",
+                "--general_log=1"]
+      mounts:
+        - target: /var/lib/mysql
+          source: "{{ master }}"
+      env:
+        MYSQL_ROOT_PASSWORD: root
+      state: started
+
+  - name: slave container
+    community.docker.docker_container:
+      name: "{{ slave }}"
+      hostname: "{{ slave }}"
+      image: "{{ image }}"
+      command: ["--server-id=2",
+                "--log-bin=mysql-bin",
+                "--binlog-format=ROW",
+                "--expire-logs-days=7",
+                "--gtid-mode=ON",
+                "--enforce-gtid-consistency",
+                "--log_replica_updates",
+                "--read-only"]
+      mounts:
+        - target: /var/lib/mysql
+          source: "{{ slave }}"
+      env:
+        MYSQL_ROOT_PASSWORD: root
+      state: started
+
+  - name: normal user
+    community.mysql.mysql_user:
+      login_host: "{{ master }}"
+      login_user: root
+      login_password: root
+      name: user
+      password: user
+      priv: '*.*:CREATE,INSERT,SELECT,UPDATE,DELETE,DROP,INDEX,PROCESS,CREATE VIEW,ALTER'
+  - name: replica user
+    community.mysql.mysql_user:
+      login_host: "{{ master }}"
+      login_user: root
+      login_password: root
+      name: slave
+      password: slave
+      priv: "*.*:REPLICATION SLAVE"
+
+  - name: stop replica
+    community.mysql.mysql_replication:
+      login_host: "{{ slave }}"
+      login_user: root
+      login_password: root
+      mode: stopreplica
+
+  - name: change replica
+    community.mysql.mysql_replication:
+      login_host: "{{ slave }}"
+      login_user: root
+      login_password: root
+      mode: changeprimary
+      primary_host: "{{ master }}"
+      primary_auto_position: true
+      master_user: slave
+      master_password: slave
+
+  - name: start replica
+    community.mysql.mysql_replication:
+      login_host: "{{ slave }}"
+      login_user: root
+      login_password: root
+      mode: startreplica

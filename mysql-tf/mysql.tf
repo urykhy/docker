@@ -10,7 +10,7 @@ resource "docker_volume" "mysql-slave" {
 }
 
 resource "docker_image" "mysql" {
-  name = "mysql:8.0"
+  name = "mysql:8.0.36-debian"
 }
 
 resource "docker_container" "mysql-master" {
