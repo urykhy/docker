@@ -39,7 +39,7 @@ services:
       - db
 
   runner:
-    image: gitea/act_runner:0.2.3
+    image: gitea/act_runner:nightly
     container_name: gitea-runner
     networks:
       - gitea
