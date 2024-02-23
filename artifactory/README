@@ -1,8 +1,0 @@
-
-docker-compose start
-open: http://artifactory.artifactory.docker:8081
-login: admin:password
-
-using with conan:
-    create conan repo with `Repository Key` as `test`
-    $conan remote add ARTI http://artifactory.artifactory.docker:8081/api/conan/test
