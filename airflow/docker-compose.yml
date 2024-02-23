@@ -61,6 +61,7 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+    cpus: 1
 
 volumes:
   airflow-postgres:

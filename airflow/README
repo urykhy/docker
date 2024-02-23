@@ -6,5 +6,10 @@ view info:
     docker compose exec airflow gosu airflow bash
     airflow info
 
+tune:
+    docker compose exec airflow gosu airflow bash
+    sed -i 's/dag_dir_list_interval.*/dag_dir_list_interval=10/' airflow.cfg
+    sed -i 's/min_file_process_interval.*/min_file_process_interval=10/' airflow.cfg
+
 ps:
     docker compose exec airflow ps --forest -eo pid,command:62,maj_flt,min_flt,rss

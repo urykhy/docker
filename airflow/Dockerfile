@@ -11,7 +11,8 @@ ARG PIP_TRUSTED_HOST
 
 RUN echo "Acquire::http::Proxy \"${APT_PROXY}\";" > /etc/apt/apt.conf.d/02proxy
 RUN    apt-get update               \
-    && apt-get install              \
+    && apt-get -y install eatmydata \
+    && eatmydata apt-get install    \
        -y                           \
        --no-install-recommends      \
        procps                       \
@@ -20,9 +21,10 @@ RUN    apt-get update               \
        python3-pip python3-redis    \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install "apache-airflow[celery,postgres,hdfs,ssh,sftp,amazon]==2.7.1" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.7.1/constraints-3.9.txt"
-RUN pip install "airflow-clickhouse-plugin"
-RUN pip install "apache-airflow-providers-jenkins"
+RUN eatmydata pip install --no-cache-dir "apache-airflow[celery,postgres,hdfs,ssh,sftp,amazon]==2.7.1" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.7.1/constraints-3.9.txt"
+RUN eatmydata pip install --no-cache-dir "airflow-clickhouse-plugin"
+RUN eatmydata pip install --no-cache-dir "apache-airflow-providers-jenkins"
+RUN eatmydata pip install --no-cache-dir "airflow-provider-duckdb"
 
 RUN useradd -ms /bin/bash airflow
 RUN mkdir /airflow
