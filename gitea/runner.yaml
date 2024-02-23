@@ -1,0 +1,6 @@
+runner:
+  capacity: 4
+cache:
+  dir: "/data/cache"
+host:
+  workdir_parent: "/data/work"

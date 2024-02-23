@@ -2,7 +2,7 @@ version: "2"
 
 services:
   db:
-    image: mysql:5.7
+    image: mysql:8.0.36-debian
     container_name: gitea-mysql
     environment:
       - MYSQL_ROOT_PASSWORD=gitea
@@ -15,7 +15,7 @@ services:
       - gitea_db:/var/lib/mysql
 
   server:
-    image: gitea/gitea:1.20
+    image: gitea/gitea:1.21.6
     container_name: gitea-server
     environment:
       - USER_UID=1000
@@ -44,22 +44,23 @@ services:
     networks:
       - gitea
     volumes:
+      - ./runner.yaml:/etc/runner.yaml
       - gitea_runner:/data
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
+      - CONFIG_FILE=/etc/runner.yaml
       - GITEA_INSTANCE_URL=http://server.gitea.docker:3000/
       - GITEA_RUNNER_REGISTRATION_TOKEN=yJwKNsf8qGxJZVDrV7OrLoYydcUEqV2HuaJ58Ut7
     depends_on:
       - server
 
   drone:
-    image: drone/drone:2.18.0
+    image: drone/drone:2.22.0
     container_name: gitea-drone
     networks:
       - gitea
     volumes:
-      - gitea_drone:/var/lib/drone/
-      - gitea_drone2:/data
+      - gitea_drone:/data
     environment:
       - DRONE_OPEN=true
       - DRONE_GIT_ALWAYS_AUTH=true
@@ -74,6 +75,7 @@ services:
       - DRONE_LOGS_DEBUG=true
       - DRONE_AGENTS_ENABLED=true
       - DRONE_USER_CREATE=username:urykhy,admin:true
+      - DRONE_DATADOG_ENABLED=false
     depends_on:
       - server
 
@@ -101,8 +103,6 @@ volumes:
   gitea_runner:
     external: true
   gitea_drone:
-    external: true
-  gitea_drone2:
     external: true
 
 networks:
