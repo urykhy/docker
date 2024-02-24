@@ -14,7 +14,7 @@ EOF
 )"
 URL="https://example.com/foobar"
 BINARY="foobar.tmp=/usr/bin/foobar"
-./fpm --verbose                     \
+./fpm.sh --verbose                  \
       --input-type dir              \
       --output-type rpm             \
       --no-auto-depends             \
