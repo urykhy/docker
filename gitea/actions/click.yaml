@@ -1,0 +1,95 @@
+name: clickhouse
+run-name: clickhouse
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test-migration-clickhouse:
+    runs-on: ubuntu-latest
+    services:
+      clickhouse:
+        image: clickhouse/clickhouse-server:23.1
+        options: >-
+          --hostname "act-clickhouse"
+
+    steps:
+      - name: restore migrate
+        id: migrate
+        uses: actions/cache@v3
+        with:
+          path: /bin/migrate
+          key: migrate
+      - name: get migrate
+        if: steps.migrate.outputs.cache-hit != 'true'
+        run: |
+          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.0/migrate.linux-amd64.tar.gz | tar -xzvf - -C /bin migrate
+
+      - name: restore clickhouse
+        id: clickhouse
+        uses: actions/cache@v3
+        with:
+          path: /bin/clickhouse
+          key: clickhouse
+      - name: get clickhouse
+        if: steps.clickhouse.outputs.cache-hit != 'true'
+        run: |
+          curl https://clickhouse.com/ | sh
+          mv clickhouse /bin/
+
+      - name: check out master
+        uses: actions/checkout@v3
+        with:
+          ref: master
+      - name: restore master dump
+        id: master_dump
+        uses: actions/cache/restore@v3
+        with:
+          path: /tmp/base.sql
+          key: base-sql-${{ hashFiles('./click/*.sql') }}
+      - name: apply master dump
+        if: steps.master_dump.outputs.cache-hit == 'true'
+        run: |
+          cat /tmp/base.sql | clickhouse client -h clickhouse -mn --echo
+      - name: ensure master up to date
+        run:
+          if [ `find ./click/ -type f | grep sql$ | wc -l` -ne '0' ]; then
+            migrate -path ./click -database 'clickhouse://clickhouse:9000?&x-multi-statement=true' -verbose up;
+          fi
+      - name: dump master schema
+        if: steps.master_dump.outputs.cache-hit != 'true'
+        run: |
+          rm /tmp/base.sql || true
+          for x in `echo "SHOW TABLES" | clickhouse client -h clickhouse`; do
+            echo "SHOW CREATE TABLE ${x} FORMAT LineAsString" | clickhouse client -h clickhouse >> /tmp/base.sql
+            echo ";" >> /tmp/base.sql
+          done
+          echo "SELECT * FROM schema_migrations SETTINGS output_format_sql_insert_table_name='schema_migrations' FORMAT SQLInsert" | clickhouse client -h clickhouse >> /tmp/base.sql
+          cat /tmp/base.sql
+      - name: save master dump
+        if: steps.master_dump.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
+        with:
+          path: /tmp/base.sql
+          key: base-sql-${{ hashFiles('./click/*.sql') }}
+
+      - name: check out branch
+        uses: actions/checkout@v3
+      - name: apply branch migrations
+        run: migrate -path ./click -database 'clickhouse://clickhouse:9000?&x-multi-statement=true' -verbose up
+
+      - name: dump branch schema
+        run: |
+          rm /tmp/base.sql || true
+          for x in `echo "SHOW TABLES" | clickhouse client -h clickhouse`; do
+            echo "SHOW CREATE TABLE ${x} FORMAT LineAsString" | clickhouse client -h clickhouse >> /tmp/base.sql
+            echo ";" >> /tmp/base.sql
+          done
+          echo "SELECT * FROM schema_migrations SETTINGS output_format_sql_insert_table_name='schema_migrations' FORMAT SQLInsert" | clickhouse client -h clickhouse >> /tmp/base.sql
+          cat /tmp/base.sql
+      - name: save branch dump
+        uses: actions/cache/save@v3
+        with:
+          path: /tmp/base.sql
+          key: base-sql-${{ hashFiles('./click/*.sql') }}

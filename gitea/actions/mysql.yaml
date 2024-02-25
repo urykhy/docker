@@ -1,0 +1,69 @@
+name: mysql
+run-name: mysql
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test-migration-mysql:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0.36-debian
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+          MYSQL_DATABASE: test
+        options: >-
+          --hostname "act-mysql"
+          --health-cmd="mysqladmin ping"
+          --health-interval=1s
+          --health-timeout=2s
+          --health-retries=10
+
+    steps:
+      - name: restore skeema
+        id: skeema
+        uses: actions/cache@v3
+        with:
+          path: /bin/skeema
+          key: skeema
+      - name: get skeema
+        if: steps.skeema.outputs.cache-hit != 'true'
+        run: |
+          curl -L https://github.com/skeema/skeema/releases/download/v1.11.1/skeema_1.11.1_linux_amd64.tar.gz | tar -xzvf - -C /bin skeema
+
+      - name: restore gh-ost
+        id: gh-ost
+        uses: actions/cache@v3
+        with:
+          path: /bin/gh-ost
+          key: gh-ost
+      - name: get gh-ost
+        if: steps.gh-ost.outputs.cache-hit != 'true'
+        run: |
+          curl -L https://github.com/github/gh-ost/releases/download/v1.1.6/gh-ost-binary-linux-amd64-20231207144046.tar.gz | tar -xzvf - -C /bin gh-ost
+
+      - name: install tools
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends default-mysql-client jq
+      - name: wait for mysql
+        run: |
+          timeout 30 bash -c "while ! mysqladmin ping -hmysql; do sleep 1; done"
+      - name: check out master
+        uses: actions/checkout@v3
+        with:
+          ref: master
+      - name: restore master schema
+        run: skeema push test --allow-unsafe --debug
+      - name: check out branch
+        uses: actions/checkout@v3
+      - name: apply with gh-ost
+        run: |
+          skeema push test --allow-unsafe --debug --alter-wrapper="gh-ost --user={USER} --host={HOST} --port={PORT} --database={SCHEMA} --table={TABLE} --alter={CLAUSES} --allow-on-master --verbose --initially-drop-ghost-table --initially-drop-old-table --ok-to-drop-table"
+          ID=`curl -H "Authorization: token ${GITHUB_TOKEN}" "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/labels" | jq -c '.[] | select(.name=="gh-ost") | .id'`
+          curl -d "{\"labels\": [${ID}]}" -H "Content-Type: application/json" -H "Authorization: token ${GITHUB_TOKEN}" "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/issues/${GITHUB_REF_NAME}/labels"
+        continue-on-error: true
+      - name: apply branch
+        run: skeema push test --allow-unsafe --debug
