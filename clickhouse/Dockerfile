@@ -1,7 +1,7 @@
 FROM golang:1.17-stretch AS gosu
 RUN  go install github.com/tianon/gosu@1.14
 
-FROM clickhouse/clickhouse-server:23.1
+FROM clickhouse/clickhouse-server:24.2
 
 ADD metrika.xml   /etc/metrika.xml
 ADD config.xml    /etc/clickhouse-server/config.xml
