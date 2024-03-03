@@ -23,6 +23,14 @@ scrape_configs:
   - targets: ['shard1-b.clickhouse:9363']
   - targets: ['shard2-a.clickhouse:9363']
   - targets: ['shard2-b.clickhouse:9363']
+- job_name: 'clickhouse-tables'
+  metrics_path: '/custom-metrics/tables'
+  static_configs:
+  - targets: ['master.clickhouse:8123']
+  - targets: ['shard1-a.clickhouse:8123']
+  - targets: ['shard1-b.clickhouse:8123']
+  - targets: ['shard2-a.clickhouse:8123']
+  - targets: ['shard2-b.clickhouse:8123']
 - job_name: 'kafka'
   static_configs:
   - targets: ['zookeeper.kafka:7070']

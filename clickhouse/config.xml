@@ -91,4 +91,30 @@
         <events>true</events>
         <asynchronous_metrics>true</asynchronous_metrics>
     </prometheus>
+
+    <http_handlers>
+        <rule>
+            <url>/custom-metrics/tables</url>
+            <methods>GET</methods>
+            <handler>
+                <type>predefined_query_handler</type>
+                <query>
+SELECT 'clickhouse_rows' AS name, 'summary' AS type, map('partition', partition_id, 'table', table, 'database', database) AS labels, sum(rows) AS value
+  FROM system.parts WHERE active GROUP BY ALL
+ UNION ALL
+SELECT 'clickhouse_bytes_on_disk' AS name, 'summary' AS type, map('partition', partition_id, 'table', table, 'database', database) AS labels, sum(bytes_on_disk) AS value
+  FROM system.parts WHERE active GROUP BY ALL
+ UNION ALL
+SELECT 'clickhouse_pk_size' AS name, 'summary' AS type, map('partition', partition_id, 'table', table, 'database', database) AS labels, sum(primary_key_size) AS value
+  FROM system.parts WHERE active GROUP BY ALL
+ UNION ALL
+SELECT 'clickhouse_parts' AS name, 'summary' AS type, map('partition', partition_id, 'table', table, 'database', database) AS labels, count() AS value
+  FROM system.parts WHERE active GROUP BY ALL
+FORMAT Prometheus
+                </query>
+                <content_type>text/plain; charset=utf-8</content_type>
+            </handler>
+        </rule>
+        <defaults/>
+    </http_handlers>
 </yandex>
