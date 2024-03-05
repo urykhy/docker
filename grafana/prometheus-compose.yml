@@ -8,7 +8,8 @@ services:
       - grafana
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./rules.yml:/etc/prometheus/rules.yml
+      - ./rules-slo.yml:/etc/prometheus/rules-slo.yml
+      - ./rules-an.yml:/etc/prometheus/rules-an.yml
       - prometheus:/prometheus
     profiles: ["prometheus"]
 

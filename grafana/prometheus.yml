@@ -9,7 +9,8 @@ alerting:
         - alertmanager:9093
 
 rule_files:
- - 'rules.yml'
+ - 'rules-slo.yml'
+ - 'rules-an.yml'
 
 scrape_configs:
 - job_name: 'prometheus'

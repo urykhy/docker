@@ -1,0 +1,13 @@
+groups:
+- name: anomaly-clickhouse-inserted-bytes
+  rules:
+  - record: ClickHouseProfileEvents_InsertedBytes:rate
+    expr: rate(ClickHouseProfileEvents_InsertedBytes[5m])
+  - record: ClickHouseProfileEvents_InsertedBytes:avg
+    expr: avg_over_time(ClickHouseProfileEvents_InsertedBytes:rate[1h:])
+  - record: ClickHouseProfileEvents_InsertedBytes:stddev
+    expr: stddev_over_time(ClickHouseProfileEvents_InsertedBytes:rate[1h:])
+  - record: ClickHouseProfileEvents_InsertedBytes:zscore
+    expr: abs((ClickHouseProfileEvents_InsertedBytes:rate - ClickHouseProfileEvents_InsertedBytes:avg) / ClickHouseProfileEvents_InsertedBytes:stddev)
+  - record: ClickHouseProfileEvents_InsertedBytes:zscore_1d
+    expr: abs((ClickHouseProfileEvents_InsertedBytes:rate - ClickHouseProfileEvents_InsertedBytes:avg offset 1d) / ClickHouseProfileEvents_InsertedBytes:stddev offset 1d)

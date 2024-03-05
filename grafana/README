@@ -35,7 +35,7 @@ prometheus:
     docker volume create alertmanager
 
     generate/update rules:
-    sloth generate -i sloth.yml -o rules.yml
+    sloth generate -i sloth.yml -o rules-slo.yml
 
 use:
     COMPOSE_PROFILES=oncall,prometheus docker compose start
