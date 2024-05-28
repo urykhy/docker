@@ -1,4 +1,5 @@
 
 docker pull nextcloud
 docker volume create nextcloud
+docker volume create nextcloud-redis
 
