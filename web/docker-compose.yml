@@ -40,8 +40,9 @@ services:
     environment:
       PYTHONUNBUFFERED: 1
 
+
   nginx:
-    image: nginx:stable-alpine
+    image: nginx:1.25.5-alpine-otel
     hostname: nginx
     container_name: nginx
     network_mode: "host"
