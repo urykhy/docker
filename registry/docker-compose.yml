@@ -6,6 +6,7 @@ services:
     hostname: registry
     volumes:
       - registry:/var/lib/registry
+      - ./config.yml:/etc/docker/registry/config.yml
     network_mode: "bridge"
 volumes:
   registry:
