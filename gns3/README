@@ -4,9 +4,9 @@ GNS3/docker
 prepare:
     ./build.sh
     docker volume create gns3
-    docker run -it --privileged --net=host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /etc/machine-id:/etc/machine-id -v gns3:/home/user --name gns3 urykhy/gns3
 
 start:
+    ./start.sh
     docker start gns3
 
 ps: it maybe required to manually rm pid files from volume
