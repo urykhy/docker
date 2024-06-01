@@ -1,9 +1,3 @@
-
-simple ospf in docker
-
-./build
-docker run --privileged --net=host --name ospf -d urykhy/ospf
 telnet localhost ospfd
 
 default password: zebra
-
