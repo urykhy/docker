@@ -20,7 +20,12 @@ services:
 
   uwsgi-torrent:
     image: urykhy/uwsgi
-    build: uwsgi
+    build:
+      context: uwsgi
+      args:
+        APT_PROXY: ${APT_PROXY}
+        PIP_INDEX_URL: ${PIP_INDEX_URL}
+        PIP_TRUSTED_HOST: ${PIP_TRUSTED_HOST}
     container_name: uwsgi-torrent
     volumes:
     - /home/ury:/home/ury
@@ -31,15 +36,24 @@ services:
 
   uwsgi-flibusta:
     image: urykhy/uwsgi
-    build: uwsgi
+    build:
+      context: uwsgi
+      args:
+        APT_PROXY: ${APT_PROXY}
+        PIP_INDEX_URL: ${PIP_INDEX_URL}
+        PIP_TRUSTED_HOST: ${PIP_TRUSTED_HOST}
     container_name: uwsgi-flibusta
     volumes:
     - /home/ury:/home/ury
+    - /u03/mirror/fb2.Flibusta.Net:/u03/mirror/fb2.Flibusta.Net
     command: uwsgi flibusta.ini
     network_mode: "bridge"
     environment:
       PYTHONUNBUFFERED: 1
-
+      MYSQL_PORT: 3306
+      MYSQL_HOST: mysql-master
+      MYSQL_USER: user
+      MYSQL_PASS: ""
 
   nginx:
     image: nginx:1.25.5-alpine-otel

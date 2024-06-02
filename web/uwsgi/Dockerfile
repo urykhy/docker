@@ -1,14 +1,17 @@
-FROM debian:buster
+FROM debian:bookworm
 
-RUN    sed -ie 's|deb.debian.org|mirror.yandex.ru|' /etc/apt/sources.list \
-    && apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-       python3-cherrypy3 python3-elasticsearch \
-       python-pip python-setuptools python-wheel procps less \
-       uwsgi-plugin-python3 \
-       uwsgi-plugin-php \
-    && pip install elasticsearch_dsl \
-    && rm -rf /var/lib/apt/lists/*
+ARG APT_PROXY
+ARG PIP_INDEX_URL
+ARG PIP_TRUSTED_HOST
+
+RUN echo "Acquire::http::Proxy \"${APT_PROXY}\";" > /etc/apt/apt.conf.d/02proxy
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    python3-cherrypy3 \
+    python3-mysqldb python3-sqlalchemy-ext python3-sqlalchemy \
+    python3-pip python3-setuptools python3-wheel procps less \
+    uwsgi-plugin-python3 uwsgi-plugin-php \
+ && rm -rf /var/lib/apt/lists/*
 
 ENV USER=root
 ADD flibusta.ini /
