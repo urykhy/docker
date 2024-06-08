@@ -1,12 +1,3 @@
-
 GNS3/docker
 
-prepare:
-    ./build.sh
-    docker volume create gns3
-
-start:
-    ./start.sh
-    docker start gns3
-
-ps: it maybe required to manually rm pid files from volume
+docker volume create gns3
