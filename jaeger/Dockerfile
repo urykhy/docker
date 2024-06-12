@@ -1,6 +1,7 @@
 FROM jaegertracing/jaeger-query:1.47 AS query
 FROM jaegertracing/jaeger-collector:1.47 AS collector
 FROM golang:1.18-stretch AS builder
+ARG  GOPROXY
 RUN  go install github.com/jaegertracing/jaeger-clickhouse/cmd/jaeger-clickhouse@0.12.0
 
 FROM debian:11

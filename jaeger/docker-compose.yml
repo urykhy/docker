@@ -1,49 +1,52 @@
 version: '2.1'
 
 services:
-    clickhouse:
-      container_name: jaeger-clickhouse
-      image: clickhouse/clickhouse-server:22.9
-      networks:
-        - jaeger
-      volumes:
-        - jaeger-clickhouse:/var/lib/clickhouse
-        - ./clickhouse.xml:/etc/clickhouse-server/config.xml
-      healthcheck:
-        test: clickhouse-local -q 'select 1'
-        interval: 1s
-        timeout: 1s
-        retries: 10
+  clickhouse:
+    container_name: jaeger-clickhouse
+    image: clickhouse/clickhouse-server:22.9
+    networks:
+      - jaeger
+    volumes:
+      - jaeger-clickhouse:/var/lib/clickhouse
+      - ./clickhouse.xml:/etc/clickhouse-server/config.xml
+    healthcheck:
+      test: clickhouse-local -q 'select 1'
+      interval: 1s
+      timeout: 1s
+      retries: 10
 
-    collector:
-      build: .
-      image: urykhy/jaeger
-      container_name: jaeger-collector
-      command: jaeger-collector --collector.zipkin.host-port=:9411 --collector.otlp.http.host-port=:12345
-      networks:
-        jaeger:
-      healthcheck:
-        test: "jaeger-collector status | grep -q 'Server available'"
-        interval: 1s
-        timeout: 1s
-        retries: 10
-      depends_on:
-        clickhouse:
-          condition: service_healthy
+  collector:
+    build:
+      context: .
+      args:
+        GOPROXY: ${GOPROXY}
+    image: urykhy/jaeger
+    container_name: jaeger-collector
+    command: jaeger-collector --collector.zipkin.host-port=:9411 --collector.otlp.http.host-port=:12345
+    networks:
+      jaeger:
+    healthcheck:
+      test: "jaeger-collector status | grep -q 'Server available'"
+      interval: 1s
+      timeout: 1s
+      retries: 10
+    depends_on:
+      clickhouse:
+        condition: service_healthy
 
-    query:
-      container_name: jaeger-query
-      image: urykhy/jaeger
-      command: jaeger-query
-      networks:
-        jaeger:
-      healthcheck:
-        test: "jaeger-query status | grep -q 'Server available'"
-        interval: 1s
-        timeout: 1s
-        retries: 10
-      depends_on:
-        - collector
+  query:
+    container_name: jaeger-query
+    image: urykhy/jaeger
+    command: jaeger-query
+    networks:
+      jaeger:
+    healthcheck:
+      test: "jaeger-query status | grep -q 'Server available'"
+      interval: 1s
+      timeout: 1s
+      retries: 10
+    depends_on:
+      - collector
 
 networks:
   jaeger:

@@ -73,6 +73,17 @@ services:
     - uwsgi-flibusta
     restart: unless-stopped
 
+  goproxy:
+    image: goproxy/goproxy:latest
+    command: "-listen=0.0.0.0:8080 -cacheDir=/go -proxy=https://goproxy.io/"
+    hostname: goproxy
+    container_name: goproxy
+    network_mode: "bridge"
+    volumes:
+    - goproxy:/go
+
 volumes:
   nginx-cache:
+    external: true
+  goproxy:
     external: true

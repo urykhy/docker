@@ -5,7 +5,10 @@ services:
     image: urykhy/kerberos
     hostname: kerberos
     container_name: kerberos
-    build: .
+    build:
+      context: .
+      args:
+        GOPROXY: ${GOPROXY}
     network_mode: "host"
     privileged: true
     volumes:

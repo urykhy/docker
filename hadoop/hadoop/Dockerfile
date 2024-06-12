@@ -1,5 +1,6 @@
 FROM golang:1.17-stretch AS forego
-RUN go install github.com/ddollar/forego@master
+ARG  GOPROXY
+RUN  go install github.com/ddollar/forego@master
 
 FROM minio/minio:RELEASE.2022-04-16T04-26-02Z AS minio
 

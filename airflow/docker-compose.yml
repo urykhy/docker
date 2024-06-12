@@ -38,6 +38,7 @@ services:
         APT_PROXY: ${APT_PROXY}
         PIP_INDEX_URL: ${PIP_INDEX_URL}
         PIP_TRUSTED_HOST: ${PIP_TRUSTED_HOST}
+        GOPROXY: ${GOPROXY}
     container_name: airflow-server
     hostname: airflow
     command: /run.sh

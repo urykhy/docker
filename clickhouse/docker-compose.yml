@@ -13,7 +13,10 @@ services:
       - clickhouse-zk:/data
 
   master:
-    build: .
+    build:
+      context: .
+      args:
+        GOPROXY: ${GOPROXY}
     image: urykhy/clickhouse
     container_name: clickhouse-master
     hostname: master
@@ -25,7 +28,10 @@ services:
       - zookeeper
 
   shard1-a:
-    build: .
+    build:
+      context: .
+      args:
+        GOPROXY: ${GOPROXY}
     image: urykhy/clickhouse
     container_name: clickhouse-shard1-a
     hostname: shard1-a
@@ -39,7 +45,10 @@ services:
       SHARD: 1
 
   shard1-b:
-    build: .
+    build:
+      context: .
+      args:
+        GOPROXY: ${GOPROXY}
     image: urykhy/clickhouse
     container_name: clickhouse-shard1-b
     hostname: shard1-b
@@ -53,7 +62,10 @@ services:
       SHARD: 1
 
   shard2-a:
-    build: .
+    build:
+      context: .
+      args:
+        GOPROXY: ${GOPROXY}
     image: urykhy/clickhouse
     container_name: clickhouse-shard2-a
     hostname: shard2-a
@@ -67,7 +79,10 @@ services:
       SHARD: 2
 
   shard2-b:
-    build: .
+    build:
+      context: .
+      args:
+        GOPROXY: ${GOPROXY}
     image: urykhy/clickhouse
     container_name: clickhouse-shard2-b
     hostname: shard2-b

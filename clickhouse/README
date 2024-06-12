@@ -43,4 +43,4 @@ on master: create database `restore`,
 ./clickhouse-backup master delete local vector1
 
 # build without hdfs
-docker build -t urykhy/clickhouse . --build-arg WITH_HDFS=false
+docker build -t urykhy/clickhouse . --build-arg WITH_HDFS=false --build-arg GOPROXY=${GOPROXY}

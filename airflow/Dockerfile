@@ -1,7 +1,9 @@
 FROM golang:1.17-stretch AS forego
+ARG  GOPROXY
 RUN  go install github.com/ddollar/forego@master
 
 FROM golang:1.17-stretch AS gosu
+ARG  GOPROXY
 RUN  go install github.com/tianon/gosu@master
 
 FROM debian:11

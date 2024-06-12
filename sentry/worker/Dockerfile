@@ -1,5 +1,6 @@
 FROM golang:1.17-stretch AS forego
-RUN go install github.com/ddollar/forego@master
+ARG  GOPROXY
+RUN  go install github.com/ddollar/forego@master
 
 FROM getsentry/sentry:23.1.1
 ADD Procfile /

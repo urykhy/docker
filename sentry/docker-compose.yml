@@ -60,6 +60,8 @@ services:
     image: urykhy/sentry-snuba
     build:
       context: snuba
+      args:
+        GOPROXY: ${GOPROXY}
     container_name: sentry-snuba
     networks:
       - sentry
@@ -91,6 +93,8 @@ services:
     command: forego start -r -f /Procfile
     build:
       context: worker
+      args:
+        GOPROXY: ${GOPROXY}
     container_name: sentry-worker
     depends_on:
       - web

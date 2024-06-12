@@ -3,7 +3,10 @@ version: '3'
 services:
   ospf:
     image: urykhy/ospf
-    build: .
+    build:
+      context: .
+      args:
+        GOPROXY: ${GOPROXY}
     hostname: ospf
     container_name: ospf
     network_mode: "host"

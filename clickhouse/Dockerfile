@@ -1,4 +1,5 @@
 FROM golang:1.17-stretch AS gosu
+ARG  GOPROXY
 RUN  go install github.com/tianon/gosu@1.14
 
 FROM clickhouse/clickhouse-server:24.2
