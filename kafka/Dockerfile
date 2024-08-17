@@ -18,7 +18,28 @@ RUN http_proxy=${S_PROXY} wget http://repo1.maven.org/maven2/io/prometheus/jmx/j
 ADD broker.properties /broker.properties
 ADD exporter.yml /exporter.yml
 
-WORKDIR /opt/kafka/bin
+# SSL
+ADD ssl/ca.crt           /tmp
+ADD ssl/server-kafka.crt /tmp
+ADD ssl/server-kafka.key /tmp
+RUN openssl pkcs12                                                       \
+        -export                                                          \
+        -in /tmp/server-kafka.crt                                        \
+        -inkey /tmp/server-kafka.key                                     \
+        -out /tmp/server.p12                                             \
+        -passout pass:123456                                             \
+ && keytool -importkeystore                                              \
+        -destkeystore /etc/kafka.jks                                     \
+        -deststorepass 123456 -destkeypass 123456                        \
+        -srckeystore /tmp/server.p12                                     \
+        -srcstorepass 123456
 
+RUN openssl x509 -outform der -in /tmp/ca.crt -out /tmp/ca.der           \
+ && keytool -import -noprompt                                            \
+        -keystore /etc/ca.jks -trustcacerts                              \
+        -deststorepass 123456                                            \
+        -file /tmp/ca.der
+
+WORKDIR /opt/kafka/bin
 ADD entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
