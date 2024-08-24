@@ -4,6 +4,7 @@ includes:
   merges: Merges.yml
   size: Size.yml
   vector: Vector.yml
+  data: Data.yml
 
 vars:
   cluster: "events"

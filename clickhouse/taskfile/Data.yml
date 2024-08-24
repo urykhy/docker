@@ -1,0 +1,106 @@
+version: "3"
+
+tasks:
+  disk-io:
+    desc: show disk io utilization by tables
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            WITH   user AS (
+                     SELECT tables[1] as tables, sum(read_bytes) AS query_bytes
+                       FROM cluster({{ $.cluster }}, system.query_log) T
+                      WHERE event_date=today() AND type!='QueryStart' AND length(T.tables) = 1
+                      GROUP BY ALL ORDER BY query_bytes DESC LIMIT 400),
+                   system AS (
+                     SELECT concat(database, '.', table) AS tables,
+                            sumIf(size_in_bytes, event_type='MergeParts') AS merge_bytes,
+                            sumIf(size_in_bytes, event_type='NewPart') AS insert_bytes
+                       FROM cluster({{ $.cluster }}, system.part_log)
+                      WHERE event_date=today()
+                      GROUP BY all ORDER BY merge_bytes DESC LIMIT 400),
+                   sum(query_bytes + insert_bytes + merge_bytes) over() AS total_bytes
+            SELECT user.tables,
+                   formatReadableSize(query_bytes) AS query,
+                   formatReadableSize(insert_bytes) AS insert,
+                   formatReadableSize(merge_bytes) AS merge,
+                   round((query_bytes + insert_bytes + merge_bytes)/total_bytes*100, 2) AS ratio,
+                   round(merge_bytes/insert_bytes*100, 2) AS amplification
+              FROM user RIGHT OUTER JOIN system USING tables
+             ORDER BY ratio DESC
+             LIMIT {{ $.limit }}
+
+  used-keys:
+    desc: show used keys
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            WITH   (SELECT DISTINCT splitByRegexp(', ', sorting_key) AS X FROM cluster({{ $.cluster }}, system.tables) WHERE database = '{{ $.database }}' AND name = '{{ $.table }}') AS keys,
+                   arrayMap(x -> splitByChar('.',x)[3], columns) AS C
+            SELECT count(),
+                   formatReadableTimeDelta(sum(query_duration_ms)/1000/count()) AS avg_time,
+                   formatReadableSize(sum(read_bytes)) AS total_bytes,
+                   arrayFilter(x -> has(keys, x), C) AS key_columns,
+                   arrayFilter(x -> not has(keys, x), C) AS data_columns
+              FROM cluster({{ $.cluster }}, system.query_log)
+             WHERE event_date = today()
+               AND has(tables, '{{ $.database }}.{{ $.table }}')
+             GROUP BY ALL
+             ORDER BY sum(read_bytes) DESC
+             LIMIT {{ $.limit }}
+
+  plan-keys:
+    desc: search useful keys
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            WITH   runningAccumulate(sum_read_bytes) AS bytes_running1,
+                   max(bytes_running1) over() AS total_bytes
+            SELECT formatReadableSize(bytes_running1) AS bytes_running,
+                   round(bytes_running1/total_bytes*100, 2) AS bytes_pct,
+                   arrayDistinct(arrayFlatten(runningAccumulate(key_columns))) AS key_columns,
+                   arrayDistinct(arrayFlatten(runningAccumulate(data_columns))) AS data_columns
+              FROM (
+              WITH (SELECT DISTINCT splitByRegexp(', ', sorting_key) AS X FROM cluster({{ $.cluster }}, system.tables) WHERE database = '{{ $.database }}' AND name = '{{ $.table }}') AS keys,
+                   arrayMap(x -> splitByChar('.',x)[3], columns) AS C
+            SELECT sumState(read_bytes) AS sum_read_bytes,
+                   groupUniqArrayState(arrayFilter(x -> has(keys, x), C)) AS key_columns,
+                   groupUniqArrayState(arrayFilter(x -> not has(keys, x), C)) AS data_columns
+              FROM cluster({{ $.cluster }}, system.query_log)
+             WHERE event_date = today()
+               AND has(tables, '{{ $.database }}.{{ $.table }}')
+             GROUP BY C
+             ORDER BY sum(read_bytes) DESC
+             LIMIT {{ $.limit }}
+            )
+
+  age:
+    desc: show requested data age
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            WITH   parseDateTime32BestEffortOrZero(extract(query, '\`{0,1}date\`{0,1}\s*>=\s*\'(\d{4}\-\d{2}\-\d{2})\'')) AS _date1,
+                   parseDateTime32BestEffortOrZero(extract(query, '\`{0,1}date\`{0,1}\s*=\s*\'(\d{4}\-\d{2}\-\d{2})\'')) AS _date2,
+                   greatest(_date1, _date2) AS _from,
+                   age('day', _from, now()) + 1 AS interval,
+                   sum(_count) over() AS total_count,
+                   sum(_bytes) over() AS total_bytes,
+                   sum(_count) over (order by interval rows between unbounded preceding and current row) as sum_count,
+                   sum(_bytes) over (order by interval rows between unbounded preceding and current row) as sum_bytes
+            SELECT interval,
+                   count() AS _count,
+                   sum(read_bytes) AS _bytes,
+                   formatReadableSize(sum_bytes) AS bytes,
+                   round(sum_bytes/total_bytes*100, 2) As bytes_running,
+                   formatReadableQuantity(sum_count) AS requests,
+                   round(sum_count/total_count*100, 2) AS requests_running
+              FROM cluster({{ $.cluster }}, system.query_log)
+             WHERE event_date = today()
+               AND has(tables, '{{ $.database }}.{{ $.table }}')
+               AND (_date1 > 0 OR _date2 > 0)
+             GROUP BY interval
+             ORDER BY interval ASC
+             LIMIT {{ $.limit }}
