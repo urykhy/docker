@@ -69,7 +69,9 @@ tasks:
       - task: :query
         vars:
           query: |
-            SELECT ProfileEvents FROM clusterAllReplicas({{ $.cluster }}, system, query_log) WHERE query_id = '{{ $.uuid }}' AND ProfileEvents != map()
+            SELECT ProfileEvents.1,ProfileEvents.2 FROM (
+              SELECT ProfileEvents FROM clusterAllReplicas({{ $.cluster }}, system, query_log) WHERE query_id = '{{ $.uuid }}' AND ProfileEvents != map()
+            ) ARRAY JOIN ProfileEvents ORDER BY 1
     preconditions:
       - sh: '[ -n "{{ $.uuid }}" ]'
         msg: "variable `uuid` required"
