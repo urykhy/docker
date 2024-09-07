@@ -1,6 +1,64 @@
 version: "3"
 
 tasks:
+  consistency:
+    desc: check if table consistent across replicas in shards
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            SELECT shard, sumMap([host],[C]) Cx, arrayUniq(Cx.2) > 1 AS broken
+            FROM (
+            SELECT getMacro('shard') AS shard, hostname() as host,
+                   count() as C
+              FROM clusterAllReplicas({{ $.cluster }}, '{{ $.database }}.{{ $.table }}')
+             WHERE date=today()
+             GROUP BY shard, host
+             ORDER BY shard, host
+            )
+            GROUP BY shard
+            ORDER BY broken DESC, shard ASC
+            SETTINGS skip_unavailable_shards=1
+
+  table-requests:
+    desc: show requests to table
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            SELECT count(),
+                   sum(query_duration_ms)/count() as avg_duration_ms,
+                   sum(ProfileEvents.Values[indexOf(ProfileEvents.Names, 'UserTimeMicroseconds')] + ProfileEvents.Values[indexOf(ProfileEvents.Names, 'SystemTimeMicroseconds')]) / 1000000 AS total_cpu_usage,
+                   formatReadableSize(sum(read_bytes)) as total_read_bytes,
+                   argMax(initial_user, read_bytes) as initial_user,
+                   argMax(query, read_bytes) as query
+              FROM clusterAllReplicas({{ $.cluster }}, system.query_log)
+             WHERE event_date = today()
+               AND has(tables, '{{ $.database }}.{{ $.table }}')
+             GROUP BY normalized_query_hash
+             ORDER BY sum(read_bytes) DESC
+             LIMIT {{ $.limit }}
+             SETTINGS skip_unavailable_shards=1
+
+  user-requests:
+    desc: show user requests (pass user variable)
+    cmds:
+      - task: :query
+        vars:
+          query: |
+            SELECT count(),
+                   sum(query_duration_ms)/count() as avg_duration_ms,
+                   sum(ProfileEvents.Values[indexOf(ProfileEvents.Names, 'UserTimeMicroseconds')] + ProfileEvents.Values[indexOf(ProfileEvents.Names, 'SystemTimeMicroseconds')]) / 1000000 AS total_cpu_usage,
+                   formatReadableSize(sum(read_bytes)) as total_read_bytes,
+                   argMax(query, read_bytes) as query
+              FROM clusterAllReplicas({{ $.cluster }}, system.query_log)
+             WHERE event_date = today()
+               AND initial_user = '{{ $.user }}'
+             GROUP BY normalized_query_hash
+             ORDER BY sum(read_bytes) DESC
+             LIMIT {{ $.limit }}
+             SETTINGS skip_unavailable_shards=1
+
   disk-io:
     desc: show disk io utilization by tables
     cmds:
