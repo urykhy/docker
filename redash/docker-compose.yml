@@ -11,6 +11,7 @@ x-redash-environment: &redash-environment
   REDASH_VERSION_CHECK: false
   REDASH_WEB_WORKERS: 1
   WORKERS_COUNT: 1
+  REDASH_ADDITIONAL_QUERY_RUNNERS: "redash.query_runner.python"
 
 services:
   server:
