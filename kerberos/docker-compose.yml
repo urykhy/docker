@@ -7,12 +7,17 @@ services:
     container_name: kerberos
     build:
       context: .
-      args:
-        GOPROXY: ${GOPROXY}
     network_mode: "host"
     privileged: true
     volumes:
       - "kerberos:/var/lib/krb5kdc"
+
+  kadmin:
+    extends:
+      service: kerberos
+    container_name: kadmin
+    hostname: kadmin
+    entrypoint: /usr/sbin/kadmind -P /var/run/kadmind.pid -nofork
 
 volumes:
   kerberos:
