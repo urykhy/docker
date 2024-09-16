@@ -8,4 +8,4 @@ if [ ! -f /airflow/init.done ]; then
     chown -R airflow: /airflow
 fi
 
-exec gosu airflow forego start -r -f /Procfile
+exec gosu airflow airflow webserver

@@ -64,6 +64,34 @@ services:
         condition: service_healthy
     cpus: 1
 
+  scheduler:
+    extends:
+      service: airflow
+    container_name: airflow-scheduler
+    hostname: airflow-scheduler
+    command: gosu airflow airflow scheduler
+
+  triggerer:
+    extends:
+      service: airflow
+    container_name: airflow-triggerer
+    hostname: airflow-triggerer
+    command: gosu airflow airflow triggerer
+
+  worker:
+    extends:
+      service: airflow
+    container_name: airflow-worker
+    hostname: airflow-worker
+    command: gosu airflow airflow celery worker
+
+  flower:
+    extends:
+      service: airflow
+    container_name: airflow-flower
+    hostname: airflow-flower
+    command: gosu airflow airflow celery flower
+
 volumes:
   airflow-postgres:
     external: true
