@@ -5,11 +5,17 @@ services:
     image: urykhy/ospf
     build:
       context: .
-      args:
-        GOPROXY: ${GOPROXY}
     hostname: ospf
     container_name: ospf
     network_mode: "host"
     privileged: true
+    command: /usr/sbin/ospfd
     volumes:
     - ./quagga:/etc/quagga
+
+  zebra:
+    extends:
+      service: ospf
+    container_name: zebra
+    hostname: zebra
+    command: /usr/sbin/zebra

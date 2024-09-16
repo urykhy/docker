@@ -1,7 +1,3 @@
-FROM golang:1.17-stretch AS forego
-ARG  GOPROXY
-RUN  go install github.com/ddollar/forego@master
-
 FROM debian:buster
 
 RUN apt-get update              \
@@ -11,10 +7,5 @@ RUN apt-get update              \
  && mkdir /run/quagga           \
  && chown quagga: /run/quagga
 
-ADD ./zebra.proc /
-
 EXPOSE 2601 2604
 ENV USER=root
-
-COPY --from=forego   /go/bin/forego /usr/bin/
-CMD ["forego", "start", "-r", "-f", "/zebra.proc"]
