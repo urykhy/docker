@@ -10,7 +10,11 @@ services:
 
   nextcloud:
     cpus: 1
-    image: nextcloud:29
+    image: urykhy/nextcloud
+    build:
+      context: .
+      args:
+        APT_PROXY: ${APT_PROXY}
     hostname: nextcloud
     container_name: nextcloud
     network_mode: "bridge"
@@ -22,7 +26,11 @@ services:
       - redis
 
   cron:
-    image: nextcloud:29
+    image: urykhy/nextcloud
+    build:
+      context: .
+      args:
+        APT_PROXY: ${APT_PROXY}
     hostname: nextcloud-cron
     container_name: nextcloud-cron
     network_mode: "bridge"
@@ -31,8 +39,6 @@ services:
     stop_signal: INT
     volumes_from:
       - nextcloud
-    volumes:
-      - ./cron.sh:/bin/cron.sh
     environment:
       REDIS_HOST: redis.nextcloud
     depends_on:
