@@ -1,0 +1,196 @@
+name: ci
+
+on:
+  pull_request: {}
+
+jobs:
+  image:
+    name: image
+    runs-on: ubuntu-latest
+    container:
+      image: "ghcr.io/catthehacker/ubuntu:act-latest"
+    outputs:
+      tag: ${{ steps.build.outputs.tag }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: build
+      id: build
+      run: |
+        docker build . -t ci/cpp-builder:${{ hashFiles('./Dockerfile') }}
+        echo "tag=${{ hashFiles('./Dockerfile') }}" >> "$GITHUB_OUTPUT"
+
+  linter:
+    needs: [image]
+    name: linter
+    runs-on: ubuntu-latest
+    container:
+      image: ci/cpp-builder:${{ needs.image.outputs.tag }}
+    outputs:
+      format: ${{ steps.format.outcome }}
+      tidy: ${{ steps.tidy.outcome }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: configure
+      run: |
+        CC="clang" CXX="clang++" meson setup build --buildtype=debug -Dcpp_args="-g -O0"
+    - name: clang-format
+      id: format
+      continue-on-error: true
+      run: |
+        clang-format --dry-run --Werror example/*.cpp
+    - name: clang-tidy
+      id: tidy
+      continue-on-error: true
+      run: |
+        clang-tidy -p build -warnings-as-errors=* example/*.cpp
+
+  sanitizer:
+    needs: [image]
+    name: ${{ matrix.sanitizer }}
+    runs-on: ubuntu-latest
+    container:
+      image: ci/cpp-builder:${{ needs.image.outputs.tag }}
+    strategy:
+      fail-fast: true
+      matrix:
+        sanitizer: ['address', 'thread', 'undefined', 'memory']
+    steps:
+    - uses: actions/checkout@v4
+    - name: configure
+      run: CC="clang" CXX="clang++" meson setup build -Dcpp_args="-g -O2 -fno-omit-frame-pointer -fno-sanitize-recover=all -fsanitize-memory-track-origins" -Db_sanitize="${{ matrix.sanitizer }}" -Db_lundef=false
+    - name: build
+      working-directory: build
+      run: meson compile
+    - name: test
+      working-directory: build
+      run: meson test
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: meson-logs-${{ matrix.sanitizer }}
+        path: build/meson-logs
+        retention-days: 7
+
+  test:
+    needs: [image]
+    name: test
+    runs-on: ubuntu-latest
+    container:
+      image: ci/cpp-builder:${{ needs.image.outputs.tag }}
+    outputs:
+      coverage: ${{ steps.store.outputs.coverage }}
+      broken: ${{ steps.store.outputs.broken }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: configure
+      run: |
+        mc config host add s3 ${{ vars.S3_HOST }} ${{ secrets.S3_KEY }} ${{ secrets.S3_SECRET }}
+        CC="clang" CXX="clang++" meson setup build --buildtype=debug -Dcpp_args="-g -O0" -Db_coverage=true
+    - name: build
+      working-directory: build
+      run: meson compile
+    - name: test
+      continue-on-error: true
+      working-directory: build
+      run: meson test --test-args '-f XML'
+    - name: generate coverage
+      working-directory: build
+      run: |
+        ninja coverage
+        pycobertura show --format markdown meson-logs/coverage.xml > meson-logs/coverage.md
+    - name: upload coverage
+      working-directory: build
+      run: |
+        mc mirror meson-logs s3/${{ vars.S3_BUCKET }}/workflow/${{ env.GITHUB_REPOSITORY }}/${{ env.GITHUB_RUN_NUMBER }}/coverage
+    - name: generate allure
+      working-directory: build
+      shell: bash
+      run: |
+        set -x
+        jq -r .stdout meson-logs/testlog.json > test.xml
+        ../testing/boost-test-xml-2-allure.py test.xml
+        rm test.xml
+        mkdir allure-input
+        mv ctest*.xml allure-input/
+        allure generate --clean -o allure-report allure-input
+    - name: upload allure
+      working-directory: build
+      run: |
+        mc mirror allure-report s3/${{ vars.S3_BUCKET }}/workflow/${{ env.GITHUB_REPOSITORY }}/${{ env.GITHUB_RUN_NUMBER }}/allure
+    - name: upload artifacts
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: meson-logs-test
+        path: build/meson-logs
+        retention-days: 7
+    - name: cache coverage.md
+      uses: actions/cache/save@v3
+      with:
+        path: build/meson-logs/coverage.md
+        key: coverage-md-${{ env.GITHUB_SHA }}
+    - name: store outputs
+      id: store
+      working-directory: build
+      run: |
+        set -x
+        R=`cat meson-logs/coverage.md | awk -F\| '/TOTAL/ {print int($5)}'`
+        echo "coverage=$R" >> "$GITHUB_OUTPUT"
+        R=`cat allure-report/widgets/summary.json | jq '.statistic.failed + .statistic.broken'`
+        echo "broken=$R" >> "$GITHUB_OUTPUT"
+
+  report:
+    needs: [image, linter, test]
+    if: always()
+    name: report
+    runs-on: ubuntu-latest
+    container:
+      image: ci/cpp-builder:${{ needs.image.outputs.tag }}
+    steps:
+    - name: fetch coverage.md
+      uses: actions/cache/restore@v3
+      with:
+        path: build/meson-logs/coverage.md
+        key: coverage-md-${{ env.GITHUB_SHA }}
+    - name: prepare
+      shell: bash
+      run: |
+        set -x
+        H="${{ vars.PAGES }}/${{ vars.S3_BUCKET }}/workflow/${{ env.GITHUB_REPOSITORY }}/${{ env.GITHUB_RUN_NUMBER }}"
+        R="${{ needs.test.outputs.coverage }}"
+        declare -A colors=(["90"]="success" ["75"]="ffff00" ["50"]="ffa500" ["25"]="ff0000" ["0"]="000000")
+        (for num in 90 75 50 25 0; do
+          if [[ $R -ge $num ]]; then
+            echo -n " [$(echo \!)[coverage](https://img.shields.io/badge/Code%20Coverage-${R}%25-${colors[$num]})]($H/coverage/coveragereport/index.html)"
+            break
+          fi
+        done) >> coverage.md
+        R="${{ needs.test.outputs.broken }}"
+        (if [[ $R -eq "0" ]]; then
+          echo -n " [$(echo \!)[allure](https://img.shields.io/badge/Tests-Passed-success)]($H/allure/index.html)"
+          else
+          echo -n " [$(echo \!)[allure](https://img.shields.io/badge/Tests-Failed-ff0000)]($H/allure/index.html)"
+        fi) >> coverage.md
+        R="${{ needs.linter.outputs.format }}"
+        H="${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_NUMBER }}/jobs/1"
+        (if [[ $R = "success" ]]; then
+          echo -n " [$(echo \!)[clang-format](https://img.shields.io/badge/Clang-Format-success)]($H)"
+          else
+          echo -n " [$(echo \!)[clang-format](https://img.shields.io/badge/Clang-Format-ffff00)]($H)"
+        fi) >> coverage.md
+        R="${{ needs.linter.outputs.tidy }}"
+        (if [[ $R = "success" ]]; then
+          echo -n " [$(echo \!)[clang-tidy](https://img.shields.io/badge/Clang-Tidy-success)]($H)"
+          else
+          echo -n " [$(echo \!)[clang-tidy](https://img.shields.io/badge/Clang-Tidy-ffff00)]($H)"
+        fi) >> coverage.md
+        echo >> coverage.md
+        cat build/meson-logs/coverage.md >> coverage.md
+        echo "" >> coverage.md
+        echo "<p align="right">Generated by :monkey: against ${{ env.GITHUB_SHA }}</p>" >> coverage.md
+    - name: publish
+      shell: bash
+      run: |
+        set -x
+        jq -n --rawfile c coverage.md '{body: $c}' > coverage.json
+        curl -v -d@coverage.json -H 'Content-Type: application/json' -H "Authorization: token ${GITHUB_TOKEN}" "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/issues/${GITHUB_REF_NAME}/comments"
