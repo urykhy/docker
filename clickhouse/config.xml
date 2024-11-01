@@ -115,6 +115,14 @@ FORMAT Prometheus
                 <content_type>text/plain; charset=utf-8</content_type>
             </handler>
         </rule>
+        <rule>
+            <methods>POST</methods>
+            <url>/api/2/store/</url>
+            <handler>
+                <type>predefined_query_handler</type>
+                <query>INSERT INTO sentry (o) SELECT {_request_body:String}::JSON</query>
+            </handler>
+        </rule>
         <defaults/>
     </http_handlers>
 </yandex>
