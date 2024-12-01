@@ -1,5 +1,5 @@
 # run once replication started
-# ansible-playbook ansible-playbook semisync.yaml -i inventory.ini
+# ansible-playbook semisync.yaml -i inventory.ini
 - hosts: docker
   connection: local
   gather_facts: yes

@@ -15,7 +15,7 @@ rule_files:
 scrape_configs:
 - job_name: 'prometheus'
   static_configs:
-  - targets: ['localhost:9090','elf.dark:9100','elf.dark:9633']
+  - targets: ['localhost:9090','elf.dark:9100','elf.dark:9633','elf.dark:9104']
 - job_name: 'clickhouse'
   static_configs:
   - targets: ['zookeeper.clickhouse:7070']
