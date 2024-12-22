@@ -53,7 +53,7 @@ services:
       MYSQL_PORT: 3306
       MYSQL_HOST: mysql-master
       MYSQL_USER: user
-      MYSQL_PASS: ""
+      MYSQL_PASS: user
 
   nginx:
     image: nginx:1.25.5-alpine-otel
