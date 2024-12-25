@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: planka-postgres
+    command: "postgres -c fsync=off -c full_page_writes=off -c synchronous_commit=OFF"
+    network_mode: "bridge"
+    volumes:
+      - pg:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: planka
+      POSTGRES_USER: planka
+      POSTGRES_PASSWORD: planka
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U planka"]
+      interval: 1s
+      timeout: 1s
+      retries: 10
+
+  planka:
+    image: ghcr.io/plankanban/planka:1.24.3
+    container_name: planka-server
+    network_mode: "bridge"
+    volumes:
+      - avatars:/app/public/user-avatars
+      - images:/app/public/project-background-images
+      - attachments:/app/private/attachments
+    environment:
+      - BASE_URL=http://planka.elf.dark
+      - DATABASE_URL=postgresql://planka:planka@postgres.planka.docker/planka
+      - SECRET_KEY=7a84afd91faa1965702f0b98c1819eeb6703bd480f30a0af52d4a698ea5f3ac9065844910ce694531382ddf6dc60b1cf302e49ce82f97a7d9029248faf51e197
+      - DEFAULT_ADMIN_EMAIL=demo@demo.demo # Do not remove if you want to prevent this user from being edited/deleted
+      - DEFAULT_ADMIN_PASSWORD=admin
+      - DEFAULT_ADMIN_NAME=Admin
+      - DEFAULT_ADMIN_USERNAME=admin
+      - PORT=8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      disable: true
+
+volumes:
+  avatars:
+  images:
+  attachments:
+  pg:

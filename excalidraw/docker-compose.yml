@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  excalidraw:
+    image: excalidraw/excalidraw:latest
+    container_name: excalidraw
+    network_mode: "bridge"
+    healthcheck:
+      disable: true
