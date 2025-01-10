@@ -1,0 +1,9 @@
+
+once started:
+    echo "docker:docker@`host -t a coordinator.fdb.docker | cut -d\  -f 4`:4500" > fdb.cluster
+
+create database:
+    fdbcli --exec "configure new single memory ; status" --timeout 10
+
+show status:
+    fdbcli --exec "status"

@@ -1,0 +1,38 @@
+version: '3.9'
+name: fdb
+
+services:
+  coordinator:
+    image: foundationdb/foundationdb:7.3.43
+    hostname: coordinator
+    network_mode: "bridge"
+    volumes:
+      - "coordinator:/var/fdb/data"
+
+  server-1:
+    image: foundationdb/foundationdb:7.3.43
+    hostname: server-1
+    network_mode: "bridge"
+    environment:
+      FDB_COORDINATOR: coordinator.fdb.docker
+    depends_on:
+      - coordinator
+    volumes:
+      - "server-1:/var/fdb/data"
+
+  server-2:
+    image: foundationdb/foundationdb:7.3.43
+    hostname: server-2
+    network_mode: "bridge"
+    environment:
+      FDB_COORDINATOR: coordinator.fdb.docker
+    depends_on:
+      - coordinator
+      - server-1
+    volumes:
+      - "server-2:/var/fdb/data"
+
+volumes:
+  coordinator:
+  server-1:
+  server-2:
