@@ -8,6 +8,20 @@ services:
     volumes:
       - "nextcloud-redis:/data"
 
+  mysql:
+    image: mysql:8.0.36-debian
+    hostname: nextcloud-mysql
+    container_name: nextcloud-mysql
+    command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW --character-set-server=utf8mb4 --collation_server=utf8mb4_general_ci
+    environment:
+      - MYSQL_ROOT_PASSWORD=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=nextcloud
+      - MYSQL_DATABASE=nextcloud
+    network_mode: "bridge"
+    volumes:
+      - nextcloud-mysql:/var/lib/mysql
+
   nextcloud:
     cpus: 1
     image: urykhy/nextcloud
@@ -24,6 +38,7 @@ services:
       REDIS_HOST: redis.nextcloud
     depends_on:
       - redis
+      - mysql
 
   cron:
     image: urykhy/nextcloud
@@ -43,10 +58,14 @@ services:
       REDIS_HOST: redis.nextcloud
     depends_on:
       - redis
-
+      - mysql
+      - nextcloud
 
 volumes:
   nextcloud:
     external: true
   nextcloud-redis:
     external: true
+  nextcloud-mysql:
+    external: true
+
