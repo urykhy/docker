@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   gns3:
     image: urykhy/gns3

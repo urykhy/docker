@@ -1,4 +1,3 @@
-version: '2'
 services:
   oracle:
     image: urykhy/oracle

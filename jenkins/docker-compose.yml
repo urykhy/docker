@@ -1,4 +1,3 @@
-version: '2'
 services:
   jenkins:
     image: urykhy/jenkins
