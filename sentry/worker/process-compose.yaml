@@ -1,0 +1,38 @@
+version: "0.5"
+is_tui_disabled: true
+
+processes:
+  worker:
+    command: sentry run worker -c 2
+    availability:
+        restart: on_failure
+
+  cron:
+    command: sentry run cron
+    availability:
+        restart: on_failure
+
+  ingest-consumer:
+    command: sentry run ingest-consumer --all-consumer-types
+    availability:
+        restart: on_failure
+
+  post-process-forwarder-errors:
+    command: sentry run post-process-forwarder --commit-batch-size 1 --entity errors
+    availability:
+        restart: on_failure
+
+  post-process-forwarder-transactions:
+    command: sentry run post-process-forwarder --commit-batch-size 1 --entity transactions --commit-log-topic=snuba-transactions-commit-log --synchronize-commit-group transactions_group
+    availability:
+        restart: on_failure
+
+  subscription-consumer-events:
+    command: sentry run query-subscription-consumer --commit-batch-size 1 --topic events-subscription-results
+    availability:
+        restart: on_failure
+
+  subscription-consumer-transactions:
+    command: sentry run query-subscription-consumer --commit-batch-size 1 --topic transactions-subscription-results
+    availability:
+        restart: on_failure

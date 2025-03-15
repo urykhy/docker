@@ -1,7 +1,7 @@
 services:
   kms:
     image: urykhy/hadoop
-    container_name: kms
+    container_name: hadoop-kms
     hostname: kms
     domainname: hadoop.docker
     command: hadoop kms
@@ -19,7 +19,7 @@ services:
 
   namenode:
     image: urykhy/hadoop
-    container_name: namenode
+    container_name: hadoop-namenode
     hostname: namenode
     domainname: hadoop.docker
     command: /namenode.sh
@@ -43,10 +43,10 @@ services:
 
   datanode1:
     image: urykhy/hadoop
-    container_name: datanode1
+    container_name: hadoop-datanode1
     hostname: datanode1
     domainname: hadoop.docker
-    command: forego start -r -f /datanode.proc
+    command: process-compose up -f /process-compose.datanode
     depends_on:
       namenode:
         condition: service_healthy
@@ -69,10 +69,10 @@ services:
 
   datanode2:
     image: urykhy/hadoop
-    container_name: datanode2
+    container_name: hadoop-datanode2
     hostname: datanode2
     domainname: hadoop.docker
-    command: forego start -r -f /datanode.proc
+    command: process-compose up -f /process-compose.datanode
     depends_on:
       namenode:
         condition: service_healthy
@@ -95,10 +95,10 @@ services:
 
   resourcemanager:
     image: urykhy/hadoop
-    container_name: resourcemanager
+    container_name: hadoop-resourcemanager
     hostname: resourcemanager
     domainname: hadoop.docker
-    command: forego start -r -f /resourcemanager.proc
+    command: process-compose up -f /process-compose.resourcemanager
     depends_on:
       datanode1:
         condition: service_healthy
@@ -116,7 +116,7 @@ services:
 
   historyserver:
     image: urykhy/hadoop
-    container_name: historyserver
+    container_name: hadoop-historyserver
     hostname: historyserver
     domainname: hadoop.docker
     command: yarn timelineserver
@@ -139,7 +139,7 @@ services:
 
   minio:
     image: urykhy/hadoop
-    container_name: minio-hdfs
+    container_name: hadoop-minio
     hostname: minio
     domainname: hadoop.docker
     depends_on:
@@ -164,7 +164,7 @@ services:
 
   spark:
     image: urykhy/hadoop-spark
-    container_name: spark
+    container_name: hadoop-spark
     hostname: spark
     domainname: hadoop.docker
     networks:

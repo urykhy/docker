@@ -1,9 +1,7 @@
-FROM golang:1.17-stretch AS forego
-ARG  GOPROXY
-RUN  go install github.com/ddollar/forego@master
-
 FROM getsentry/sentry:23.1.1
-ADD Procfile /
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl
+RUN curl -fSL https://github.com/F1bonacc1/process-compose/releases/download/v1.46.0/process-compose_linux_amd64.tar.gz -o - | tar -C /bin/ -vzxf - process-compose
+
+ADD process-compose.yaml /
 ENTRYPOINT []
-CMD ["forego", "start", "-r", "-f", "/Procfile"]
-COPY --from=forego   /go/bin/forego /usr/bin/
+CMD []

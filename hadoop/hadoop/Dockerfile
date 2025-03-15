@@ -1,7 +1,3 @@
-FROM golang:1.17-stretch AS forego
-ARG  GOPROXY
-RUN  go install github.com/ddollar/forego@master
-
 FROM minio/minio:RELEASE.2022-04-16T04-26-02Z AS minio
 
 FROM debian:11
@@ -68,10 +64,12 @@ RUN openssl pkcs12                                                              
     #    -keystore /etc/ssl/certs/java/cacerts -deststorepass changeit -trustcacerts  \
     #    -srckeystore /tmp/kms.hadoop.docker.p12 -srcstorepass 123456
 
-ADD namenode.sh          /
-ADD datanode.proc        /
-ADD resourcemanager.proc /
+ADD namenode.sh /
 RUN rm /etc/hadoop/kms-log4j.properties
+
+RUN http_proxy=${S_PROXY} curl -fSL http://github.com/F1bonacc1/process-compose/releases/download/v1.46.0/process-compose_linux_amd64.tar.gz -o - | tar -C /bin/ -vzxf - process-compose
+ADD process-compose.datanode /
+ADD process-compose.resourcemanager /
 
 # Kerberos support
 ADD krb5.conf        /etc/
@@ -87,4 +85,3 @@ ENV WITH_KERBEROS=$WITH_KERBEROS
 RUN if [ "$WITH_KERBEROS" != "true" ]; then sed -i '/KERBEROS BEGIN/,/KERBEROS END/d' /etc/hadoop/*.xml; fi
 
 COPY --from=minio    /opt/bin/minio /usr/bin/
-COPY --from=forego   /go/bin/forego /usr/bin/

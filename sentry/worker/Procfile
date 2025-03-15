@@ -1,7 +1,0 @@
-worker: sentry run worker -c 2
-cron: sentry run cron
-ingest-consumer:                     sentry run ingest-consumer --all-consumer-types
-post-process-forwarder-errors:       sentry run post-process-forwarder --commit-batch-size 1 --entity errors
-post-process-forwarder-transactions: sentry run post-process-forwarder --commit-batch-size 1 --entity transactions --commit-log-topic=snuba-transactions-commit-log --synchronize-commit-group transactions_group
-subscription-consumer-events:        sentry run query-subscription-consumer --commit-batch-size 1 --topic events-subscription-results
-subscription-consumer-transactions:  sentry run query-subscription-consumer --commit-batch-size 1 --topic transactions-subscription-results

@@ -1,3 +1,0 @@
-hdfs: hdfs datanode
-history: mapred historyserver
-manager: yarn nodemanager

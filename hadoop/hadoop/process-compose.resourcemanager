@@ -1,0 +1,8 @@
+version: "0.5"
+is_tui_disabled: true
+
+processes:
+  resourcemanager:
+    command: yarn resourcemanager
+    availability:
+        restart: on_failure

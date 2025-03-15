@@ -1,0 +1,34 @@
+version: "0.5"
+is_tui_disabled: true
+
+processes:
+  hdfs:
+    command: hdfs datanode
+    availability:
+        restart: on_failure
+    readiness_probe:
+        http_get:
+            host: 127.0.0.1
+            scheme: http
+            path: "/"
+            port: 9864
+        period_seconds: 1
+        timeout_seconds: 1
+        initial_delay_seconds: 5
+        failure_threshold: 10
+
+  history:
+    command: mapred historyserver
+    availability:
+        restart: on_failure
+    depends_on:
+        hdfs:
+            condition: process_healthy
+
+  nodemanager:
+    command: yarn nodemanager
+    availability:
+        restart: on_failure
+    depends_on:
+        hdfs:
+            condition: process_healthy
