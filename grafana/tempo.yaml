@@ -1,5 +1,9 @@
 distributor:
   receivers:
+    otlp:
+      protocols:
+        http:
+          endpoint: 0.0.0.0:12345
     jaeger:
       protocols:
         thrift_compact:

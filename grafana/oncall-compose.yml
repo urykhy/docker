@@ -1,7 +1,7 @@
 services:
   oncall:
     image: grafana/oncall:latest
-    container_name: oncall-server
+    container_name: grafana-oncall-server
     command: bash -c "python manage.py migrate --noinput && exec uwsgi --ini uwsgi.ini"
     networks:
       - grafana
@@ -15,7 +15,7 @@ services:
 
   celery:
     image: grafana/oncall:latest
-    container_name: oncall-celery
+    container_name: grafana-oncall-celery
     command: ./celery_with_exporter.sh
     networks:
       - grafana
@@ -26,7 +26,7 @@ services:
 
   redis:
     image: redis
-    container_name: oncall-redis
+    container_name: grafana-oncall-redis
     networks:
       - grafana
     volumes:
@@ -35,7 +35,7 @@ services:
 
   mysql:
     image: mysql:8.0-debian
-    container_name: oncall-mysql
+    container_name: grafana-oncall-mysql
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --log-error-verbosity=1
     networks:
       - grafana

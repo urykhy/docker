@@ -1,7 +1,7 @@
 services:
   prometheus:
     image: prom/prometheus:v2.47.2
-    container_name: prometheus
+    container_name: grafana-prometheus
     networks:
       - grafana
     volumes:
@@ -9,17 +9,15 @@ services:
       - ./rules-slo.yml:/etc/prometheus/rules-slo.yml
       - ./rules-an.yml:/etc/prometheus/rules-an.yml
       - prometheus:/prometheus
-    profiles: ["prometheus"]
 
   alertmanager:
     image: prom/alertmanager:v0.26.0
-    container_name: alertmanager
+    container_name: grafana-alertmanager
     networks:
       - grafana
     volumes:
       - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
       - alertmanager:/alertmanager
-    profiles: ["prometheus"]
 
 volumes:
   prometheus:

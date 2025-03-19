@@ -1,0 +1,9 @@
+---
+apiVersion: 1
+datasources:
+  - uid: VU57gME7z
+    type: grafana-clickhouse-datasource
+    name: ClickHouse
+    jsonData:
+      port: 9000
+      host: master.clickhouse

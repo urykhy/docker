@@ -3,13 +3,8 @@ docker volume create --name=grafana_data
 docker volume create --name=grafana_tempo
 docker network create grafana
 
-grafana sources:
-    graphite: http://graphite:80
-       tempo: http://tempo:80
-         elk: http://server.elk:9200, index: logstash, message field name: message, version: 7.7+
-
 web interface:
-    http://grafana.grafana:3000 as admin:admin
+    http://grafana:3000
     http://graphite.grafana
 
 tempo status:
@@ -38,4 +33,4 @@ prometheus:
     sloth generate -i sloth.yml -o rules-slo.yml
 
 use:
-    COMPOSE_PROFILES=oncall,prometheus docker compose start
+    COMPOSE_PROFILES=oncall docker compose start

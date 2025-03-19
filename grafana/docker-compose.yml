@@ -4,18 +4,53 @@ include:
 
 services:
   grafana:
-    image: grafana/grafana:11.2.0
+    image: grafana/grafana:11.5.2
     hostname: grafana
-    container_name: grafana
+    container_name: grafana-server
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-pyroscope-app
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
     networks:
       - grafana
     volumes:
+      - ./provisioning:/etc/grafana/provisioning
       - "grafana_data:/var/lib/grafana"
+
+  pyroscope:
+    image: grafana/pyroscope:latest
+    hostname: pyroscope
+    container_name: grafana-pyroscope
+    networks:
+      - grafana
+    volumes:
+      - "grafana-pyro-data:/data"
+      - "grafana-pyro-comp:/data-compactor"
+    # ports 4040
+
+  alloy:
+    privileged: true
+    user: root
+    pid: host
+    image: grafana/alloy:v1.7.4
+    hostname: alloy
+    container_name: grafana-alloy
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --storage.path=/var/lib/alloy/data
+      - --server.http.listen-addr=0.0.0.0:12345
+    networks:
+      - grafana
+    volumes:
+      - ./config.alloy:/etc/alloy/config.alloy
+    # ports 12345
 
   tempo:
     image: grafana/tempo:latest
     hostname: tempo
-    container_name: tempo
+    container_name: grafana-tempo
     command: [ "-config.file=/etc/tempo.yaml" ]
     networks:
       - grafana
@@ -29,7 +64,7 @@ services:
   graphite:
     image: nickstenning/graphite
     hostname: graphite
-    container_name: graphite
+    container_name: grafana-graphite
     networks:
       - grafana
     volumes:
@@ -45,4 +80,8 @@ volumes:
   grafana_data:
     external: true
   grafana_tempo:
+    external: true
+  grafana-pyro-data:
+    external: true
+  grafana-pyro-comp:
     external: true
