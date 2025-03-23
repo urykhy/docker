@@ -81,8 +81,19 @@ services:
     volumes:
     - goproxy:/go
 
+  registry:
+    image: registry:2
+    container_name: registry
+    hostname: registry
+    network_mode: "bridge"
+    volumes:
+      - registry:/var/lib/registry
+      - ./registry.yml:/etc/docker/registry/config.yml
+
 volumes:
   nginx-cache:
     external: true
   goproxy:
+    external: true
+  registry:
     external: true
