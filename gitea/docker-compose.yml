@@ -1,5 +1,5 @@
 services:
-  db:
+  mysql:
     image: mysql:8.0.36-debian
     container_name: gitea-mysql
     environment:
@@ -19,7 +19,7 @@ services:
       - USER_UID=1000
       - USER_GID=100
       - GITEA__DATABASE__DB_TYPE=mysql
-      - GITEA__DATABASE__HOST=db.gitea:3306
+      - GITEA__DATABASE__HOST=mysql.gitea:3306
       - GITEA__DATABASE__USER=gitea
       - GITEA__DATABASE__PASSWD=gitea
       - GITEA__SERVER__HTTP_PORT=3000
@@ -29,12 +29,17 @@ services:
       - GITEA__REPOSITORY__DEFAULT_BRANCH=master
       - GITEA__ACTIONS__ENABLED=true
       - GITEA__webhook__ALLOWED_HOST_LIST=*
+    healthcheck:
+      test: curl --head localhost:3000
+      interval: 1s
+      timeout: 1s
+      retries: 30
     networks:
       - gitea
     volumes:
       - gitea_server:/data
     depends_on:
-      - db
+      - mysql
 
   runner:
     image: gitea/act_runner:nightly
@@ -50,7 +55,8 @@ services:
       - GITEA_INSTANCE_URL=http://server.gitea.docker:3000/
       - GITEA_RUNNER_REGISTRATION_TOKEN=yJwKNsf8qGxJZVDrV7OrLoYydcUEqV2HuaJ58Ut7
     depends_on:
-      - server
+      server:
+        condition: service_healthy
 
   drone:
     image: drone/drone:2.22.0
@@ -69,13 +75,14 @@ services:
       - DRONE_SERVER_PROTO=http
       - DRONE_RPC_SECRET=123
       - DRONE_DATABASE_DRIVER=mysql
-      - DRONE_DATABASE_DATASOURCE=drone:drone@tcp(db.gitea:3306)/drone?parseTime=true
+      - DRONE_DATABASE_DATASOURCE=drone:drone@tcp(mysql.gitea:3306)/drone?parseTime=true
       - DRONE_LOGS_DEBUG=true
       - DRONE_AGENTS_ENABLED=true
       - DRONE_USER_CREATE=username:urykhy,admin:true
       - DRONE_DATADOG_ENABLED=false
     depends_on:
-      - server
+      server:
+        condition: service_healthy
 
   agent:
     image: drone/drone-runner-docker:1.8.3
