@@ -51,7 +51,7 @@ services:
     volumes:
       - "redash_redis:/data"
   postgres:
-    image: postgres:15-alpine
+    image: postgres:17.4-alpine
     container_name: redash-postgres
     command: "postgres -c fsync=off -c full_page_writes=off -c synchronous_commit=OFF"
     networks:
@@ -60,14 +60,14 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_HOST_AUTH_METHOD: "trust"
     volumes:
-      - "redash_pg:/var/lib/postgresql/data"
+      - "redash_postgres:/var/lib/postgresql/data"
 
 networks:
   redash:
     external: true
 
 volumes:
-  redash_pg:
+  redash_postgres:
     external: true
   redash_redis:
     external: true

@@ -1,11 +1,11 @@
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:17.4-alpine
     container_name: planka-postgres
     command: "postgres -c fsync=off -c full_page_writes=off -c synchronous_commit=OFF"
     network_mode: "bridge"
     volumes:
-      - pg:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: planka
       POSTGRES_USER: planka
@@ -44,4 +44,4 @@ volumes:
   avatars:
   images:
   attachments:
-  pg:
+  postgres:

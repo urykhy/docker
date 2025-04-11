@@ -1,5 +1,5 @@
 volumes:
-  sentry-db:
+  sentry-postgres:
     external: true
   sentry-files:
     external: true
@@ -28,7 +28,7 @@ services:
     - sentry
 
   postgres:
-    image: postgres:12
+    image: postgres:17.4-alpine
     container_name: sentry-postgres
     command: "postgres -c fsync=off -c full_page_writes=off -c synchronous_commit=OFF"
     environment:
@@ -36,7 +36,7 @@ services:
       POSTGRES_PASSWORD: sentry
       POSTGRES_DB: sentry
     volumes:
-    - sentry-db:/var/lib/postgresql/data
+    - sentry-postgres:/var/lib/postgresql/data
     networks:
     - sentry
 
