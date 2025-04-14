@@ -10,7 +10,7 @@ services:
     networks:
       - gitea
     volumes:
-      - gitea_db:/var/lib/mysql
+      - gitea-mysql:/var/lib/mysql
 
   server:
     image: gitea/gitea:1.21.6
@@ -37,7 +37,7 @@ services:
     networks:
       - gitea
     volumes:
-      - gitea_server:/data
+      - gitea-server:/data
     depends_on:
       - mysql
 
@@ -48,7 +48,7 @@ services:
       - gitea
     volumes:
       - ./runner.yaml:/etc/runner.yaml
-      - gitea_runner:/data
+      - gitea-runner:/data
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - CONFIG_FILE=/etc/runner.yaml
@@ -64,7 +64,7 @@ services:
     networks:
       - gitea
     volumes:
-      - gitea_drone:/data
+      - gitea-drone:/data
     environment:
       - DRONE_OPEN=true
       - DRONE_GIT_ALWAYS_AUTH=true
@@ -101,13 +101,13 @@ services:
       - DRONE_LOGS_DEBUG=true
 
 volumes:
-  gitea_db:
+  gitea-mysql:
     external: true
-  gitea_server:
+  gitea-server:
     external: true
-  gitea_runner:
+  gitea-runner:
     external: true
-  gitea_drone:
+  gitea-drone:
     external: true
 
 networks:

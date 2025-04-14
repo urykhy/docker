@@ -2,23 +2,23 @@
 gitea + MySQL
 
 prepare:
-docker volume create gitea_db
-docker volume create gitea_server
-docker volume create gitea_drone
-docker volume create gitea_runner
+docker volume create gitea-mysql
+docker volume create gitea-server
+docker volume create gitea-drone
+docker volume create gitea-runner
 docker network create gitea      --subnet 172.16.11.0/24
 
 docker-compose create --force-recreate
 docker-compose start
 
 # tune mysql DB
-mysql -uroot -pgitea -hdb.gitea
+mysql -uroot -pgitea -hmysql.gitea
 $ ALTER DATABASE gitea CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci';
 
 # Drone does not create your database automatically.
-echo "create database drone" | mysql -hdb.gitea -uroot -pgitea
-echo "create user 'drone'@'%' IDENTIFIED BY 'drone'"  | mysql -hdb.gitea -uroot -pgitea
-echo "grant all privileges on drone.* TO 'drone'@'%'" | mysql -hdb.gitea -uroot -pgitea
+echo "create database drone" | mysql -hmysql.gitea -uroot -pgitea
+echo "create user 'drone'@'%' IDENTIFIED BY 'drone'"  | mysql -hmysql.gitea -uroot -pgitea
+echo "grant all privileges on drone.* TO 'drone'@'%'" | mysql -hmysql.gitea -uroot -pgitea
 
 access:
 http://server.gitea.docker:3000
