@@ -4,6 +4,7 @@ volumes:
   prometheus: {}
   coroot: {}
   clickhouse: {}
+  node-agent: {}
 
 networks:
   coroot:
@@ -11,7 +12,7 @@ networks:
 
 services:
   coroot:
-    image: ghcr.io/coroot/coroot
+    image: ghcr.io/coroot/coroot:1.10.3
     volumes:
       - coroot:/data
     networks:
@@ -27,7 +28,7 @@ services:
       - prometheus
 
   node-agent:
-    image: ghcr.io/coroot/coroot-node-agent
+    image: ghcr.io/coroot/coroot-node-agent:1.23.19
     privileged: true
     networks:
       - coroot
@@ -36,9 +37,11 @@ services:
       - /sys/kernel/tracing:/sys/kernel/tracing
       - /sys/kernel/debug:/sys/kernel/debug
       - /sys/fs/cgroup:/host/sys/fs/cgroup
+      - node-agent:/data
     command:
       - '--collector-endpoint=http://coroot:8080'
       - '--cgroupfs-root=/host/sys/fs/cgroup'
+      - '--wal-dir=/data'
 
   prometheus:
     image: prom/prometheus:v2.45.4
@@ -64,6 +67,7 @@ services:
       - coroot
     volumes:
       - clickhouse:/var/lib/clickhouse/
+      - ./default-user.xml:/etc/clickhouse-server/users.d/default-user.xml
 
   collector:
     image: otel/opentelemetry-collector:0.101.0

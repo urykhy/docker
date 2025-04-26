@@ -1,1 +1,3 @@
 docker network create coroot     --subnet 172.16.17.0/24
+
+in volume/_data: chmod 777 .
