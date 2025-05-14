@@ -18,13 +18,14 @@ services:
       retries: 10
 
   planka:
-    image: ghcr.io/plankanban/planka:1.24.3
+    image: ghcr.io/plankanban/planka:2.0.0-rc.2
     container_name: planka-server
     network_mode: "bridge"
     volumes:
       - avatars:/app/public/user-avatars
-      - images:/app/public/project-background-images
       - attachments:/app/private/attachments
+      - favicons:/app/public/favicons
+      - background-images:/app/public/background-images
     environment:
       - BASE_URL=http://planka.elf.dark
       - DATABASE_URL=postgresql://planka:planka@postgres.planka.docker/planka
@@ -33,6 +34,7 @@ services:
       - DEFAULT_ADMIN_PASSWORD=admin
       - DEFAULT_ADMIN_NAME=Admin
       - DEFAULT_ADMIN_USERNAME=admin
+      - DEFAULT_LANGUAGE=en-US
       - PORT=8080
     depends_on:
       postgres:
@@ -42,6 +44,7 @@ services:
 
 volumes:
   avatars:
-  images:
   attachments:
   postgres:
+  favicons:
+  background-images:
