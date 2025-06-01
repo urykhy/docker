@@ -7,3 +7,6 @@ create database:
 
 show status:
     fdbcli --exec "status"
+
+show roles:
+    fdbcli --exec "status json" | jq -r '.cluster.processes[] | ["machine_id", .machine_id ],["address:", .address ],["roles:", .roles[].role] | @tsv' | column -t

@@ -5,33 +5,50 @@ services:
     image: foundationdb/foundationdb:7.3.43
     hostname: coordinator
     network_mode: "bridge"
+    environment:
+      FDB_COORDINATOR: coordinator.fdb.docker
+      FDB_PROCESS_CLASS: coordinator
     volumes:
       - "coordinator:/var/fdb/data"
 
-  server-1:
+  server-stateless:
     image: foundationdb/foundationdb:7.3.43
-    hostname: server-1
+    hostname: server-stateless
     network_mode: "bridge"
     environment:
       FDB_COORDINATOR: coordinator.fdb.docker
+      FDB_PROCESS_CLASS: stateless
     depends_on:
       - coordinator
     volumes:
-      - "server-1:/var/fdb/data"
+      - "server-stateless:/var/fdb/data"
 
-  server-2:
+  server-log:
     image: foundationdb/foundationdb:7.3.43
-    hostname: server-2
+    hostname: server-log
     network_mode: "bridge"
     environment:
       FDB_COORDINATOR: coordinator.fdb.docker
+      FDB_PROCESS_CLASS: log
     depends_on:
       - coordinator
-      - server-1
     volumes:
-      - "server-2:/var/fdb/data"
+      - "server-log:/var/fdb/data"
+
+  server-storage:
+    image: foundationdb/foundationdb:7.3.43
+    hostname: server-storage
+    network_mode: "bridge"
+    environment:
+      FDB_COORDINATOR: coordinator.fdb.docker
+      FDB_PROCESS_CLASS: storage
+    depends_on:
+      - coordinator
+    volumes:
+      - "server-storage:/var/fdb/data"
 
 volumes:
   coordinator:
-  server-1:
-  server-2:
+  server-stateless:
+  server-log:
+  server-storage:
