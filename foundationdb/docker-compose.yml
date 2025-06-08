@@ -3,52 +3,33 @@ name: fdb
 services:
   coordinator:
     image: foundationdb/foundationdb:7.3.43
-    hostname: coordinator
+    hostname: fdb-coordinator
     network_mode: "bridge"
+    privileged: true
     environment:
       FDB_COORDINATOR: coordinator.fdb.docker
-      FDB_PROCESS_CLASS: coordinator
+      FDB_CLUSTER_FILE: /etc/foundationdb/fdb.cluster
+    init: true
+    entrypoint: ["/entrypoint.sh"]
     volumes:
-      - "coordinator:/var/fdb/data"
+      - "data:/var/fdb/data"
+      - "logs:/var/fdb/logs"
+      - "config:/etc/foundationdb"
+      - "./foundationdb.conf.in:/tmp/foundationdb.conf.in"
+      - "./fdb.cluster.in:/tmp/fdb.cluster.in"
+      - "./entrypoint.sh:/entrypoint.sh"
 
-  server-stateless:
-    image: foundationdb/foundationdb:7.3.43
-    hostname: server-stateless
+  exporter:
+    image: aikoven/foundationdb-exporter:3.0.0
     network_mode: "bridge"
     environment:
-      FDB_COORDINATOR: coordinator.fdb.docker
-      FDB_PROCESS_CLASS: stateless
+      FDB_CLUSTER_FILE: /etc/foundationdb/fdb.cluster
+    volumes:
+      - "config:/etc/foundationdb/"
     depends_on:
       - coordinator
-    volumes:
-      - "server-stateless:/var/fdb/data"
-
-  server-log:
-    image: foundationdb/foundationdb:7.3.43
-    hostname: server-log
-    network_mode: "bridge"
-    environment:
-      FDB_COORDINATOR: coordinator.fdb.docker
-      FDB_PROCESS_CLASS: log
-    depends_on:
-      - coordinator
-    volumes:
-      - "server-log:/var/fdb/data"
-
-  server-storage:
-    image: foundationdb/foundationdb:7.3.43
-    hostname: server-storage
-    network_mode: "bridge"
-    environment:
-      FDB_COORDINATOR: coordinator.fdb.docker
-      FDB_PROCESS_CLASS: storage
-    depends_on:
-      - coordinator
-    volumes:
-      - "server-storage:/var/fdb/data"
 
 volumes:
-  coordinator:
-  server-stateless:
-  server-log:
-  server-storage:
+  data:
+  logs:
+  config:

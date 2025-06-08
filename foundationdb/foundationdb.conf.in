@@ -1,0 +1,72 @@
+[fdbmonitor]
+restart-delay=5
+initial-restart-delay=5
+
+[fdbserver]
+command = /usr/bin/fdbserver
+public-address = %ADDR%:$ID
+listen-address = public
+datadir = /var/fdb/data/$ID
+logdir = /var/fdb/logs/$ID
+memory = 500MiB
+cache-memory = 400MiB
+storage-memory = 400MiB
+locality_machineid = $ID
+locality_zoneid = $ID
+
+[fdbserver.4500]
+class=coordinator
+
+[fdbserver.4501]
+class=stateless
+[fdbserver.4502]
+class=stateless
+[fdbserver.4503]
+class=stateless
+[fdbserver.4504]
+class=stateless
+[fdbserver.4505]
+class=stateless
+[fdbserver.4506]
+class=stateless
+[fdbserver.4507]
+class=stateless
+[fdbserver.4508]
+class=stateless
+[fdbserver.4509]
+class=stateless
+[fdbserver.4510]
+class=stateless
+[fdbserver.4511]
+class=stateless
+[fdbserver.4512]
+class=stateless
+[fdbserver.4513]
+class=stateless
+[fdbserver.4514]
+class=stateless
+[fdbserver.4515]
+class=stateless
+
+
+[fdbserver.4520]
+class=transaction
+[fdbserver.4521]
+class=transaction
+[fdbserver.4522]
+class=transaction
+[fdbserver.4523]
+class=transaction
+[fdbserver.4524]
+class=transaction
+
+[fdbserver.4530]
+class=storage
+[fdbserver.4531]
+class=storage
+[fdbserver.4532]
+class=storage
+[fdbserver.4533]
+class=storage
+[fdbserver.4534]
+class=storage

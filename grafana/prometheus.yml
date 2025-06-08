@@ -38,3 +38,6 @@ scrape_configs:
   - targets: ['broker-1.kafka:7071']
   - targets: ['broker-2.kafka:7071']
   - targets: ['broker-3.kafka:7071']
+- job_name: 'fdb'
+  static_configs:
+  - targets: ['exporter.fdb:9444']
