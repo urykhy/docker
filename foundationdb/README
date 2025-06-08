@@ -1,12 +1,17 @@
+prepare volume:
+    cat foundationdb.conf | grep 45 | sed -e 's/.*\(45..\).*/\1/' | xargs | tr '\ ' ,
+    sudo mkdir /u01/docker/volumes/fdb_data/_data/{4500,4501,4502,4503,4504,4505,4506,4507,4508,4509,4510,4511,4512,4513,4514,4515,4520,4521,4522,4523,4524,4530,4531,4532,4533,4534}
+    sudo mkdir /u01/docker/volumes/fdb_logs/_data/{4500,4501,4502,4503,4504,4505,4506,4507,4508,4509,4510,4511,4512,4513,4514,4515,4520,4521,4522,4523,4524,4530,4531,4532,4533,4534}
 
 once started:
     echo "docker:docker@`host -t a coordinator.fdb.docker | cut -d\  -f 4`:4500" > fdb.cluster
 
 create database:
-    fdbcli --exec "configure new single memory ; status" --timeout 10
+    fdbcli --no-status --exec "configure new double ssd  ; status" --timeout 10
+    > configure grv_proxies=3
 
 show status:
     fdbcli --exec "status"
 
 show roles:
-    fdbcli --exec "status json" | jq -r '.cluster.processes[] | ["machine_id", .machine_id ],["address:", .address ],["roles:", .roles[].role] | @tsv' | column -t
+    fdbcli --exec "status json" | jq -r '["address","cpu","roles"], (.cluster.processes[] | [.address, (.cpu.usage_cores * 1000 | round / 10), .roles[].role]) | @tsv' | column -t -R 2 | sort -n
