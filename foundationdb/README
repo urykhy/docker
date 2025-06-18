@@ -9,9 +9,3 @@ once started:
 create database:
     fdbcli --no-status --exec "configure new double ssd  ; status" --timeout 10
     > configure grv_proxies=3
-
-show status:
-    fdbcli --exec "status"
-
-show roles:
-    fdbcli --exec "status json" | jq -r '["address","cpu","roles"], (.cluster.processes[] | [.address, (.cpu.usage_cores * 1000 | round / 10), .roles[].role]) | @tsv' | column -t -R 2 | sort -n
