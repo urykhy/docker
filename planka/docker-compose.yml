@@ -18,7 +18,7 @@ services:
       retries: 10
 
   planka:
-    image: ghcr.io/plankanban/planka:2.0.0-rc.2
+    image: ghcr.io/plankanban/planka:2.0.0-rc.3
     container_name: planka-server
     network_mode: "bridge"
     volumes:
