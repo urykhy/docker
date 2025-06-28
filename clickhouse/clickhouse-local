@@ -1,3 +1,4 @@
 #!/bin/bash
 
-docker run --rm -i -v `pwd`:/data --workdir=/data --user `id -u` --entrypoint=clickhouse-local clickhouse/clickhouse-server:24.2 "$@"
+if [ -t 0 ] ; then T="t"; else T=""; fi
+docker run --rm -i${T} -v `pwd`:/data --workdir=/data --user `id -u` --entrypoint=clickhouse-local clickhouse/clickhouse-server:24.2 "$@"
