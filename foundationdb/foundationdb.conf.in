@@ -8,11 +8,12 @@ public-address = %ADDR%:$ID
 listen-address = public
 datadir = /var/fdb/data/$ID
 logdir = /var/fdb/logs/$ID
-memory = 500MiB
-cache-memory = 400MiB
-storage-memory = 400MiB
+memory = 4100MiB
+cache-memory = 800MiB
+storage-memory = 800MiB
 locality_machineid = $ID
 locality_zoneid = $ID
+knob_disable_posix_kernel_aio=1
 
 [fdbserver.4500]
 class=coordinator
@@ -47,7 +48,6 @@ class=stateless
 class=stateless
 [fdbserver.4515]
 class=stateless
-
 
 [fdbserver.4520]
 class=transaction
