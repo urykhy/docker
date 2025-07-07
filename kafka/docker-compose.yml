@@ -69,10 +69,31 @@ services:
       KAFKA_CLUSTERS_0_METRICS_TYPE: PROMETHEUS
       KAFKA_CLUSTERS_0_METRICS_PORT: 7071
 
+  registry:
+    image: confluentinc/cp-schema-registry:7.2.15
+    container_name: kafka-registry
+    hostname: kafka-registry
+    networks:
+      kafka:
+    depends_on:
+      - broker-3
+    environment:
+      SCHEMA_REGISTRY_HEAP_OPTS: -Xms64m -Xmx256m
+      SCHEMA_REGISTRY_JVM_PERFORMANCE_OPTS: -XX:+UseShenandoahGC
+      SCHEMA_REGISTRY_HOST_NAME: kafka-registry
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
+      SCHEMA_REGISTRY_LISTENERS: http://registry.kafka.docker:8081
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://broker-1:9092
+      SCHEMA_REGISTRY_DEBUG: 'true'
+    volumes:
+      - kafka-registry:/etc/schema-registry/secrets
+
 volumes:
   kafka-zk:
     external: true
   kafka-data:
+    external: true
+  kafka-registry:
     external: true
 networks:
   kafka:
