@@ -1,4 +1,5 @@
 #!/bin/bash
 
+touch $HOME/.clickhouse-client-history
 if [ -t 0 ] ; then T="t"; else T=""; fi
-docker run --rm -i${T} -v `pwd`:/data --workdir=/data --user `id -u` --entrypoint=clickhouse-local clickhouse/clickhouse-server:24.2 "$@"
+docker run --rm -i${T} -v `pwd`:/data --workdir=/data -v $HOME/.clickhouse-client-history:/tmp/.clickhouse-client-history -e CLICKHOUSE_HISTORY_FILE=/tmp/.clickhouse-client-history --user `id -u` --entrypoint=clickhouse-local clickhouse/clickhouse-server:25.5-alpine --path /data/.click "$@"
