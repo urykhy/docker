@@ -1,0 +1,16 @@
+docker network create temporal   --subnet 172.16.18.0/24
+docker volume create temporal-mysql
+
+mysql -uroot -ptemporal -hmysql.temporal
+create database temporal;
+create database temporal_visibility;
+grant all privileges on temporal.* to temporal;
+grant all privileges on temporal_visibility.* to temporal;
+
+dc exec cli bash
+temporal-sql-tool --ep mysql -u root --pw temporal --db temporal setup-schema -v 0.0
+temporal-sql-tool --ep mysql -u root --pw temporal --db temporal update-schema -d ./schema/mysql/v8/temporal/versioned
+temporal-sql-tool --ep mysql -u root --pw temporal --db temporal_visibility setup-schema -v 0.0
+temporal-sql-tool --ep mysql -u root --pw temporal --db temporal_visibility update-schema -d ./schema/mysql/v8/visibility/versioned
+tctl --ns default namespace register -rd 3
+

@@ -1,0 +1,68 @@
+services:
+  mysql:
+    image: mysql:8.0.36-debian
+    container_name: temporal-mysql
+    networks:
+      - temporal
+    environment:
+      - MYSQL_ROOT_PASSWORD=temporal
+      - MYSQL_USER=temporal
+      - MYSQL_PASSWORD=temporal
+      - MYSQL_DATABASE=temporal
+    volumes:
+      - temporal-mysql:/var/lib/mysql
+    healthcheck:
+      test: mysql -u$$MYSQL_USER -p$$MYSQL_PASSWORD -h127.0.0.1 -e 'select 1'
+      timeout: 1s
+      interval: 1s
+      retries: 10
+
+  server:
+    image: temporalio/server:1.28.0
+    container_name: temporal-server
+    networks:
+      - temporal
+    volumes:
+      - ./dynamicconfig:/etc/temporal/config/dynamicconfig
+    environment:
+      - BIND_ON_IP=0.0.0.0
+      - DB=mysql8
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+      - MYSQL_PWD=temporal
+      - MYSQL_SEEDS=mysql
+      - MYSQL_USER=temporal
+      - VISIBILITY_MYSQL_PWD=temporal
+      - VISIBILITY_MYSQL_SEEDS=mysql
+      - VISIBILITY_MYSQL_USER=temporal
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  cli:
+    image: temporalio/admin-tools:1.28.0-tctl-1.18.2-cli-1.3.0
+    container_name: temporal-cli
+    networks:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=server:7233
+      - TEMPORAL_CLI_ADDRESS=server:7233
+    stdin_open: true
+    tty: true
+
+  ui:
+    image: temporalio/ui:2.34.0
+    container_name: temporal-ui
+    networks:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=server:7233
+      - TEMPORAL_CORS_ORIGINS=http://server:7233
+    depends_on:
+      - server
+
+volumes:
+  temporal-mysql:
+    external: true
+networks:
+  temporal:
+    external: true
