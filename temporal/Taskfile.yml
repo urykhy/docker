@@ -1,0 +1,17 @@
+version: '3'
+
+tasks:
+  venv:
+    desc: create venv
+    cmds:
+      - bash -c "python3 -m venv env; source env/bin/activate; python -m pip install temporalio"
+
+  worker:
+    desc: run worker
+    cmds:
+      - bash -c "source env/bin/activate; cd example; python worker.py"
+
+  flow:
+    desc: run workflow
+    cmds:
+      - bash -c "source env/bin/activate; cd example; python flow.py"
