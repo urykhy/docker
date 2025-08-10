@@ -1,6 +1,6 @@
 services:
   pmm-server:
-    image: percona/pmm-server:3
+    image: percona/pmm-server:3.3
     container_name: pmm-server
     hostname: pmm-server
     network_mode: "bridge"
