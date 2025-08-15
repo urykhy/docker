@@ -1,6 +1,7 @@
 services:
   prometheus:
     image: prom/prometheus:v2.47.2
+    hostname: prometheus
     container_name: grafana-prometheus
     networks:
       - grafana
@@ -12,7 +13,12 @@ services:
 
   alertmanager:
     image: prom/alertmanager:v0.26.0
+    hostname: alertmanager
     container_name: grafana-alertmanager
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+      - "--storage.path=/alertmanager"
+      - "--web.external-url=http://alertmanager.grafana:9093"
     networks:
       - grafana
     volumes:

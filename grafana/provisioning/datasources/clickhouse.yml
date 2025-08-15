@@ -6,4 +6,4 @@ datasources:
     name: ClickHouse
     jsonData:
       port: 9000
-      host: master.clickhouse
+      server: master.clickhouse
