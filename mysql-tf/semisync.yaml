@@ -20,7 +20,7 @@
                 "--innodb-monitor-enable=ALL",
                 "--log_output=FILE",
                 "--general_log_file=/var/lib/mysql/log",
-                "--general_log=1",
+                "--general_log=0",
                 "--plugin-load-add=rpl_semi_sync_source=semisync_source.so",
                 "--rpl_semi_sync_source_enabled=1"]
       mounts:
