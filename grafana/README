@@ -26,7 +26,6 @@ oncall:
 
 prometheus:
     prepare:
-    docker volume create prometheus
     docker volume create alertmanager
 
     generate/update rules:
