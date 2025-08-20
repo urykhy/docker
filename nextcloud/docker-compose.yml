@@ -11,7 +11,7 @@ services:
     image: mysql:8.0.36-debian
     hostname: nextcloud-mysql
     container_name: nextcloud-mysql
-    command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW --character-set-server=utf8mb4 --collation_server=utf8mb4_general_ci
+    command: --transaction-isolation=READ-COMMITTED --log-bin=0 --binlog-format=ROW --character-set-server=utf8mb4 --collation_server=utf8mb4_general_ci
     environment:
       - MYSQL_ROOT_PASSWORD=nextcloud
       - MYSQL_USER=nextcloud
