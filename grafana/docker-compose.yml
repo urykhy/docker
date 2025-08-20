@@ -28,6 +28,7 @@ services:
       - "grafana-pyro-data:/data"
       - "grafana-pyro-comp:/data-compactor"
     # ports 4040
+    profiles: ["grafana"]
 
   alloy:
     privileged: true
@@ -46,6 +47,7 @@ services:
     volumes:
       - ./config.alloy:/etc/alloy/config.alloy
     # ports 12345
+    profiles: ["grafana"]
 
   tempo:
     image: grafana/tempo:latest
@@ -57,6 +59,7 @@ services:
     volumes:
       - "./tempo.yaml:/etc/tempo.yaml"
       - "grafana_tempo:/data"
+    profiles: ["grafana"]
     #  ports
     #  80      # tempo api
     #  6831    # jaeger/thrift_compact on udp

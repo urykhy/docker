@@ -32,4 +32,4 @@ prometheus:
     sloth generate -i sloth.yml -o rules-slo.yml
 
 use:
-    COMPOSE_PROFILES=oncall docker compose start
+    COMPOSE_PROFILES=oncall,grafana docker compose start
