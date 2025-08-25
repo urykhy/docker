@@ -27,6 +27,7 @@ oncall:
 prometheus:
     prepare:
     docker volume create alertmanager
+    docker volume create prometheus
 
     generate/update rules:
     sloth generate -i sloth.yml -o rules-slo.yml

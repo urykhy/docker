@@ -5,16 +5,16 @@ services:
     container_name: grafana-prometheus
     networks:
       - grafana
-    tmpfs:
-      - /prometheus:size=512m,mode=1777
     volumes:
+      - prometheus:/prometheus
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - ./rules-slo.yml:/etc/prometheus/rules-slo.yml
       - ./rules-an.yml:/etc/prometheus/rules-an.yml
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
-      - "--storage.tsdb.retention.size=500MB"
+      - "--storage.tsdb.retention.size=300MB"
+      - "--storage.tsdb.min-block-duration=30m"
 
   alertmanager:
     image: prom/alertmanager:v0.26.0
@@ -32,4 +32,6 @@ services:
 
 volumes:
   alertmanager:
+    external: true
+  prometheus:
     external: true
