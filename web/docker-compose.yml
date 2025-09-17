@@ -50,7 +50,7 @@ services:
     environment:
       PYTHONUNBUFFERED: 1
       MYSQL_PORT: 3306
-      MYSQL_HOST: mysql-master
+      MYSQL_HOST: mysql-master.docker
       MYSQL_USER: user
       MYSQL_PASS: user
 
