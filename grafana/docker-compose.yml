@@ -4,7 +4,7 @@ include:
 
 services:
   grafana:
-    image: grafana/grafana:11.5.2
+    image: grafana/grafana:12.1.1
     hostname: grafana
     container_name: grafana-server
     environment:
