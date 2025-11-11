@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17.4-alpine
+    container_name: postgres
+    command: "postgres -c fsync=off -c full_page_writes=off -c synchronous_commit=OFF -c shared_preload_libraries=pg_stat_statements"
+    network_mode: "bridge"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: user
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: user
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 1s
+      timeout: 1s
+      retries: 10
+
+volumes:
+  postgres:
