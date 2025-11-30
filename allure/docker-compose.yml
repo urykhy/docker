@@ -1,20 +1,23 @@
 services:
   engine:
     image: urykhy/allure-engine
-    build: allure
+    build:
+      context: allure
+      args:
+        APT_PROXY: ${APT_PROXY}
     hostname:  allure-engine
     container_name: allure-engine
     network_mode: "bridge"
     volumes:
       - "allure:/data"
   web:
-    image: urykhy/allure-web
-    build: nginx
+    image: nginx:1.25.5-alpine
     hostname: allure-web
     container_name: allure-web
     network_mode: "bridge"
     volumes:
       - "allure:/data"
+      - ./nginx/upload.conf:/etc/nginx/conf.d/default.conf
 
 volumes:
   allure:

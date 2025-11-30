@@ -1,10 +1,12 @@
-FROM debian:buster
+FROM debian:bullseye
+
+ARG APT_PROXY
 
 ENV ALLURE_VER 2.19.0
 ENV ALLURE_URL https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/$ALLURE_VER/allure-commandline-$ALLURE_VER.tgz
 
-RUN    sed -ie 's|deb.debian.org|mirror.yandex.ru|' /etc/apt/sources.list \
-    && apt-get update \
+RUN echo "Acquire::http::Proxy \"${APT_PROXY}\";" > /etc/apt/apt.conf.d/02proxy
+RUN    apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
        openjdk-11-jre-headless \
        curl procps less \
