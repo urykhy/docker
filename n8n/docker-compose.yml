@@ -3,6 +3,7 @@ services:
     image: docker.n8n.io/n8nio/n8n:1.122.5
     container_name: n8n
     hostname: n8n
+    network_mode: "bridge"
     environment:
       - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
       - N8N_HOST=${SUBDOMAIN}.${DOMAIN_NAME}
@@ -10,6 +11,7 @@ services:
       - N8N_PROTOCOL=http
       - N8N_SECURE_COOKIE=false
       - N8N_RUNNERS_ENABLED=true
+      - N8N_DIAGNOSTICS_ENABLED=false
       - NODE_ENV=production
       - WEBHOOK_URL=https://${SUBDOMAIN}.${DOMAIN_NAME}/
       - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
