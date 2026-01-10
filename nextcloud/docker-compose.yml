@@ -60,6 +60,19 @@ services:
       - mysql
       - nextcloud
 
+  office:
+    image: collabora/code:25.04.8.1.1
+    hostname: nextcloud-office
+    container_name: nextcloud-office
+    network_mode: "bridge"
+    environment:
+      extra_params: "--o:ssl.enable=false --o:ssl.termination=true --o:server_name=nextcloud.elf.dark --o:net.service_root=/office"
+      dictionaries: "en_GB en_US ru_RU"
+    depends_on:
+      - redis
+      - mysql
+      - nextcloud
+
 volumes:
   nextcloud:
     external: true
@@ -67,4 +80,3 @@ volumes:
     external: true
   nextcloud-mysql:
     external: true
-
