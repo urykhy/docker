@@ -18,14 +18,11 @@ services:
       retries: 10
 
   planka:
-    image: ghcr.io/plankanban/planka:2.0.0-rc.3
+    image: ghcr.io/plankanban/planka:2.0.0
     container_name: planka-server
     network_mode: "bridge"
     volumes:
-      - avatars:/app/public/user-avatars
-      - attachments:/app/private/attachments
-      - favicons:/app/public/favicons
-      - background-images:/app/public/background-images
+      - data:/app/data
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=1
       - net.ipv6.conf.default.disable_ipv6=1
@@ -46,8 +43,5 @@ services:
       disable: true
 
 volumes:
-  avatars:
-  attachments:
+  data:
   postgres:
-  favicons:
-  background-images:
