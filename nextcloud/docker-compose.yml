@@ -73,6 +73,19 @@ services:
       - mysql
       - nextcloud
 
+  whiteboard:
+    image: ghcr.io/nextcloud-releases/whiteboard:stable
+    hostname: nextcloud-whiteboard
+    container_name: nextcloud-whiteboard
+    network_mode: "bridge"
+    depends_on:
+      - redis
+      - mysql
+      - nextcloud
+    environment:
+      NEXTCLOUD_URL: https://nextcloud.docker
+      JWT_SECRET_KEY: qZoUIuxq4vMWTEE7yQxo4ZwGon8057
+
 volumes:
   nextcloud:
     external: true
