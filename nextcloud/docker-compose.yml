@@ -74,7 +74,7 @@ services:
       - nextcloud
 
   whiteboard:
-    image: ghcr.io/nextcloud-releases/whiteboard:stable
+    image: ghcr.io/nextcloud-releases/whiteboard:v1.5.7
     hostname: nextcloud-whiteboard
     container_name: nextcloud-whiteboard
     network_mode: "bridge"

@@ -1,4 +1,4 @@
-FROM nextcloud:32
+FROM nextcloud:33
 
 ARG APT_PROXY
 
