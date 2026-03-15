@@ -5,3 +5,7 @@ services:
     network_mode: "bridge"
     healthcheck:
       disable: true
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.excalidraw.rule=Host(`excalidraw`)
+      - traefik.http.services.excalidraw.loadbalancer.server.port=80

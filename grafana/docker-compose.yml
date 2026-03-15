@@ -17,6 +17,10 @@ services:
     volumes:
       - ./provisioning:/etc/grafana/provisioning
       - "grafana_data:/var/lib/grafana"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.grafana.rule=Host(`grafana`)
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
 
   pyroscope:
     image: grafana/pyroscope:latest
@@ -53,7 +57,7 @@ services:
     image: grafana/tempo:latest
     hostname: tempo
     container_name: grafana-tempo
-    command: [ "-config.file=/etc/tempo.yaml" ]
+    command: ["-config.file=/etc/tempo.yaml"]
     networks:
       - grafana
     volumes:

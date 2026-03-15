@@ -41,6 +41,10 @@ services:
         condition: service_healthy
     healthcheck:
       disable: true
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.planka.rule=Host(`planka`)
+      - traefik.http.services.planka.loadbalancer.server.port=8080
 
 volumes:
   data:
