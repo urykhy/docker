@@ -11,6 +11,9 @@ access:
 web: http://server.redash:5000
 api: curl -H 'Authorization: Key zN4XEDtdCa5d7jfjuUDp441cV81ssUsKLSqE7xuT' 'http://server.redash.docker:5000/api/queries'
 
+migrations:
+docker compose run --rm server manage db upgrade
+
 upgrade db:
 # docker compose run --rm -it postgres bash -c 'pg_dumpall -d postgresql://postgres:postgres@postgres.redash/postgres > /var/lib/postgresql/data/dump_all'
 # store dump_all. clear volume, start new version. restore dump_all

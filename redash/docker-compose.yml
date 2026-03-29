@@ -13,7 +13,7 @@ x-redash-environment: &redash-environment
 
 services:
   server:
-    image: redash/redash:preview
+    image: redash/redash:26.3.0
     container_name: redash-server
     command: server
     networks:
@@ -24,7 +24,7 @@ services:
     environment:
       <<: *redash-environment
   scheduler:
-    image: redash/redash:preview
+    image: redash/redash:26.3.0
     container_name: redash-scheduler
     command: scheduler
     networks:
@@ -34,7 +34,7 @@ services:
     environment:
       <<: *redash-environment
   worker:
-    image: redash/redash:preview
+    image: redash/redash:26.3.0
     container_name: redash-worker
     command: worker
     networks:
