@@ -1,0 +1,16 @@
+---
+users:
+  ury:
+    disabled: false
+    displayname: "Ury"
+    password: "$argon2id$v=19$m=65536,t=3,p=4$rWnPshR/QVTMfa+Vo3OP9w$/QX/1UzjrfSvy9/q3SE4LDHeYh9cou7/310kioJLwRI"
+    email: "ury@elf.dark"
+    groups:
+      - "dev"
+  admin:
+    disabled: false
+    displayname: "Admin"
+    password: "$argon2id$v=19$m=65536,t=3,p=4$Qk1lbzcH8DBuxX7P9w4AZQ$kqvexW1b2G/OQNj8DOLN5vgou2mu3piPUZba9DxDoEk"
+    email: "admin@elf.dark"
+    groups:
+      - "admin"

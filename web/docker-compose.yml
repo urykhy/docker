@@ -116,6 +116,21 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
+  authelia:
+    image: "authelia/authelia:4.39"
+    hostname: authelia
+    domainname: elf.dark
+    container_name: authelia
+    network_mode: "bridge"
+    volumes:
+      - "./authelia:/config"
+    healthcheck:
+      disable: true
+    environment:
+      TZ: "Europe/Moscow"
+      PUID: "1000"
+      GGID: "100"
+
 volumes:
   nginx-cache:
     external: true
