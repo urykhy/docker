@@ -2,7 +2,7 @@ once started:
     echo "docker:docker@`host -t a coordinator.fdb.docker | cut -d\  -f 4`:4500" > fdb.cluster
 
 create database:
-    fdbcli --no-status --exec "configure new double ssd  ; status" --timeout 10
+    fdbcli --no-status --exec "configure new single ssd  ; status" --timeout 10
     fdbcli --no-status --exec "configure new double ssd-redwood-1  ; status" --timeout 10
     fdbcli --no-status --exec "configure new double ssd-rocksdb-v1  ; status" --timeout 10
     fdbcli --no-status --exec "configure new single memory  ; status" --timeout 10
