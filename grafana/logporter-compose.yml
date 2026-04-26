@@ -1,0 +1,24 @@
+services:
+  logporter:
+    image: lifailon/logporter:latest
+    hostname: logporter
+    container_name: grafana-logporter
+    networks:
+      - grafana
+    environment:
+      - DOCKER_HOST=tcp://docker-proxy:2375
+    depends_on:
+      docker-proxy:
+        condition: service_started
+
+  docker-proxy:
+    image: lscr.io/linuxserver/socket-proxy:latest
+    hostname: docker-proxy
+    container_name: grafana-docker-proxy
+    networks:
+      - grafana
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - CONTAINERS=1
+      - INFO=1

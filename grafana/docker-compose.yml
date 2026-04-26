@@ -1,6 +1,7 @@
 include:
   - oncall-compose.yml
   - prometheus-compose.yml
+  - logporter-compose.yml
 
 services:
   grafana:
@@ -32,7 +33,7 @@ services:
       - "grafana-pyro-data:/data"
       - "grafana-pyro-comp:/data-compactor"
     # ports 4040
-    profiles: ["grafana"]
+    profiles: [ "grafana" ]
 
   alloy:
     privileged: true
@@ -51,39 +52,27 @@ services:
     volumes:
       - ./config.alloy:/etc/alloy/config.alloy
     # ports 12345
-    profiles: ["grafana"]
+    profiles: [ "grafana" ]
 
   tempo:
     image: grafana/tempo:latest
     hostname: tempo
     container_name: grafana-tempo
-    command: ["-config.file=/etc/tempo.yaml"]
+    command: [ "-config.file=/etc/tempo.yaml" ]
     networks:
       - grafana
     volumes:
       - "./tempo.yaml:/etc/tempo.yaml"
       - "grafana_tempo:/data"
-    profiles: ["grafana"]
+    profiles: [ "grafana" ]
     #  ports
     #  80      # tempo api
     #  6831    # jaeger/thrift_compact on udp
-
-  graphite:
-    image: nickstenning/graphite
-    hostname: graphite
-    container_name: grafana-graphite
-    networks:
-      - grafana
-    volumes:
-      - "graphite:/var/lib/graphite/storage/whisper/"
-    profiles: ["graphite"]
 
 networks:
   grafana:
     external: true
 volumes:
-  graphite:
-    external: true
   grafana_data:
     external: true
   grafana_tempo:

@@ -1,19 +1,12 @@
-docker volume create --name=graphite
 docker volume create --name=grafana_data
 docker volume create --name=grafana_tempo
 docker network create grafana
 
 web interface:
     http://grafana:3000
-    http://graphite.grafana
 
 tempo status:
     curl http://tempo.grafana:80/status
-
-cleanup old graphite data:
-    cd /u01/docker/volumes/graphite/_data/ # to volume
-    find . -type f -mtime +7 -name \*.wsp -delete;
-    find . -depth -type d -empty -delete
 
 oncall:
     prepare:
