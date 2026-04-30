@@ -13,7 +13,7 @@ services:
       - gitea-mysql:/var/lib/mysql
 
   server:
-    image: gitea/gitea:1.21.6
+    image: gitea/gitea:1.26.1
     container_name: gitea-server
     environment:
       - USER_UID=1000
