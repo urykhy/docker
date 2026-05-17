@@ -49,6 +49,7 @@ services:
       PHOTOPRISM_VISION_API: "false"                 # server: enables service API endpoints under /api/v1/vision (requires access token)
       PHOTOPRISM_SITE_URL: "http://photoprism.elf.dark/" # server URL in the format "http(s)://domain.name(:port)/(path)"
       PHOTOPRISM_TRUSTED_PROXY: "0.0.0.0/0"
+      PHOTOPRISM_HTTPS_PROXY: "http://10.103.10.3:8090"
       PHOTOPRISM_AUTH_MODE: "oidc"
       PHOTOPRISM_OIDC_PROVIDER: "authelia"
       PHOTOPRISM_OIDC_URI: "https://authelia.elf.dark"
