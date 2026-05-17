@@ -42,7 +42,7 @@ services:
       - mysql
 
   runner:
-    image: gitea/act_runner:nightly
+    image: gitea/runner:1.0.0
     container_name: gitea-runner
     networks:
       - gitea
