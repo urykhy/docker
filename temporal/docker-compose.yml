@@ -56,7 +56,8 @@ services:
       - temporal
     environment:
       - TEMPORAL_ADDRESS=server:7233
-      - TEMPORAL_CORS_ORIGINS=http://server:7233
+      - TEMPORAL_CORS_ORIGINS=http://ui.temporal:8080
+      - TEMPORAL_CSRF_COOKIE_INSECURE=true
     depends_on:
       - server
 
