@@ -101,6 +101,8 @@ services:
       - traefik.enable=true
       - traefik.http.routers.uptime.rule=Host(`uptime`)
       - traefik.http.services.uptime.loadbalancer.server.port=3001
+    environment:
+      NOTIFICATION_PROXY: http://10.103.10.3:8090
 
   traefik:
     image: traefik:v3.6.10
