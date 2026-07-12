@@ -15,9 +15,11 @@ services:
       LIBGL_ALWAYS_INDIRECT: 1
       DISPLAY: ${DISPLAY}
     volumes:
-    - /tmp/.X11-unix:/tmp/.X11-unix
-    - /etc/machine-id:/etc/machine-id
     - gns3:/home/user/GNS3
+    #- /tmp/.X11-unix:/tmp/.X11-unix
+    #- /etc/machine-id:/etc/machine-id
+    devices:
+    - "/dev/kvm:/dev/kvm"
 
 volumes:
   gns3:

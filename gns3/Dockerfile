@@ -22,17 +22,18 @@ RUN apt update                   \
     -y                           \
     --no-install-recommends      \
     procps                       \
-    python3 python3-pip pipx python3-pyqt5 python3-pyqt5.qtwebsockets  \
-    python3-pyqt5.qtsvg dynamips curl gnupg2 telnet xterm libcap2-bin  \
+    python3 python3-pip pipx dynamips curl gnupg2 telnet xterm libcap2-bin qemu-system-x86 qemu-utils \
+    python3-pyqt6 python3-pyqt6.qtsvg python3-pyqt6.qtmultimedia python3-pyqt6.sip python3-pyqt6.qtwebsockets \
  && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /tmp/ubridge/ubridge /usr/bin/
 RUN setcap cap_net_admin,cap_net_raw=ep /usr/bin/ubridge
 
 RUN adduser -uid 1000 user
+RUN groupadd -f -r -g 131 -U user kvm
 USER user
 RUN pip install --break-system-packages --no-cache-dir gns3-server gns3-gui
 
 ENV QT_XKB_CONFIG_ROOT=/usr/share/X11/xkb
 ENV PATH=$PATH:/home/user/.local/bin/
-CMD ["gns3"]
+CMD ["gns3server"]
