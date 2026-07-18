@@ -8,6 +8,7 @@
             <log_queries>1</log_queries>
             <date_time_input_format>best_effort</date_time_input_format>
             <allow_experimental_json_type>1</allow_experimental_json_type>
+            <opentelemetry_start_trace_probability>1</opentelemetry_start_trace_probability>
         </default>
 
         <readonly>
