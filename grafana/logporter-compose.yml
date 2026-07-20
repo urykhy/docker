@@ -10,6 +10,7 @@ services:
     depends_on:
       docker-proxy:
         condition: service_started
+    restart: unless-stopped
 
   docker-proxy:
     image: lscr.io/linuxserver/socket-proxy:latest
