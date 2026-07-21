@@ -4,7 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 from activities import *
 from temporalio.client import Client
 from temporalio.worker import Worker
-from workflows import MyFlow
+from workflows import FlowWithPrio, MyFlow
 
 
 async def main():
@@ -13,7 +13,7 @@ async def main():
         worker = Worker(
             client,
             task_queue="my-task-queue",
-            workflows=[MyFlow],
+            workflows=[MyFlow, FlowWithPrio],
             max_concurrent_activities=2,
             activities=[step_hello, step_diff, step_process, step_notify],
             activity_executor=executor,

@@ -18,7 +18,7 @@ services:
       retries: 10
 
   server:
-    image: temporalio/server:1.28.0
+    image: temporalio/server:1.31.2
     container_name: temporal-server
     networks:
       - temporal
@@ -39,7 +39,7 @@ services:
         condition: service_healthy
 
   cli:
-    image: temporalio/admin-tools:1.28.0-tctl-1.18.2-cli-1.3.0
+    image: temporalio/admin-tools:1.31.2
     container_name: temporal-cli
     networks:
       - temporal

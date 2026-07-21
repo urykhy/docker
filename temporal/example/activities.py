@@ -6,6 +6,9 @@ from temporalio import activity
 
 @activity.defn
 async def step_hello(params) -> str:
+    for i in range(1, 10):
+        await sleep(0.2)
+        activity.heartbeat("ping")
     return f"Hello, {params}!"
 
 

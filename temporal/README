@@ -17,4 +17,10 @@ temporal-sql-tool --ep mysql -u root --pw temporal --db temporal_visibility upda
 
 # start temporal, and from cli again
 tctl --ns default namespace register -rd 3
+tctl --ns default namespace update --retention 10
 
+# upgrade
+dc run --rm cli /bin/sh
+> cd /etc/temporal/
+> temporal-sql-tool --ep mysql -u root --pw temporal --db temporal update-schema -d ./schema/mysql/v8/temporal/versioned
+> temporal-sql-tool --ep mysql -u root --pw temporal --db temporal_visibility update-schema -d ./schema/mysql/v8/visibility/versioned
