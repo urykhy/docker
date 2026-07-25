@@ -1,0 +1,19 @@
+services:
+  nocodb:
+    image: nocodb/nocodb:2026.07.0
+    hostname: nocodb
+    container_name: nocodb
+    network_mode: "bridge"
+    environment:
+      NC_PUBLIC_URL: http://nocodb.elf.dark
+    volumes:
+      - nocodb:/usr/app/data/
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nocodb.rule=Host(`nocodb`)
+      - traefik.http.services.nocodb.loadbalancer.server.port=8080
+
+volumes:
+  nocodb:
+    external: true
+
