@@ -55,7 +55,7 @@ services:
       MYSQL_PASS: user
 
   nginx:
-    image: nginx:1.25.5-alpine-otel
+    image: nginx:1.31.6-alpine-otel
     hostname: nginx
     container_name: nginx
     network_mode: "host"
