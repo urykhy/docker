@@ -83,3 +83,16 @@ class FlowWithPrio:
             if not t.done():
                 print(f"about to cancel task for {step}")
                 t.cancel()
+
+
+@workflow.defn
+class CanFlow:
+    @workflow.run
+    async def run(self, params) -> list[str]:
+        if len(params["tasks"]) > 0:
+            params["out"].append(await workflow.execute_activity(step_hello, params["tasks"][0], start_to_close_timeout=timedelta(seconds=5)))
+            del params["tasks"][0]
+            workflow.continue_as_new(params)
+        else:
+            return params["out"]
+

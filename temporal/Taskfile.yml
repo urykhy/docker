@@ -14,4 +14,4 @@ tasks:
   flow:
     desc: run workflow
     cmds:
-      - bash -c "source env/bin/activate; cd example; python flow.py"
+      - bash -c "source env/bin/activate; cd example; python flow.py {{.CLI_ARGS}}"

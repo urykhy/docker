@@ -24,3 +24,9 @@ dc run --rm cli /bin/sh
 > cd /etc/temporal/
 > temporal-sql-tool --ep mysql -u root --pw temporal --db temporal update-schema -d ./schema/mysql/v8/temporal/versioned
 > temporal-sql-tool --ep mysql -u root --pw temporal --db temporal_visibility update-schema -d ./schema/mysql/v8/visibility/versioned
+
+# run
+task worker
+task flow -- CanFlow
+task flow -- print
+
