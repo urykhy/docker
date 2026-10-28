@@ -15,6 +15,21 @@ services:
       - "--storage.tsdb.path=/prometheus"
       - "--storage.tsdb.retention.size=300MB"
       - "--storage.tsdb.min-block-duration=30m"
+      - "--storage.tsdb.retention.time=2d"
+
+  victoria:
+    image: victoriametrics/victoria-metrics:v1.155.0
+    hostname: victoria
+    container_name: grafana-victoria
+    networks:
+      - grafana
+    command:
+      - "-storageDataPath=/victoria"
+      - "-retentionPeriod=4" # 4 months retention
+      - "-dedup.minScrapeInterval=15s"
+      - "-inmemoryDataFlushInterval=60s"
+    volumes:
+      - victoria:/victoria
 
   alertmanager:
     image: prom/alertmanager:v0.26.0
@@ -34,4 +49,6 @@ volumes:
   alertmanager:
     external: true
   prometheus:
+    external: true
+  victoria:
     external: true

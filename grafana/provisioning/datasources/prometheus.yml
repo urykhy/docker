@@ -9,3 +9,11 @@ datasources:
     jsonData:
       httpMethod: POST
       manageAlerts: true
+  - uid: fsezzmVictoria
+    type: prometheus
+    name: Victoria
+    url: http://victoria:8428
+    isDefault: false
+    jsonData:
+      httpMethod: POST
+      manageAlerts: true
