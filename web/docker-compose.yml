@@ -3,7 +3,8 @@ services:
     image: urykhy/jekyll
     build: jekyll
     container_name: jekyll
-    network_mode: "bridge"
+    networks:
+      - web
     command: bash -c "bundler install && jekyll serve --trace --verbose --port 80 --host 0.0.0.0"
     volumes:
       - /home/ury/devel/jekyll/stuff:/srv/jekyll
@@ -15,7 +16,8 @@ services:
     volumes:
       - /home/ury:/home/ury
     command: uwsgi php.ini
-    network_mode: "bridge"
+    networks:
+      - web
 
   uwsgi-torrent:
     image: urykhy/uwsgi
@@ -29,7 +31,8 @@ services:
     volumes:
       - /home/ury:/home/ury
     command: uwsgi torrent.ini
-    network_mode: "bridge"
+    networks:
+      - web
     environment:
       PYTHONUNBUFFERED: 1
 
@@ -46,7 +49,8 @@ services:
       - /home/ury:/home/ury
       - /u03/mirror/fb2.Flibusta.Net:/u03/mirror/fb2.Flibusta.Net
     command: uwsgi flibusta.ini
-    network_mode: "bridge"
+    networks:
+      - web
     environment:
       PYTHONUNBUFFERED: 1
       MYSQL_PORT: 3306
@@ -77,7 +81,8 @@ services:
     command: "-listen=0.0.0.0:8080 -cacheDir=/go -proxy=https://goproxy.io/"
     hostname: goproxy
     container_name: goproxy
-    network_mode: "bridge"
+    networks:
+      - web
     volumes:
       - goproxy:/go
 
@@ -85,7 +90,8 @@ services:
     image: registry:2
     container_name: registry
     hostname: registry
-    network_mode: "bridge"
+    networks:
+      - web
     volumes:
       - registry:/var/lib/registry
       - ./registry.yml:/etc/docker/registry/config.yml
@@ -94,7 +100,8 @@ services:
     image: louislam/uptime-kuma:2
     hostname: uptime-kuma
     container_name: uptime-kuma
-    network_mode: "bridge"
+    networks:
+      - web
     volumes:
       - uptime-kuma:/app/data
     labels:
@@ -114,7 +121,8 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.traefik.address=:81"
       - "--providers.docker.exposedByDefault=false"
-    network_mode: "bridge"
+    networks:
+      - web
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
@@ -123,7 +131,8 @@ services:
     hostname: authelia
     domainname: elf.dark
     container_name: authelia
-    network_mode: "bridge"
+    networks:
+      - web
     volumes:
       - "./authelia:/config"
     healthcheck:
@@ -132,6 +141,10 @@ services:
       TZ: "Europe/Moscow"
       PUID: "1000"
       GGID: "100"
+
+networks:
+  web:
+    external: true
 
 volumes:
   nginx-cache:
